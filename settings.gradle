@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://maven.mozilla.org/maven2"
+
+            /* content {
+                // Never fetch components from here. We always want to use snapshots.
+                excludeGroup "org.mozilla.components"
+            } */
+        }
+    }
+}
+rootProject.name = "QwantBrowserCompose"
+include ':app'
