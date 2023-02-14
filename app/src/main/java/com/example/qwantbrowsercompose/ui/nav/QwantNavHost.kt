@@ -8,18 +8,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.qwantbrowsercompose.PrivacyMode
+import com.example.qwantbrowsercompose.ui.PrivacyMode
 import com.example.qwantbrowsercompose.ext.navigateSingleTopTo
 import com.example.qwantbrowsercompose.preferences.frontend.FrontEndPreferences
 import com.example.qwantbrowsercompose.preferences.frontend.FrontEndPreferencesViewModel
+import com.example.qwantbrowsercompose.ui.QwantApplicationViewModel
 import com.example.qwantbrowsercompose.ui.browser.BrowserScreen
 import com.example.qwantbrowsercompose.ui.tabs.TabsScreen
 
 @Composable
 fun QwantNavHost(
     navController: NavHostController,
-    onPrivacyChanged: (privacyMode: PrivacyMode) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    appViewModel: QwantApplicationViewModel = hiltViewModel(),
 ) {
     NavHost(
         navController = navController,
@@ -28,8 +29,7 @@ fun QwantNavHost(
     ) {
         composable(NavDestination.Browser.route) { BrowserScreen() }
         composable(NavDestination.Tabs.route) { TabsScreen(
-            homepageUrl = "http://www.qwant.com",
-            onPrivacyChange = onPrivacyChanged,
+            appViewModel = appViewModel,
             onClose = { navController.navigateSingleTopTo(NavDestination.Browser.route) }
         ) }
         composable(NavDestination.History.route) { Text("History") }

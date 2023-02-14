@@ -1,47 +1,51 @@
 package com.example.qwantbrowsercompose.ui.tabs
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.qwantbrowsercompose.PrivacyMode
-import mozilla.components.browser.state.selector.selectedTab
-import com.example.qwantbrowsercompose.R
-import com.example.qwantbrowsercompose.tabs.TabsScreenViewModel
+import com.example.qwantbrowsercompose.ui.PrivacyMode
+import com.example.qwantbrowsercompose.ui.QwantApplicationViewModel
+import com.example.qwantbrowsercompose.ui.utils.BigButton
+import mozilla.components.browser.state.state.SessionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsScreen(
-    homepageUrl: String,
-    onPrivacyChange: (privacyMode: PrivacyMode) -> Unit = {},
     onClose: () -> Unit = {},
-    viewModel: TabsScreenViewModel = hiltViewModel()
+    appViewModel: QwantApplicationViewModel = hiltViewModel(),
+    tabsViewModel: TabsScreenViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current // TODO remove this replacing toast with snackbar message
+    val private by appViewModel.isPrivate.collectAsState()
+    val tabs by tabsViewModel.tabs.collectAsState()
+    val selectedTabId by tabsViewModel.selectedTabId.collectAsState()
 
-    var private by remember { mutableStateOf(viewModel.mozac.store.state.selectedTab?.content?.private ?: false) }
+    val normalTabs by remember(tabs) { derivedStateOf { tabs.filter { !it.content.private } } }
+    val privateTabs by remember(tabs) { derivedStateOf { tabs.filter { it.content.private } } }
+    val normalTabsCount by remember(normalTabs) { derivedStateOf { normalTabs.count() } }
 
-    DisposableEffect(private) {
-        onPrivacyChange(if (private) PrivacyMode.PRIVATE else PrivacyMode.NORMAL)
+    DisposableEffect(true) {
         onDispose {
-            onPrivacyChange(PrivacyMode.SELECTED_TAB_PRIVACY)
+            appViewModel.setPrivacyMode(PrivacyMode.SELECTED_TAB_PRIVACY)
         }
     }
 
-
+    // TODO remove this replacing toast with snackbar message
+    val context = LocalContext.current
     val deleteSuccessToast = if (private) "private delete OK" else "delete OK"
 
     Scaffold(
@@ -61,21 +65,24 @@ fun TabsScreen(
                 )
 
                 TabPrivacySwitch(
-                    store = viewModel.mozac.store,
+                    tabCount = normalTabsCount,
                     private = private,
-                    onPrivateChange = { p -> private = p },
+                    onPrivateChange = { p ->
+                        appViewModel.setPrivacyMode(when (p) {
+                            true -> PrivacyMode.PRIVATE
+                            false -> PrivacyMode.NORMAL
+                        })
+                    },
                     modifier = Modifier.align(Alignment.Center)
                 )
 
                 DeleteTabsButton(
                     private = private,
                     onDeleteConfirmed = {
+                        tabsViewModel.removeTabs(private)
                         if (private) {
-                            viewModel.useCases.tabsUseCases.removePrivateTabs.invoke()
-                            private = false
+                            appViewModel.setPrivacyMode(PrivacyMode.NORMAL)
                         } else {
-                            viewModel.useCases.tabsUseCases.removeNormalTabs.invoke()
-                            viewModel.useCases.tabsUseCases.addTab.invoke(homepageUrl, selectTab = true)
                             onClose()
                         }
                         // TODO replace toast with snackbar message
@@ -89,27 +96,50 @@ fun TabsScreen(
             }
         }
     ) { padding ->
+        val onTabSelected = { tab: SessionState ->
+            tabsViewModel.selectTab(tab.id)
+            onClose()
+        }
+        val onTabDeleted = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
+
         Box(modifier = Modifier.padding(padding)) {
-            TabList(
-                store = viewModel.mozac.store,
-                private = private,
-                // thumbnailStorage = thumbnailStorage,
-                modifier = Modifier.fillMaxHeight(),
-                onTabSelected = { tab ->
-                    viewModel.useCases.tabsUseCases.selectTab.invoke(tab.id)
-                    onClose()
-                },
-                onTabDeleted = { tab -> viewModel.useCases.tabsUseCases.removeTab.invoke(tab.id) }
-            )
+            AnimatedVisibility(
+                visible = private,
+                enter = slideInHorizontally(initialOffsetX = { it }),
+                exit = slideOutHorizontally(targetOffsetX = { it })
+            ) {
+                TabList(
+                    list = privateTabs,
+                    selectedTabId = selectedTabId,
+                    modifier = Modifier.fillMaxHeight(),
+                    onTabSelected = onTabSelected,
+                    onTabDeleted = onTabDeleted
+                )
+            }
+
+            AnimatedVisibility(
+                visible = !private,
+                enter = slideInHorizontally(initialOffsetX = { -it }),
+                exit = slideOutHorizontally(targetOffsetX = { -it })
+            ) {
+                TabList(
+                    list = normalTabs,
+                    selectedTabId = selectedTabId,
+                    modifier = Modifier.fillMaxHeight(),
+                    onTabSelected = onTabSelected,
+                    onTabDeleted = onTabDeleted
+                )
+            }
 
             Box(modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 12.dp)
             ) {
-                NewTabButton(
-                    private = private,
+                BigButton(
+                    text = if (private) "add private tab" else "add tab",
+                    icon = Icons.Outlined.AddCircle,
                     onClick = {
-                        viewModel.useCases.tabsUseCases.addTab.invoke(homepageUrl, selectTab = true, private = private)
+                        tabsViewModel.openNewQwantTab(private = private)
                         onClose()
                     },
                     modifier = Modifier.height(36.dp)

@@ -1,6 +1,7 @@
 package com.example.qwantbrowsercompose.ui.tabs
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +29,7 @@ import com.example.qwantbrowsercompose.R
 @Composable
 fun TabRow(
     tab: TabSessionState,
+    selected: Boolean,
     // thumbnailStorage: ThumbnailStorage,
     onSelected: (tab: TabSessionState) -> Unit,
     onDeleted: (tab: TabSessionState) -> Unit,
@@ -34,7 +37,7 @@ fun TabRow(
 ) {
     Row(modifier = modifier
         .fillMaxWidth()
-        .padding(start = 20.dp, bottom = 16.dp)
+        .background(if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
         .clickable { onSelected(tab) }
     ) {
         Card(
@@ -42,6 +45,7 @@ fun TabRow(
             modifier = Modifier
                 .width(90.dp)
                 .height(70.dp)
+                .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_background),
@@ -49,7 +53,7 @@ fun TabRow(
                 contentDescription = "Thumbnail placeholder",
                 contentScale = ContentScale.None
             )
-            TabThumbnail(tab.id, 90.dp/* , thumbnailStorage */)
+            TabThumbnail(tab.id/*, 90.dp , thumbnailStorage */)
         }
 
         Box(modifier = Modifier

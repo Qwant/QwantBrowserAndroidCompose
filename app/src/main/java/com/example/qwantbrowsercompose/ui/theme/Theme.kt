@@ -31,7 +31,7 @@ private val DarkPrivateColorScheme = DarkColorScheme.copy(
 private fun animateColor(targetValue: Color) =
     animateColorAsState(
         targetValue = targetValue,
-        animationSpec = tween(durationMillis = 2000)
+        animationSpec = tween(durationMillis = 1000)
     ).value
 
 @Composable

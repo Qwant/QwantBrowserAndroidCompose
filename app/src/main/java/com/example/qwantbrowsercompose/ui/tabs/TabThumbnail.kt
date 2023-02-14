@@ -21,11 +21,11 @@ import mozilla.components.concept.base.images.ImageLoadRequest
 @Composable
 fun TabThumbnail(
     tabId: String,
-    size: Dp,
+    // size: Dp,
     // thumbnailStorage: ThumbnailStorage,
     modifier: Modifier = Modifier
 ) {
-    val pixelSize = with(LocalDensity.current) { size.roundToPx() }
+    // val pixelSize = with(LocalDensity.current) { size.roundToPx() }
     var loadedImage: Bitmap? by remember { mutableStateOf(null) }
 
     LaunchedEffect(tabId) {

@@ -17,15 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.qwantbrowsercompose.ui.utils.animateAlignmentAsState
 import mozilla.components.browser.state.store.BrowserStore
-import com.example.qwantbrowsercompose.R
 
 @Composable
 fun TabPrivacySwitch(
-    store: BrowserStore,
+    // store: BrowserStore,
+    tabCount: Int,
     private: Boolean,
     onPrivateChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -50,13 +49,12 @@ fun TabPrivacySwitch(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             TabCounterButton(
-                store = store,
+                tabCount = tabCount,
                 onClicked = { onPrivateChange(false) },
                 modifier = Modifier
                     .width(70.dp)
                     .height(40.dp)
-                    .padding(8.dp),
-                tabsFilter = { tabSessionState -> !tabSessionState.content.private }
+                    .padding(8.dp)
 
             )
             Image(

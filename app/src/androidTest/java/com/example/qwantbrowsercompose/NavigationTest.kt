@@ -3,13 +3,9 @@ package com.example.qwantbrowsercompose
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import com.example.qwantbrowsercompose.ext.components
-import com.example.qwantbrowsercompose.ui.nav.QwantNavHost
-import com.example.qwantbrowsercompose.ui.theme.QwantBrowserTheme
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule

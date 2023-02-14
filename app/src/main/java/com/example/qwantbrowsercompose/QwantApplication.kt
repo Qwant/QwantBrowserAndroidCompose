@@ -1,10 +1,9 @@
 package com.example.qwantbrowsercompose
 
 import android.app.Application
-import androidx.compose.runtime.collectAsState
 import com.example.qwantbrowsercompose.mozac.Core
 import com.example.qwantbrowsercompose.mozac.UseCases
-import com.example.qwantbrowsercompose.userdata.history.HistoryRepository
+import com.example.qwantbrowsercompose.usecases.QwantUseCases
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import mozilla.components.browser.state.action.SystemAction

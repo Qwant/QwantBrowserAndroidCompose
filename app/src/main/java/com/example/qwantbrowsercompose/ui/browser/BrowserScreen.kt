@@ -1,54 +1,106 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.qwantbrowsercompose.ui.browser
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.qwantbrowsercompose.browser.BrowserScreenViewModel
-import com.example.qwantbrowsercompose.browser.toolbar.BrowserToolbar
-import mozilla.components.browser.state.helper.Target
-
-@Composable
-fun BrowserScreen() {
-   Scaffold(
-       topBar = { BrowserHeader() }
-   ) { innerPadding ->
-        EngineViewWrapper(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        )
-   }
-}
+import com.example.qwantbrowsercompose.R
+import com.example.qwantbrowsercompose.ui.browser.mozaccompose.EngineView
+import com.example.qwantbrowsercompose.ui.browser.mozaccompose.SessionFeature
+import com.example.qwantbrowsercompose.ui.browser.suggest.Suggest
+import com.example.qwantbrowsercompose.ui.browser.toolbar.Toolbar
+import com.example.qwantbrowsercompose.ui.utils.IconAction
 
 
 @Composable
-fun BrowserHeader(
+fun BrowserScreen(
     viewModel: BrowserScreenViewModel = hiltViewModel()
 ) {
-    var editMode by remember { mutableStateOf(false) }
-    var editText by remember { mutableStateOf("") }
+    val currentUrl by viewModel.currentUrl.collectAsState()
+    val loadingProgress by viewModel.loadingProgress.collectAsState()
+    val suggestions by viewModel.suggestions.collectAsState()
 
-    BrowserToolbar(
-        store = viewModel.mozac.store,
-        target = Target.SelectedTab,
-        onDisplayMenuClicked = { },
-        onTextEdit = { t -> editText = t },
-        onTextCommit = { t ->
-            editMode = false
-            viewModel.useCases.sessionUseCases.loadUrl(t)
-            // TODO do something more clever: URL check, search, ...
-       },
-        onDisplayToolbarClick = {
-            editMode = true
-        },
-        hint = "hint",
-        editMode = editMode,
-        editText = editText
-    )
+    var toolbarFocus by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    if (currentUrl != null) {
+        Column {
+            Toolbar(
+                url = currentUrl!!,
+                onTextChanged = { text -> viewModel.updateSearchTerms(text) },
+                onTextCommit = { text -> viewModel.commitSearch(text) },
+                hasFocus = toolbarFocus,
+                onFocusChanged = { hasFocus -> toolbarFocus = hasFocus },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                pageActions = {
+                    if (loadingProgress == 1f) {
+                        IconAction(
+                            label = "Reload",
+                            icon = Icons.Default.Autorenew
+                        ) { viewModel.reloadUrl() }
+                    } else {
+                        IconAction(
+                            label = "Cancel",
+                            icon = Icons.Default.Cancel
+                        ) { viewModel.stopLoading() }
+                    }
+                },
+                browserActions = {
+                    IconAction(
+                        label = "Qwant VIP",
+                        icon = Icons.Default.Radar
+                    ) { /* TODO open webextension */ }
+                }
+            )
+
+            Box(modifier = Modifier.weight(2f)) {
+                EngineView(
+                    modifier = Modifier.fillMaxSize(),
+                    features = { engineView ->
+                        SessionFeature(engineView = engineView)
+                    }
+                )
+
+                ProgressBar(
+                    loadingProgress = loadingProgress,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(5.dp)
+                )
+
+                if (toolbarFocus) {
+                    Suggest(
+                        suggestions = suggestions,
+                        onSuggestionClicked = { suggestion ->
+                            viewModel.commitSuggestion(suggestion)
+                            focusManager.clearFocus()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    )
+                }
+            }
+        }
+    } else {
+        Icon(
+            painter = painterResource(id = R.drawable.qwant_logo),
+            contentDescription = "Logo qwant",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(64.dp)
+        )
+    }
 }

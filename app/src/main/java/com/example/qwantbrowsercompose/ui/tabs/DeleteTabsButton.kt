@@ -35,7 +35,7 @@ fun DeleteTabsButton(
             onDismissRequest = { dialogOpened = false },
             dismissButton = {
                 TextButton(onClick = { dialogOpened = false }) {
-                    Text(stringResource(android.R.string.no))
+                    Text("No")
                 }
             },
             confirmButton = {
@@ -43,7 +43,7 @@ fun DeleteTabsButton(
                     dialogOpened = false
                     onDeleteConfirmed()
                 }) {
-                    Text(stringResource(android.R.string.yes))
+                    Text("Yes")
                 }
             }
         )

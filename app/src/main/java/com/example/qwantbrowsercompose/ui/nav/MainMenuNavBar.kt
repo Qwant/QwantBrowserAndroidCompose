@@ -7,7 +7,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -95,7 +94,7 @@ fun NavBarItem(
                     modifier = Modifier.size(24.dp)
                 )
             } else {
-                Text("1")
+                Text("1") // TODO replace with tabcounter
             }
             Text(text = text)
         }

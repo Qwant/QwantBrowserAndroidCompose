@@ -5,11 +5,14 @@ buildscript {
         mozac_version = "110.+"
         hilt_version = '2.40'
         room_version = '2.5.0'
-        material_version = '1.1.0-alpha03'
+        material_version = '1.1.0-alpha04'
     }
 
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+    }
+    repositories {
+        mavenCentral()
     }
 }
 

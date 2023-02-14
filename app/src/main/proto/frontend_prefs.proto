@@ -3,6 +3,62 @@ syntax = "proto3";
 option java_package = "com.example.qwantbrowsercompose.preferences.frontend";
 option java_multiple_files = true;
 
+enum Appearance {
+  SYSTEM_SETTINGS = 0;
+  LIGHT = 1;
+  DARK = 2;
+}
+
+enum CustomPageColor {
+  RANDOM_COLOR = 0;
+  BLUE = 1;
+  GREEN = 2;
+  PINK = 3;
+  PURPLE = 4;
+}
+
+enum CustomPageCharacter {
+  RANDOM_CHARACTER = 0;
+  DOUDOUNE = 1;
+  FOOTBALL = 2;
+  TURTLENECK = 3;
+  GLASSES = 4;
+  CAT = 5;
+  BALLOON = 6;
+  NO_CHARACTER = 7;
+}
+
+enum AdultFilter {
+  MODERATE = 0;
+  NO_FILTER = 1;
+  STRICT = 2;
+}
+
+enum InterfaceLanguage {
+  EN = 0;
+  FR = 1;
+  DE = 2;
+  IT = 3;
+  ES = 4;
+}
+
+enum SearchResultRegion {
+  en_GB = 0;
+  fr_FR = 1;
+}
+
 message FrontEndPreferences {
-  bool show_news = 1;
+  Appearance appearance = 1;
+  CustomPageColor custom_page_color = 2;
+  CustomPageCharacter custom_page_character = 3;
+
+  bool show_news = 4;
+  bool show_sponsor = 5;
+  bool show_favicons = 6;
+  bool open_results_in_new_tab = 7;
+
+  AdultFilter adult_filter = 8;
+
+  string interface_language = 9;
+  string search_result_region = 10;
 }

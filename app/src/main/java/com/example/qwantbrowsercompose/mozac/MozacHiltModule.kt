@@ -16,10 +16,4 @@ object MozacHiltModule {
     : Core {
         return Core(context = context)
     }
-
-    @Singleton
-    @Provides fun provideUseCases(core: Core)
-    : UseCases {
-        return UseCases(core)
-    }
 }
