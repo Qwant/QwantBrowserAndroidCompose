@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.qwantbrowsercompose'
+    namespace 'com.qwant.android.qwantbrowser'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.qwantbrowsercompose"
+        applicationId "com.qwant.android.qwantbrowser"
         minSdk 21
         targetSdk 33
         versionCode 1
