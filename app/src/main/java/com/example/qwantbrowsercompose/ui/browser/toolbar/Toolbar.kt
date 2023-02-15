@@ -60,7 +60,6 @@ fun Toolbar(
             keyboardActions = KeyboardActions(
                 onGo = {
                     onTextCommit(displayedText)
-                    // focusManager.clearFocus()
                     clearFocus()
                 }
             ),
@@ -71,7 +70,6 @@ fun Toolbar(
             modifier = Modifier
                 .weight(2f, true)
                 .onFocusChanged {
-                    // hasFocus = it.hasFocus
                     if (!it.hasFocus) {
                         displayedText = url
                         onTextChanged("")

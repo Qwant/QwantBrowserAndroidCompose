@@ -1,6 +1,11 @@
 package com.example.qwantbrowsercompose.ui.browser
 
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.qwantbrowsercompose.mozac.Core
@@ -9,7 +14,6 @@ import com.example.qwantbrowsercompose.suggest.GroupedSuggestionProvider
 import com.example.qwantbrowsercompose.suggest.Suggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlin.isUrl
@@ -24,9 +28,11 @@ class BrowserScreenViewModel @Inject constructor(
     private val useCases: UseCases,
     suggestionProvider: GroupedSuggestionProvider
 ): ViewModel() {
-    private val searchTerms: MutableStateFlow<String> = MutableStateFlow("")
+    private var searchTerms by mutableStateOf("")
+    var toolbarFocus by mutableStateOf(false)
+        private set
 
-    val suggestions = searchTerms
+    val suggestions = snapshotFlow { searchTerms }
         .map { search -> suggestionProvider.getSuggestions(search) }
         .stateIn(
             scope = viewModelScope,
@@ -51,8 +57,20 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = ""
         )
 
+    val canGoBack = mozac.store.flow()
+        .map { state -> state.selectedTab?.content?.canGoBack ?: false }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
+
     val reloadUrl = useCases.sessionUseCases.reload
     val stopLoading = useCases.sessionUseCases.stopLoading
+    val goBack = useCases.sessionUseCases.goBack
+
+    val engine = mozac.engine
+    val store = mozac.store
 
     fun commitSuggestion(suggestion: Suggestion) {
         if (suggestion.url != null) {
@@ -60,6 +78,10 @@ class BrowserScreenViewModel @Inject constructor(
         } else {
             commitSearch(suggestion.label)
         }
+    }
+
+    fun changeToolbarFocus(hasFocus: Boolean) {
+        toolbarFocus = hasFocus
     }
 
     fun commitSearch(searchText: String) {
@@ -71,8 +93,6 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun updateSearchTerms(newSearchTerms: String) {
-        viewModelScope.launch {
-            searchTerms.emit(newSearchTerms)
-        }
+        searchTerms = newSearchTerms
     }
 }

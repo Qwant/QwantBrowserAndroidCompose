@@ -4,12 +4,9 @@ import com.example.qwantbrowsercompose.preferences.frontend.FrontEndPreferencesR
 import com.example.qwantbrowsercompose.usecases.QwantUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
-class UseCases @Inject constructor(
+class UseCases (
     private val core: Core,
     private val frontEndPreferencesRepository: FrontEndPreferencesRepository
 ) {

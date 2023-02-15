@@ -1,6 +1,7 @@
 package com.example.qwantbrowsercompose.mozac
 
 import android.content.Context
+import com.example.qwantbrowsercompose.preferences.frontend.FrontEndPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +16,14 @@ object MozacHiltModule {
     @Provides fun provideCore(@ApplicationContext context: Context)
     : Core {
         return Core(context = context)
+    }
+
+    @Singleton
+    @Provides fun provideUseCases(
+        core: Core,
+        frontEndPreferencesRepository: FrontEndPreferencesRepository
+    )
+    : UseCases {
+        return UseCases(core, frontEndPreferencesRepository)
     }
 }

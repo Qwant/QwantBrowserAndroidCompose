@@ -28,8 +28,8 @@ fun BrowserScreen(
     val currentUrl by viewModel.currentUrl.collectAsState()
     val loadingProgress by viewModel.loadingProgress.collectAsState()
     val suggestions by viewModel.suggestions.collectAsState()
+    val canGoBack by viewModel.canGoBack.collectAsState()
 
-    var toolbarFocus by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     if (currentUrl != null) {
@@ -38,8 +38,8 @@ fun BrowserScreen(
                 url = currentUrl!!,
                 onTextChanged = { text -> viewModel.updateSearchTerms(text) },
                 onTextCommit = { text -> viewModel.commitSearch(text) },
-                hasFocus = toolbarFocus,
-                onFocusChanged = { hasFocus -> toolbarFocus = hasFocus },
+                hasFocus = viewModel.toolbarFocus,
+                onFocusChanged = { hasFocus -> viewModel.changeToolbarFocus(hasFocus) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -66,9 +66,15 @@ fun BrowserScreen(
 
             Box(modifier = Modifier.weight(2f)) {
                 EngineView(
+                    engine = viewModel.engine,
                     modifier = Modifier.fillMaxSize(),
                     features = { engineView ->
-                        SessionFeature(engineView = engineView)
+                        SessionFeature(
+                            engineView = engineView,
+                            store = viewModel.store,
+                            canGoBack = canGoBack,
+                            goBackUseCase = viewModel.goBack
+                        )
                     }
                 )
 
@@ -79,7 +85,7 @@ fun BrowserScreen(
                         .height(5.dp)
                 )
 
-                if (toolbarFocus) {
+                if (viewModel.toolbarFocus) {
                     Suggest(
                         suggestions = suggestions,
                         onSuggestionClicked = { suggestion ->
