@@ -5,16 +5,16 @@ import com.qwant.android.qwantbrowser.ui.preferences.PreferenceNavDestination
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceLink
 
 @Composable
-fun MainPreferencesScreen(
+fun FrontEndPreferencesScreen(
     onNavigateTo: (PreferenceNavDestination) -> Unit
 ) {
-    BasePreferenceScreen(destination = PreferenceNavDestination.Main) {
+    BasePreferenceScreen(destination = PreferenceNavDestination.Frontend) {
         PreferenceLink(
-            destination = PreferenceNavDestination.Frontend,
+            destination = PreferenceNavDestination.FrontendInterface,
             onNavigateTo = onNavigateTo
         )
         PreferenceLink(
-            destination = PreferenceNavDestination.Engine,
+            destination = PreferenceNavDestination.FrontendSearch,
             onNavigateTo = onNavigateTo
         )
     }

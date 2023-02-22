@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings">Settings</string>
+
+    <string name="settings_frontend_title">Qwant settings</string>
+    <string name="settings_frontend_interface_title">Qwant interface</string>
+    <string name="settings_frontend_search_title">Qwant search results</string>
+    <string name="settings_engine_title">Web engine settings</string>
 </resources>

@@ -35,7 +35,6 @@ fun QwantNavHost(
         composable(NavDestination.History.route) { Text("History") }
         composable(NavDestination.Bookmarks.route) { Text("Bookmarks") }
         preferencesGraph(navController, NavDestination.Preferences.route)
-        // composable(NavDestination.Settings.route) { TestPrefs() }
     }
 }
 
