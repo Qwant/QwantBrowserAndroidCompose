@@ -67,16 +67,15 @@ fun BrowserScreen(
             Box(modifier = Modifier.weight(2f)) {
                 EngineView(
                     engine = viewModel.engine,
-                    modifier = Modifier.fillMaxSize(),
-                    features = { engineView ->
-                        SessionFeature(
-                            engineView = engineView,
-                            store = viewModel.store,
-                            canGoBack = canGoBack,
-                            goBackUseCase = viewModel.goBack
-                        )
-                    }
-                )
+                    modifier = Modifier.fillMaxSize()
+                ) { engineView ->
+                    SessionFeature(
+                        engineView = engineView,
+                        store = viewModel.store,
+                        canGoBack = canGoBack,
+                        goBackUseCase = viewModel.goBack
+                    )
+                }
 
                 ProgressBar(
                     loadingProgress = loadingProgress,
