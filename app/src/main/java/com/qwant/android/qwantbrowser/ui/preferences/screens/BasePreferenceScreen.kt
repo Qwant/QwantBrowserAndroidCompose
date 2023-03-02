@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.preferences.PreferenceNavDestination
-import com.qwant.android.qwantbrowser.ui.utils.ScreenHeader
+import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 
 @Composable
 fun BasePreferenceScreen(

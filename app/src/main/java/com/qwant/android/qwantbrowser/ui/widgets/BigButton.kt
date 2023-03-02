@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.utils
+package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width

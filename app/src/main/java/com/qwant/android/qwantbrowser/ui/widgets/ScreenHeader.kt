@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.utils
+package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background

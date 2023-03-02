@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.ui.PrivacyMode
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
-import com.qwant.android.qwantbrowser.ui.utils.BigButton
+import com.qwant.android.qwantbrowser.ui.widgets.BigButton
 import mozilla.components.browser.state.state.SessionState
 
 @OptIn(ExperimentalMaterial3Api::class)

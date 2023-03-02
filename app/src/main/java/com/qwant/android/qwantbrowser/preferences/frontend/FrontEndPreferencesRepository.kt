@@ -9,6 +9,9 @@ import javax.inject.Inject
 
 private const val LOGTAG: String = "FrontEndPreferencesRepo"
 
+// Not needed, while this class remains stateless
+// @Module
+// @InstallIn(ActivityRetainedComponent::class)
 class FrontEndPreferencesRepository @Inject constructor(
     private val datastore: DataStore<FrontEndPreferences>
 ) {
@@ -39,8 +42,8 @@ class FrontEndPreferencesRepository @Inject constructor(
     suspend fun getQwantUrl(
         query: String? = null,
         widget: Boolean = false
-    ) : String? {
-        var url = homeUrl.lastOrNull()
+    ) : String {
+        var url = homeUrl.first()
 
         if (query != null) url += "&q=$query"
         if (widget) url += "&widget=1"
@@ -89,6 +92,12 @@ class FrontEndPreferencesRepository @Inject constructor(
     suspend fun updateShowNews(show: Boolean) {
         datastore.updateData { preferences ->
             preferences.toBuilder().setShowNews(show).build()
+        }
+    }
+
+    suspend fun updateInterfaceLanguage(language: String) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setInterfaceLanguage(language).build()
         }
     }
 }

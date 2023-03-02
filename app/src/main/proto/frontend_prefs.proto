@@ -34,19 +34,6 @@ enum AdultFilter {
   STRICT = 2;
 }
 
-enum InterfaceLanguage {
-  EN = 0;
-  FR = 1;
-  DE = 2;
-  IT = 3;
-  ES = 4;
-}
-
-enum SearchResultRegion {
-  en_GB = 0;
-  fr_FR = 1;
-}
-
 message FrontEndPreferences {
   Appearance appearance = 1;
   CustomPageColor custom_page_color = 2;

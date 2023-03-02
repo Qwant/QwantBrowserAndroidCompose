@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.widgets
+package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

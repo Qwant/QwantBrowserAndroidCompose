@@ -6,4 +6,10 @@
     <string name="settings_frontend_interface_title">Qwant interface</string>
     <string name="settings_frontend_search_title">Qwant search results</string>
     <string name="settings_engine_title">Web engine settings</string>
+
+    <string name="available_language_english">English</string>
+    <string name="available_language_french">French</string>
+    <string name="available_language_german">German</string>
+    <string name="available_language_italian">Italian</string>
+    <string name="available_language_spanish">Spanish</string>
 </resources>

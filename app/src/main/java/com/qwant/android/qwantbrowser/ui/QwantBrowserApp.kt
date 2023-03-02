@@ -14,10 +14,12 @@ import com.qwant.android.qwantbrowser.ui.nav.MainMenuNavBar
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.nav.NavDestinations
 import com.qwant.android.qwantbrowser.ui.nav.QwantNavHost
+import com.qwant.android.qwantbrowser.ui.preferences.PreferenceNavDestination
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
 fun QwantBrowserApp(
+    intent_action: String? = null,
     applicationViewModel: QwantApplicationViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
@@ -27,6 +29,15 @@ fun QwantBrowserApp(
     } ?: NavDestination.Browser
 
     val isPrivate by applicationViewModel.isPrivate.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        if (intent_action == "CHANGED_LANGUAGE") {
+            // navController.restoreState()
+            navController.navigate(NavDestination.Preferences.route + "/" + PreferenceNavDestination.FrontendInterface.route) {
+                restoreState = true // TODO this does not work. explore navController methods and options to restore full settings backstack
+            }
+        }
+    }
 
     QwantBrowserTheme(
         privacy = isPrivate

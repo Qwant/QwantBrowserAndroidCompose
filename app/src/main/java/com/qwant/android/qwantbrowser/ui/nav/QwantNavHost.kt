@@ -37,14 +37,3 @@ fun QwantNavHost(
         preferencesGraph(navController, NavDestination.Preferences.route)
     }
 }
-
-@Composable
-fun TestPrefs(
-    viewModel: FrontEndPreferencesViewModel = hiltViewModel()
-) {
-    val prefs by viewModel.flow.collectAsState(initial = FrontEndPreferences.getDefaultInstance())
-
-    Button(onClick = { viewModel.updateShowNews(!prefs.showNews) }) {
-        Text(text = prefs.showNews.toString())
-    }
-}

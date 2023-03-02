@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.qwant.android.qwantbrowser.ui.utils.IconAction
+import com.qwant.android.qwantbrowser.ui.widgets.IconAction
 
 @Composable
 fun Toolbar(

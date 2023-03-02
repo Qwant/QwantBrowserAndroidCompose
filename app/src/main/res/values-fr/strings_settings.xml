@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Paramètres</string>
+
+    <string name="settings_frontend_title">Paramètres Qwant</string>
+    <string name="settings_frontend_interface_title">Interface</string>
+    <string name="settings_frontend_search_title">Résultats de recherche</string>
+    <string name="settings_engine_title">Paramètres du moteur de rendu</string>
+
+    <string name="available_language_english">Anglais</string>
+    <string name="available_language_french">Français</string>
+    <string name="available_language_german">Allemand</string>
+    <string name="available_language_italian">Italien</string>
+    <string name="available_language_spanish">Espagnol</string>
+</resources>

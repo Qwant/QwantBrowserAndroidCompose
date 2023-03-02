@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.utils
+package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
