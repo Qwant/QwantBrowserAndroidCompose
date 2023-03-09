@@ -16,7 +16,19 @@ fun SessionFeature(
     canGoBack: Boolean,
     goBackUseCase: SessionUseCases.GoBackUseCase
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
+    ComposeFeatureWrapper(feature = SessionFeature(
+        store = store,
+        goBackUseCase = goBackUseCase,
+        engineView = engineView
+    )) {
+        BackHandler(canGoBack) {
+            goBackUseCase()
+        }
+        BackHandler(engineView.canClearSelection()) {
+            engineView.clearSelection()
+        }
+    }
+    /* val lifecycleOwner = LocalLifecycleOwner.current
     val feature = remember { ViewBoundFeatureWrapper<SessionFeature>() }
 
     LaunchedEffect(engineView) {
@@ -36,5 +48,5 @@ fun SessionFeature(
     }
     BackHandler(engineView.canClearSelection()) {
         engineView.clearSelection()
-    }
+    } */
 }
