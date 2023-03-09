@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.nav
 
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -9,8 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.qwant.android.qwantbrowser.ext.navigateSingleTopTo
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferences
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.preferencesGraph
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreen

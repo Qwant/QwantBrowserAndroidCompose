@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.qwant.android.qwantbrowser.mozac.UseCases
 import com.qwant.android.qwantbrowser.ui.QwantBrowserApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
