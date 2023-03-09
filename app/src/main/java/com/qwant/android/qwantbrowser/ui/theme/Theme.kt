@@ -17,11 +17,15 @@ import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = ActionBlue200,
-    onPrimary = Color.White
+    onPrimary = Color.White,
+    secondaryContainer = Color.White,
+    onSecondaryContainer = Color.Black
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = ActionBlue400
+    primary = ActionBlue400,
+    secondaryContainer = GreySecondary,
+    onSecondaryContainer = Color.White
 )
 
 private val DarkPrivateColorScheme = DarkColorScheme.copy(
@@ -38,9 +42,11 @@ private fun animateColor(targetValue: Color) =
 @Composable
 fun ColorScheme.animatedColors() = copy(
     primary = animateColor(primary),
+    background = animateColor(background),
     surface = animateColor(surface),
     onSurface = animateColor(onSurface),
-    background = animateColor(background),
+    secondaryContainer = animateColor(secondaryContainer),
+    onSecondaryContainer = animateColor(onSecondaryContainer)
 )
 
 @Composable

@@ -14,6 +14,6 @@ class UseCases (
     val tabsUseCases: TabsUseCases by lazy { TabsUseCases(core.store) }
 
     val qwantUseCases: QwantUseCases by lazy {
-        QwantUseCases(frontEndPreferencesRepository, sessionUseCases)
+        QwantUseCases(frontEndPreferencesRepository, sessionUseCases, tabsUseCases)
     }
 }

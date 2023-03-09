@@ -48,4 +48,6 @@ message FrontEndPreferences {
 
   string interface_language = 9;
   string search_result_region = 10;
+
+  bool videos_on_qwant = 11;
 }

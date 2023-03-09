@@ -87,7 +87,7 @@ class BrowserScreenViewModel @Inject constructor(
         if (searchText.isUrl()) {
             useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
-            useCases.qwantUseCases.openSERPPage.invoke(searchText, viewModelScope)
+            useCases.qwantUseCases.loadSERPPage.invoke(searchText, viewModelScope)
         }
     }
 

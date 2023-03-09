@@ -14,8 +14,6 @@ class TabsScreenViewModel @Inject constructor(
     mozac: Core,
     private val useCases: UseCases
 ): ViewModel() {
-    private val homepageUrl = "https://www.qwant.com" // TODO get this from preference repository
-
     val tabs = mozac.store.flow()
         .map { state -> state.tabs }
         .stateIn(
@@ -33,7 +31,7 @@ class TabsScreenViewModel @Inject constructor(
         )
 
     fun openNewQwantTab(private: Boolean = false) {
-        useCases.tabsUseCases.addTab.invoke(homepageUrl, selectTab = true, private = private)
+        useCases.qwantUseCases.openHomePage(viewModelScope, private = private)
     }
 
     fun removeTabs(private: Boolean = false) {

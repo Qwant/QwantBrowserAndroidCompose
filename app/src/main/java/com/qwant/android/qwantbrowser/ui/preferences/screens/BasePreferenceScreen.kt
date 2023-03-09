@@ -1,9 +1,11 @@
 package com.qwant.android.qwantbrowser.ui.preferences.screens
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,11 +22,15 @@ fun BasePreferenceScreen(
         ScreenHeader(
             title = stringResource(id = destination.label)
         )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(8.dp)
-        ) {
-            content()
+        LazyColumn {
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    content()
+                }
+            }
         }
     }
 }

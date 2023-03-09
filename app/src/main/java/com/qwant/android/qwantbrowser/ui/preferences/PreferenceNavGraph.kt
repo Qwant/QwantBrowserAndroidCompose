@@ -6,8 +6,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.qwant.android.qwantbrowser.ui.preferences.screens.BasePreferenceScreen
 import com.qwant.android.qwantbrowser.ui.preferences.screens.FrontEndPreferencesScreen
-import com.qwant.android.qwantbrowser.ui.preferences.screens.FrontendInterfacePreferencesScreen
+import com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface.FrontendInterfacePreferencesScreen
 import com.qwant.android.qwantbrowser.ui.preferences.screens.MainPreferencesScreen
+import com.qwant.android.qwantbrowser.ui.preferences.screens.frontendSearch.FrontendSearchPreferencesScreen
 
 
 fun NavGraphBuilder.preferencesGraph(navController: NavController, route: String) {
@@ -23,7 +24,7 @@ fun NavGraphBuilder.preferencesGraph(navController: NavController, route: String
             FrontEndPreferencesScreen(onNavigateTo = onNavigateTo)
         }
         composable("$route/${PreferenceNavDestination.FrontendSearch.route}") {
-            BasePreferenceScreen(destination = PreferenceNavDestination.FrontendSearch)
+            FrontendSearchPreferencesScreen()
         }
         composable("$route/${PreferenceNavDestination.FrontendInterface.route}") {
             FrontendInterfacePreferencesScreen()

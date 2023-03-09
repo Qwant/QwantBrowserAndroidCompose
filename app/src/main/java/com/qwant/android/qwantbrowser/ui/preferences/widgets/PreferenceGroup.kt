@@ -21,18 +21,19 @@ fun PreferenceGroup(
     Column(modifier = modifier
         .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(12.dp))
         .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+        .padding(vertical = 4.dp)
         .fillMaxWidth()
     ) {
         if (title != null) {
             Row(modifier = Modifier.padding(8.dp)){
                 if (icon != null) {
-                    Icon(icon, contentDescription = title)
+                    Icon(icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
                 }
 
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     Text(text = title, style = MaterialTheme.typography.titleMedium)
                     if (description != null) {
-                        Text(text = description, style = MaterialTheme.typography.labelSmall)
+                        Text(text = description, style = MaterialTheme.typography.labelSmall, color = LocalContentColor.current.copy(0.6f))
                     }
                 }
             }

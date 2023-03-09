@@ -5,29 +5,39 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.urlEncode
 
 
 class QwantUseCases(
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    sessionUseCases: SessionUseCases
+    sessionUseCases: SessionUseCases,
+    tabsUseCases: TabsUseCases
 ) {
     class OpenHomePageUseCase internal constructor(
         private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
-        private val sessionUseCases: SessionUseCases
+        private val tabsUseCases: TabsUseCases
     ) {
-        suspend operator fun invoke() {
-            sessionUseCases.loadUrl(url = frontEndPreferencesRepository.homeUrl.first())
+        suspend operator fun invoke(private: Boolean = false) {
+            tabsUseCases.addTab.invoke(
+                frontEndPreferencesRepository.homeUrl.first(),
+                selectTab = true,
+                private = private
+            )
         }
 
-        operator fun invoke(coroutineScope: CoroutineScope) {
+        operator fun invoke(coroutineScope: CoroutineScope, private: Boolean = false) {
             coroutineScope.launch {
-                sessionUseCases.loadUrl(url = frontEndPreferencesRepository.homeUrl.first())
+                tabsUseCases.addTab.invoke(
+                    frontEndPreferencesRepository.homeUrl.first(),
+                    selectTab = true,
+                    private = private
+                )
             }
         }
     }
 
-    class OpenSERPPageUseCase internal constructor(
+    class LoadSERPPageUseCase internal constructor(
         private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
         private val sessionUseCases: SessionUseCases
     ) {
@@ -45,9 +55,9 @@ class QwantUseCases(
     }
 
     val openHomePage: OpenHomePageUseCase by lazy {
-        OpenHomePageUseCase(frontEndPreferencesRepository, sessionUseCases)
+        OpenHomePageUseCase(frontEndPreferencesRepository, tabsUseCases)
     }
-    val openSERPPage: OpenSERPPageUseCase by lazy {
-        OpenSERPPageUseCase(frontEndPreferencesRepository, sessionUseCases)
+    val loadSERPPage: LoadSERPPageUseCase by lazy {
+        LoadSERPPageUseCase(frontEndPreferencesRepository, sessionUseCases)
     }
 }

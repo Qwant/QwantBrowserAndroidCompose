@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.widgets
+package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -15,7 +15,7 @@ fun InterfaceLanguageDropdown(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-    val availableInterfaceLanguages = listOf( // TODO Move this somewhere else
+    val availableInterfaceLanguages = listOf(
         DropdownSelectorItem("en", R.string.available_language_english),
         DropdownSelectorItem("fr", R.string.available_language_french),
         DropdownSelectorItem("de", R.string.available_language_german),

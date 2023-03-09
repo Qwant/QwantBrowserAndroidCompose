@@ -35,8 +35,15 @@ class FrontEndPreferencesRepository @Inject constructor(
             append(QwantBaseUrl)
             append("?client=").append(client)
             if (prefs.showNews) append("&hc=1") else append("&hc=0")
+            append("&theme=").append(when(prefs.appearance) {
+                Appearance.LIGHT -> 0
+                Appearance.DARK -> 1
+                Appearance.SYSTEM_SETTINGS -> -1
+                else -> -1
+            })
             append("&qbc=1")
         }
+        // TODO add back bouygues f parameter here, or not if done with another endpoint
     }
 
     suspend fun getQwantUrl(
@@ -98,6 +105,60 @@ class FrontEndPreferencesRepository @Inject constructor(
     suspend fun updateInterfaceLanguage(language: String) {
         datastore.updateData { preferences ->
             preferences.toBuilder().setInterfaceLanguage(language).build()
+        }
+    }
+
+    suspend fun updateAppearance(appearance: Appearance) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setAppearance(appearance).build()
+        }
+    }
+
+    suspend fun updateCustomPageColor(color: CustomPageColor) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setCustomPageColor(color).build()
+        }
+    }
+
+    suspend fun updateCustomPageCharacter(character: CustomPageCharacter) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setCustomPageCharacter(character).build()
+        }
+    }
+
+    suspend fun updateShowSponsor(show: Boolean) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setShowSponsor(show).build()
+        }
+    }
+
+    suspend fun updateSearchResultRegion(region: String) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setSearchResultRegion(region).build()
+        }
+    }
+
+    suspend fun updateAdultFilter(filter: AdultFilter) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setAdultFilter(filter).build()
+        }
+    }
+
+    suspend fun updateShowFavicons(show: Boolean) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setShowFavicons(show).build()
+        }
+    }
+
+    suspend fun updateOpenResultsInNewTab(openInNewTab: Boolean) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setOpenResultsInNewTab(openInNewTab).build()
+        }
+    }
+
+    suspend fun updateVideosOnQwant(playOnQwant: Boolean) {
+        datastore.updateData { preferences ->
+            preferences.toBuilder().setVideosOnQwant(playOnQwant).build()
         }
     }
 }
