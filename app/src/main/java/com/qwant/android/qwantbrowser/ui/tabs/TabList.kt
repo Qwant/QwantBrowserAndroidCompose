@@ -21,6 +21,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 
 const val LOGTAG = "QB_TABLIST"
 
@@ -28,6 +29,7 @@ const val LOGTAG = "QB_TABLIST"
 fun TabList(
     list: List<TabSessionState>,
     selectedTabId: String?,
+    thumbnailStorage: ThumbnailStorage,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
     modifier: Modifier = Modifier,
@@ -104,6 +106,7 @@ fun TabList(
                     TabRow(
                         tab = tab,
                         selected = tab.id == selectedTabId,
+                        thumbnailStorage = thumbnailStorage,
                         onSelected = onTabSelected,
                         onDeleted = onTabDeleted
                     )

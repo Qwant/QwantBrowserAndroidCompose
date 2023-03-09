@@ -42,6 +42,8 @@ class TabsScreenViewModel @Inject constructor(
         }
     }
 
+    val thumbnailStorage = mozac.thumbnailStorage
+
     val selectTab = useCases.tabsUseCases.selectTab
     val removeTab = useCases.tabsUseCases.removeTab
 }

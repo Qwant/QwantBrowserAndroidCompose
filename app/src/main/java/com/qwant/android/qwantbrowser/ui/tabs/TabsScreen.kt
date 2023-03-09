@@ -111,6 +111,7 @@ fun TabsScreen(
                 TabList(
                     list = privateTabs,
                     selectedTabId = selectedTabId,
+                    thumbnailStorage = tabsViewModel.thumbnailStorage,
                     modifier = Modifier.fillMaxHeight(),
                     onTabSelected = onTabSelected,
                     onTabDeleted = onTabDeleted
@@ -125,6 +126,7 @@ fun TabsScreen(
                 TabList(
                     list = normalTabs,
                     selectedTabId = selectedTabId,
+                    thumbnailStorage = tabsViewModel.thumbnailStorage,
                     modifier = Modifier.fillMaxHeight(),
                     onTabSelected = onTabSelected,
                     onTabDeleted = onTabDeleted

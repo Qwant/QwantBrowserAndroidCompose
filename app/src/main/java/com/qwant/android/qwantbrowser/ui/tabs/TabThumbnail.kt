@@ -15,26 +15,26 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-// import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.images.ImageLoadRequest
 
 @Composable
 fun TabThumbnail(
     tabId: String,
-    // size: Dp,
-    // thumbnailStorage: ThumbnailStorage,
+    size: Dp,
+    thumbnailStorage: ThumbnailStorage,
     modifier: Modifier = Modifier
 ) {
-    // val pixelSize = with(LocalDensity.current) { size.roundToPx() }
+    val pixelSize = with(LocalDensity.current) { size.roundToPx() }
     var loadedImage: Bitmap? by remember { mutableStateOf(null) }
 
     LaunchedEffect(tabId) {
-        // loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize)).await()
+        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize)).await()
     }
 
-    if (loadedImage != null) {
+    loadedImage?.let {
         Image(
-            bitmap = loadedImage!!.asImageBitmap(),
+            bitmap = it.asImageBitmap(),
             contentDescription = "Tab Thumbnail",
             contentScale = ContentScale.FillWidth,
             alignment = Alignment.TopCenter,

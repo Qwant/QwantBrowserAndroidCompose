@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.EngineView
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.SessionFeature
+import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.ThumbnailFeature
 import com.qwant.android.qwantbrowser.ui.browser.suggest.Suggest
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.Toolbar
 import com.qwant.android.qwantbrowser.ui.widgets.IconAction
@@ -75,6 +76,7 @@ fun BrowserScreen(
                         canGoBack = canGoBack,
                         goBackUseCase = viewModel.goBack
                     )
+                    ThumbnailFeature(engineView = engineView, store = viewModel.store)
                 }
 
                 ProgressBar(

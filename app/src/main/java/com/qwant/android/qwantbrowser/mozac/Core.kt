@@ -5,6 +5,8 @@ import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
@@ -14,12 +16,7 @@ import mozilla.components.concept.fetch.Client
  * Component group for all core browser functionality.
  */
 class Core(private val context: Context) {
-    /**
-     * The browser engine component initialized based on the build
-     * configuration (see build variants).
-     */
     val engine: Engine by lazy {
-        // val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val defaultSettings = DefaultSettings(
             /* requestInterceptor = AppRequestInterceptor(context),
             remoteDebuggingEnabled = false, // prefs.getBoolean(context.getPreferenceKey(pref_key_remote_debugging), false),
@@ -31,29 +28,17 @@ class Core(private val context: Context) {
         EngineProvider.createEngine(context, defaultSettings)
     }
 
-    /**
-     * The [Client] implementation (`concept-fetch`) used for HTTP requests.
-     */
     val client: Client by lazy {
         EngineProvider.createClient(context)
     }
 
-    /**
-     * The [BrowserStore] holds the global [BrowserState].
-     */
+    val thumbnailStorage by lazy { ThumbnailStorage(context) }
+
     val store by lazy {
         BrowserStore(
-                middleware = /* listOf(
-                        DownloadMiddleware(context, DownloadService::class.java),
-                        ThumbnailsMiddleware(thumbnailStorage),
-                        ReaderViewMiddleware(),
-                        RegionMiddleware(
-                                context,
-                                LocationService.default()
-                        ),
-                        SearchMiddleware(context, listOf("qwant")),
-                        RecordingDevicesMiddleware(context)
-                ) + */ EngineMiddleware.create(engine)
+            middleware = listOf(
+                ThumbnailsMiddleware(thumbnailStorage),
+            ) + EngineMiddleware.create(engine)
         )
     }
 

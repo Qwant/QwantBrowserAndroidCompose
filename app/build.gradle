@@ -102,6 +102,7 @@ dependencies {
     implementation "org.mozilla.components:feature-tabs:$mozac_version"
     implementation "org.mozilla.components:support-ktx:$mozac_version"
     implementation "org.mozilla.components:support-rusthttp:$mozac_version"
+    implementation "org.mozilla.components:browser-thumbnails:$mozac_version"
 
     // Tests
     testImplementation 'junit:junit:4.13.2'
