@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -16,11 +17,15 @@ fun SessionFeature(
     canGoBack: Boolean,
     goBackUseCase: SessionUseCases.GoBackUseCase
 ) {
-    ComposeFeatureWrapper(feature = SessionFeature(
-        store = store,
-        goBackUseCase = goBackUseCase,
-        engineView = engineView
-    )) {
+    val feature = remember(engineView) {
+        SessionFeature(
+            store = store,
+            goBackUseCase = goBackUseCase,
+            engineView = engineView
+        )
+    }
+
+    ComposeFeatureWrapper(feature = feature) {
         BackHandler(canGoBack) {
             goBackUseCase()
         }
@@ -28,25 +33,4 @@ fun SessionFeature(
             engineView.clearSelection()
         }
     }
-    /* val lifecycleOwner = LocalLifecycleOwner.current
-    val feature = remember { ViewBoundFeatureWrapper<SessionFeature>() }
-
-    LaunchedEffect(engineView) {
-        feature.set(
-            feature = SessionFeature(
-                store = store,
-                goBackUseCase = goBackUseCase,
-                engineView = engineView
-            ),
-            owner = lifecycleOwner,
-            view = engineView.asView()
-        )
-    }
-
-    BackHandler(canGoBack) {
-        goBackUseCase()
-    }
-    BackHandler(engineView.canClearSelection()) {
-        engineView.clearSelection()
-    } */
 }

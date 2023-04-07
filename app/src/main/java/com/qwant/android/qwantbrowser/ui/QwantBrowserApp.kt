@@ -59,6 +59,7 @@ fun QwantBrowserApp(
 
     if (appearance != null && appearance != Appearance.UNRECOGNIZED) {
         homeUrl?.let {
+            // TODO remember this for recompositions somehow
             QwantUrlEngineSyncFeature(
                 it,
                 qwantTabs,
@@ -70,20 +71,20 @@ fun QwantBrowserApp(
             darkTheme = darkTheme,
             privacy = isPrivate
         ) {
-            Scaffold(bottomBar = {
+            /* Scaffold(bottomBar = {
                 MainMenuNavBar(
                     currentScreen = currentScreen,
                     onTabSelected = { destination ->
                         navController.navigateSingleTopTo(destination.route)
                     }
                 )
-            }) { innerPadding ->
+            }) { innerPadding -> */
                 QwantNavHost(
                     navController = navController,
-                    modifier = Modifier.padding(innerPadding),
+                    // modifier = Modifier.padding(innerPadding),
                     appViewModel = applicationViewModel
                 )
-            }
+            /*} */
         }
     } else {
         // TODO splash screen

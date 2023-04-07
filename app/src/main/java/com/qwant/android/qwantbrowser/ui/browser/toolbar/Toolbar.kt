@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -11,7 +13,9 @@ import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -49,7 +53,10 @@ fun Toolbar(
         clearFocus()
     }
 
-    Row(modifier = modifier.padding(start = 8.dp, top = 8.dp, bottom = 8.dp)) {
+    Row(modifier = modifier
+        .drawBehind { drawRect(Color.White) }
+        .padding(horizontal = 8.dp, vertical = 8.dp)
+    ) {
         BasicTextField(
             value = displayedText,
             onValueChange = {
@@ -96,6 +103,13 @@ fun Toolbar(
                 }
             )
         }
-        browserActions()
+        ToolbarTextField()
+        AnimatedVisibility(
+            visible = !hasFocus,
+            enter = expandHorizontally(animationSpec = tween(1000)),
+            exit = shrinkHorizontally(animationSpec = tween(1000))
+        ) {
+            browserActions()
+        }
     }
 }

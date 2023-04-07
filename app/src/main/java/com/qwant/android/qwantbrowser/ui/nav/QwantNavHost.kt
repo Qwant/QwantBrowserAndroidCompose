@@ -24,7 +24,9 @@ fun QwantNavHost(
         startDestination = NavDestination.Browser.route,
         modifier = modifier
     ) {
-        composable(NavDestination.Browser.route) { BrowserScreen() }
+        composable(NavDestination.Browser.route) { BrowserScreen(
+            navigateTo = { destination -> navController.navigateSingleTopTo(destination.route) }
+        ) }
         composable(NavDestination.Tabs.route) { TabsScreen(
             appViewModel = appViewModel,
             onClose = { navController.navigateSingleTopTo(NavDestination.Browser.route) }

@@ -48,6 +48,14 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = 0f
         )
 
+    val tabCount = mozac.store.flow()
+        .map { state -> state.tabs.count() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = 0
+        )
+
     val currentUrl = mozac.store.flow()
         .map { state -> state.selectedTab?.content?.url }
         .stateIn(

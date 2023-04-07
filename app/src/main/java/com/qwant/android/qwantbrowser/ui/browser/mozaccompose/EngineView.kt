@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -15,13 +16,14 @@ fun EngineView(
     features: @Composable (EngineView) -> Unit = {},
 ) {
     var engineView: EngineView? by remember { mutableStateOf(null) }
-    
     val latestFeatures by rememberUpdatedState(features)
 
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            engine.createView(context).asView()
+            engine.createView(context).asView().apply {
+                this.isNestedScrollingEnabled = true
+            }
         },
         update = { view ->
             engineView = view as EngineView

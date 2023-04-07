@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import mozilla.components.browser.state.store.BrowserStore
@@ -11,7 +12,9 @@ fun ThumbnailFeature(
     engineView: EngineView,
     store: BrowserStore
 ) {
-    ComposeFeatureWrapper(feature = BrowserThumbnails(
-        LocalContext.current, engineView, store
-    ))
+    val context = LocalContext.current
+    val feature = remember(context, engineView) {
+        BrowserThumbnails(context, engineView, store)
+    }
+    ComposeFeatureWrapper(feature = feature)
 }
