@@ -1,7 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
-
-import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView

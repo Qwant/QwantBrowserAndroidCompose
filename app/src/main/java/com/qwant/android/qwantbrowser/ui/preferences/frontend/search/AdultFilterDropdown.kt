@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendSearch
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.search
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

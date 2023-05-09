@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.ux
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons

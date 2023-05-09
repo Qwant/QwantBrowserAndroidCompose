@@ -13,6 +13,7 @@ sealed class PreferenceNavDestination(
     val icon: ImageVector
 ) {
     object Main : PreferenceNavDestination(route = "main", label = R.string.settings, Icons.Default.Settings)
+    object App : PreferenceNavDestination(route = "app", label = R.string.settings_app_title, Icons.Default.Apps)
     object Frontend : PreferenceNavDestination(route = "frontend", label = R.string.settings_frontend_title, Icons.Default.Web)
     object FrontendInterface : PreferenceNavDestination(route = "frontend/interface", label = R.string.settings_frontend_interface_title, Icons.Default.SmartScreen)
     object FrontendSearch : PreferenceNavDestination(route = "frontend/search", label = R.string.settings_frontend_search_title, Icons.Default.Search)

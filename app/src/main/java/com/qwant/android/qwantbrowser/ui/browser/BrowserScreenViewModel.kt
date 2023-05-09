@@ -1,16 +1,14 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.suggest.GroupedSuggestionProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
+import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import mozilla.components.browser.state.selector.selectedTab
@@ -24,29 +22,11 @@ const val LOGTAG = "QB_BROWSERVM"
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
     mozac: Core,
-    private val useCases: UseCases,
-    suggestionProvider: GroupedSuggestionProvider
+    appPreferencesRepository: AppPreferencesRepository,
+    suggestionProvider: GroupedSuggestionProvider,
+    private val useCases: UseCases
 ): ViewModel() {
-    private var searchTerms by mutableStateOf("")
-    var toolbarFocus by mutableStateOf(false)
-        private set
-
-    val suggestions = snapshotFlow { searchTerms }
-        .map { search -> suggestionProvider.getSuggestions(search) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = listOf()
-        )
-
-    val loadingProgress = mozac.store.flow()
-        .map { state -> state.selectedTab?.content?.progress?.toFloat()?.div(100) }
-        .filterNotNull()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = 0f
-        )
+    val toolbarState = ToolbarState(mozac.store, appPreferencesRepository, suggestionProvider, viewModelScope)
 
     val tabCount = mozac.store.flow()
         .map { state -> state.tabs.count() }
@@ -63,6 +43,7 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = ""
         )
+
 
     val canGoBack = mozac.store.flow()
         .map { state -> state.selectedTab?.content?.canGoBack ?: false }
@@ -87,19 +68,11 @@ class BrowserScreenViewModel @Inject constructor(
         }
     }
 
-    fun changeToolbarFocus(hasFocus: Boolean) {
-        toolbarFocus = hasFocus
-    }
-
     fun commitSearch(searchText: String) {
         if (searchText.isUrl()) {
             useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
             useCases.qwantUseCases.loadSERPPage.invoke(searchText, viewModelScope)
         }
-    }
-
-    fun updateSearchTerms(newSearchTerms: String) {
-        searchTerms = newSearchTerms
     }
 }

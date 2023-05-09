@@ -32,8 +32,6 @@ class Core(private val context: Context) {
         EngineProvider.createClient(context)
     }
 
-    val thumbnailStorage by lazy { ThumbnailStorage(context) }
-
     val store by lazy {
         BrowserStore(
             middleware = listOf(
@@ -45,4 +43,6 @@ class Core(private val context: Context) {
     val sessionStorage: SessionStorage by lazy {
         SessionStorage(context, engine)
     }
+
+    val thumbnailStorage by lazy { ThumbnailStorage(context) }
 }

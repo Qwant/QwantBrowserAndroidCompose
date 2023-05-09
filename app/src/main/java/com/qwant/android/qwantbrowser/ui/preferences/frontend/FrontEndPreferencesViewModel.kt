@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.viewmodels
+package com.qwant.android.qwantbrowser.ui.preferences.frontend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

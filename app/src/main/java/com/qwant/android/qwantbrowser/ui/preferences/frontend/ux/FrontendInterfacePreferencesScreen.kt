@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.ux
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
@@ -7,9 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
-import com.qwant.android.qwantbrowser.ui.preferences.viewmodels.FrontEndPreferencesViewModel
+import com.qwant.android.qwantbrowser.ui.preferences.frontend.FrontEndPreferencesViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.PreferenceNavDestination
-import com.qwant.android.qwantbrowser.ui.preferences.screens.BasePreferenceScreen
+import com.qwant.android.qwantbrowser.ui.preferences.BasePreferenceScreen
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceGroup
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceToggle
 

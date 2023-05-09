@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.ux
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode

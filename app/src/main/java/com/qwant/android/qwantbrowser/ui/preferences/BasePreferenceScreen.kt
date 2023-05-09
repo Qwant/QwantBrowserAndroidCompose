@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens
+package com.qwant.android.qwantbrowser.ui.preferences
 
 
 import androidx.compose.foundation.layout.Arrangement

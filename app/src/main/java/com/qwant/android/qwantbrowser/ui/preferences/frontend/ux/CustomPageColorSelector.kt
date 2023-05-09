@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendInterface
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.ux
 
 import androidx.compose.runtime.Composable
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance

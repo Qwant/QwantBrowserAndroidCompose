@@ -1,115 +1,110 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
-import androidx.compose.material3.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.qwant.android.qwantbrowser.ui.widgets.IconAction
+import com.qwant.android.qwantbrowser.ui.browser.ProgressBar
+import com.qwant.android.qwantbrowser.ui.browser.suggest.Suggest
+
 
 @Composable
 fun Toolbar(
-    url: String,
-    onTextChanged: (String) -> Unit,
     onTextCommit: (String) -> Unit,
-    hasFocus: Boolean,
-    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    pageActions: @Composable () -> Unit = {},
-    browserActions: @Composable () -> Unit = {},
+    toolbarState: ToolbarState,
+    beforeTextField: @Composable () -> Unit = {},
+    afterTextField: @Composable () -> Unit = {},
+    animationDurationMs: Int = 1000,
+    animationEasing: Easing = FastOutSlowInEasing
 ) {
-    val focusManager = LocalFocusManager.current
+    val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
 
-    var displayedText by remember(url) { mutableStateOf(url) }
+    val toolbarTextFieldPadding by animateDpAsState(
+        targetValue = if (toolbarState.hasFocus) 8.dp else 0.dp,
+        animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)
+    )
 
-    val localStyle = LocalTextStyle.current
-    val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current))
-
-    val clearFocus = remember(focusManager, onFocusChanged) { {
-        onFocusChanged(false)
-        focusManager.clearFocus()
-    } }
-
-    BackHandler(hasFocus) {
-        displayedText = url
-        onTextChanged("")
-        clearFocus()
-    }
-
-    Row(modifier = modifier
-        .drawBehind { drawRect(Color.White) }
-        .padding(horizontal = 8.dp, vertical = 8.dp)
-    ) {
-        BasicTextField(
-            value = displayedText,
-            onValueChange = {
-                displayedText = it
-                onTextChanged(it)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Go),
-            keyboardActions = KeyboardActions(
-                onGo = {
-                    onTextCommit(displayedText)
-                    clearFocus()
-                }
-            ),
-            singleLine = true,
-            enabled = true,
-            textStyle = mergedStyle,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-            modifier = Modifier
-                .weight(2f, true)
-                .onFocusChanged {
-                    if (!it.hasFocus) {
-                        displayedText = url
-                        onTextChanged("")
-                    }
-                    onFocusChanged(it.hasFocus)
-                }
-        ) { innerTextField ->
-            ToolbarDecorator(
-                hasFocus = hasFocus,
-                isEmpty = displayedText.isEmpty(),
-                hintColor = mergedStyle.color.copy(alpha = 0.6f),
-                innerTextField = innerTextField,
-                trailingIcons = {
-                    if (hasFocus) {
-                        if (displayedText.isNotEmpty()) {
-                            IconAction(label = "Clear", icon = Icons.Default.Backspace) {
-                                displayedText = ""
-                                onTextChanged("")
-                            }
-                        }
-                    } else {
-                        pageActions()
-                    }
-                }
-            )
+    Column(modifier = modifier) {
+        if (toolbarPosition == HideOnScrollPosition.Bottom) {
+            ToolbarSuggest(toolbarState = toolbarState, Modifier.weight(2f))
+            ToolbarProgressBar(toolbarState = toolbarState)
         }
-        ToolbarTextField()
-        AnimatedVisibility(
-            visible = !hasFocus,
-            enter = expandHorizontally(animationSpec = tween(1000)),
-            exit = shrinkHorizontally(animationSpec = tween(1000))
+
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .drawBehind { drawRect(Color.White) }
+            .padding(vertical = 8.dp)
         ) {
-            browserActions()
+            AnimatedVisibility(
+                visible = !toolbarState.hasFocus,
+                enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
+                exit = shrinkHorizontally(shrinkTowards = Alignment.Start, animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
+            ) {
+                beforeTextField()
+            }
+
+            ToolbarTextField(
+                toolbarState = toolbarState,
+                onCommit = onTextCommit,
+                modifier = Modifier
+                    .weight(2f, true)
+                    .padding(horizontal = toolbarTextFieldPadding)
+            )
+
+            AnimatedVisibility(
+                visible = !toolbarState.hasFocus,
+                enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
+                exit = shrinkHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
+            ) {
+                afterTextField()
+            }
+        }
+
+        if (toolbarPosition == HideOnScrollPosition.Top) {
+            ToolbarProgressBar(toolbarState = toolbarState)
+            ToolbarSuggest(toolbarState = toolbarState, Modifier.weight(2f))
         }
     }
+}
+
+@Composable
+private fun ToolbarProgressBar(
+    toolbarState: ToolbarState
+) {
+    val loadingProgress by toolbarState.loadingProgress.collectAsState()
+
+    ProgressBar(
+        loadingProgress = loadingProgress,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(5.dp)
+    )
+}
+
+@Composable
+private fun ToolbarSuggest(
+    toolbarState: ToolbarState,
+    modifier: Modifier = Modifier
+) {
+    val suggestions by toolbarState.suggestions.collectAsState()
+
+    Suggest(
+        suggestions = suggestions,
+        onSuggestionClicked = { suggestion ->
+            // viewModel.commitSuggestion(suggestion)
+            // focusManager.clearFocus()
+        },
+        modifier = modifier.background(Color.White)
+    )
 }

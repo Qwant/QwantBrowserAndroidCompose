@@ -1,13 +1,13 @@
-package com.qwant.android.qwantbrowser.ui.preferences.screens.frontendSearch
+package com.qwant.android.qwantbrowser.ui.preferences.frontend.search
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.qwant.android.qwantbrowser.ui.preferences.viewmodels.FrontEndPreferencesViewModel
+import com.qwant.android.qwantbrowser.ui.preferences.frontend.FrontEndPreferencesViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.PreferenceNavDestination
-import com.qwant.android.qwantbrowser.ui.preferences.screens.BasePreferenceScreen
+import com.qwant.android.qwantbrowser.ui.preferences.BasePreferenceScreen
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceGroup
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceToggle
 

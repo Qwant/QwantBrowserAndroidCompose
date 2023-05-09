@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.qwant.android.qwantbrowser.preferences.app";
+option java_multiple_files = true;
+
+enum ToolbarPosition {
+  TOP = 0;
+  BOTTOM = 1;
+}
+
+message AppPreferences {
+  bool hide_toolbar_on_scroll = 1;
+  ToolbarPosition toolbar_position = 2;
+}

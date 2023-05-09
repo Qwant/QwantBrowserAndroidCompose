@@ -6,6 +6,10 @@
     <string name="settings_frontend_interface_title">Qwant interface</string>
     <string name="settings_frontend_search_title">Qwant search results</string>
     <string name="settings_engine_title">Web engine settings</string>
+    <string name="settings_app_title">App settings</string>
+
+    <string name="available_toolbar_position_top">Top</string>
+    <string name="available_toolbar_position_bottom">Bottom</string>
 
     <string name="available_language_english">English</string>
     <string name="available_language_french">French</string>
