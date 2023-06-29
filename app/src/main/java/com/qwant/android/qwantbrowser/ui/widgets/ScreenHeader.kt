@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.widgets
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,11 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Terrain
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,29 +30,40 @@ fun ScreenHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            // .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
-        IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSecondaryContainer) {
+            IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+
+            if (icon != null) {
+                Icon(icon, contentDescription = title, modifier = Modifier.padding(end = 4.dp))
+            }
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(2f)
+            )
+
+            actions()
         }
-
-        if (icon != null) {
-            Icon(icon, contentDescription = title, modifier = Modifier.padding(end = 4.dp))
-        }
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.weight(2f)
-        )
-
-        actions()
     }
 }
 
 
 @Preview
 @Composable fun ScreenHeaderPreviewTitleOnly() {
+    QwantBrowserTheme {
+        ScreenHeader(
+            title = "Coucou"
+        )
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable fun ScreenHeaderPreviewTitleOnlyNight() {
     QwantBrowserTheme {
         ScreenHeader(
             title = "Coucou"

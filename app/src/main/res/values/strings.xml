@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">QwantBrowserCompose</string>
+
+    <string name="empty_string" translatable="false" />
 </resources>

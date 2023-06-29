@@ -7,7 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
+/* @Singleton
 class ClipboardProvider @Inject constructor(
     @ApplicationContext context: Context
 ) : SuggestionProvider {
@@ -27,4 +27,4 @@ class ClipboardProvider @Inject constructor(
 
         return listOf()
     }
-}
+} */

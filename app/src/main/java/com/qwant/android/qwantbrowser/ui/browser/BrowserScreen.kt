@@ -5,7 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
@@ -15,32 +16,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
-import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.EngineView
-import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.SessionFeature
-import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.ThumbnailFeature
+import com.qwant.android.qwantbrowser.ext.*
+import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
+import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.*
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.*
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
-import com.qwant.android.qwantbrowser.ui.widgets.IconAction
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
+import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 
+enum class TabOpening {
+    NONE, NORMAL, PRIVATE
+}
 
 @Composable
 fun BrowserScreen(
     navigateTo: (NavDestination) -> Unit,
-    viewModel: BrowserScreenViewModel = hiltViewModel()
+    appViewModel: QwantApplicationViewModel = hiltViewModel(),
+    viewModel: BrowserScreenViewModel = hiltViewModel(),
+    openNewTab: TabOpening = TabOpening.NONE
 ) {
     val currentUrl by viewModel.currentUrl.collectAsState()
-    val canGoBack by viewModel.canGoBack.collectAsState()
 
-    val shouldHideToolbarOnScroll by viewModel.toolbarState.shouldHideOnScroll.collectAsState()
+    /* var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+    fun refresh() = refreshScope.launch {
+        Log.d("QWANT_PULLREFRESH", "refresh")
+        refreshing = true
+        delay(1500)
+        refreshing = false
+    }
+    val pullRefreshState = rememberPullRefreshState(refreshing, ::refresh) */
 
-    if (currentUrl != null) {
-        // TODO Modifier.pullRefresh(pullRefreshState, enabled = true)
-        // val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { Log.d("QWANT_PULLREFRESH", "refresh") })
-        // PullRefreshIndicator(false, pullRefreshState, Modifier.align(Alignment.TopCenter))
+    LaunchedEffect(true) {
+        when (openNewTab) {
+            TabOpening.NORMAL -> viewModel.openNewQwantTab(private = false)
+            TabOpening.PRIVATE -> viewModel.openNewQwantTab(private = true)
+            else -> {}
+        }
+    }
 
+
+    if (currentUrl != null /* TODO wait also for toolbar position to be ready before first display */ ) {
         HideOnScrollToolbar(
             toolbarState = viewModel.toolbarState,
             toolbar = { modifier ->
@@ -49,33 +68,26 @@ fun BrowserScreen(
                     modifier = modifier,
                     toolbarState = viewModel.toolbarState,
                     beforeTextField = { QwantVIPAction() },
-                    afterTextField = { AfterActions(navigateTo, viewModel) }
+                    beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && !(currentUrl?.isQwantUrl() ?: false) },
+                    afterTextField = { AfterActions(navigateTo, viewModel) },
+                    afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
                 )
             },
             height = 56.dp,
             modifier = Modifier.fillMaxSize()
         ) { modifier ->
-            EngineView(
-                engine = viewModel.engine,
-                modifier = modifier
-            ) { engineView ->
-                SessionFeature(
-                    engineView = engineView,
-                    store = viewModel.store,
-                    canGoBack = canGoBack,
-                    goBackUseCase = viewModel.goBack,
-                    backEnabled = { !viewModel.toolbarState.hasFocus }
-                )
-                ThumbnailFeature(
-                    engineView = engineView,
-                    store = viewModel.store
-                )
-                DynamicToolbarFeature(
-                    engineView = engineView,
-                    toolbarState = viewModel.toolbarState,
-                    enabled = shouldHideToolbarOnScroll
-                )
-            }
+            // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
+                GlobalFeatures(appViewModel, viewModel)
+
+                EngineView(
+                    engine = viewModel.engine,
+                    modifier = modifier
+                ) { engineView ->
+                    EngineViewFeatures(engineView, viewModel)
+                }
+
+                // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+            // }
         }
     } else {
         Icon(
@@ -89,17 +101,20 @@ fun BrowserScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+
 @Composable
-fun QwantVIPAction() {
+fun ToolbarAction(
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
     Box(
         modifier = Modifier
-            // .minimumInteractiveComponentSize()
-            .size(24.dp)
-            // .clip(IconButtonTokens.StateLayerShape.toShape())
-            // .background(color = colors.containerColor(enabled).value)
+            .width(40.dp)
+            .fillMaxHeight()
+            .padding(8.dp)
             .clickable(
-                onClick = { },
+                onClick = onClick,
                 enabled = true,
                 role = Role.Button,
                 interactionSource = remember { MutableInteractionSource() },
@@ -110,58 +125,141 @@ fun QwantVIPAction() {
             ),
         contentAlignment = Alignment.Center
     ) {
-        BadgedBox(badge = { Badge { Text("8") } }) {
+        content()
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QwantVIPAction() {
+    val theme = LocalQwantTheme.current
+    val imageID = when {
+        theme.dark || theme.private -> R.drawable.icons_webext_vip_night
+        else -> R.drawable.icons_webext_vip
+    }
+
+    ToolbarAction(onClick = { }) {
+        BadgedBox(
+            badge = {
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier
+                        .offset(x = (-8).dp, y = 4.dp)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.primaryContainer,
+                            RoundedCornerShape(50)
+                        )
+                ) {
+                    Text("99+", maxLines = 1)
+                }
+            }
+        ) {
             Image(
-                painter = painterResource(id = R.drawable.icons_flags_china),
-                contentDescription = "Qwant VIP"
+                painter = painterResource(id = imageID),
+                contentDescription = "Qwant VIP",
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
 }
+
 
 @Composable
 fun AfterActions(
     navigateTo: (NavDestination) -> Unit,
     viewModel: BrowserScreenViewModel
 ) {
-    val tabCount by viewModel.tabCount.collectAsState()
 
     Row {
-        IconAction(
-            label = "Zap",
-            icon = Icons.Default.StrikethroughS
-        ) { navigateTo(NavDestination.Preferences) }
+        ZapButton(navigateTo, viewModel)
+        TabsButton(navigateTo, viewModel)
+        BrowserMenuButton(navigateTo, viewModel)
+    }
+}
 
-        IconButton(onClick = { navigateTo(NavDestination.Tabs) }) {
-            Text(
-                text = if (tabCount > 99) "∞" else tabCount.toString(),
-                fontSize = 12.sp,
-                modifier = Modifier
-                    .border(width = 2.dp, color = LocalContentColor.current)
-                    .padding(vertical = 4.dp, horizontal = 8.dp)
-            )
+@Composable fun ZapButton(
+    navigateTo: (NavDestination) -> Unit,
+    viewModel: BrowserScreenViewModel
+) {
+    val theme = LocalQwantTheme.current
+    val zapImageID = when {
+        theme.dark || theme.private -> R.drawable.icons_zap_night
+        else -> R.drawable.icons_zap
+    }
+
+    ToolbarAction(onClick = { navigateTo(NavDestination.Preferences) }) {
+        Image(
+            painter = painterResource(id = zapImageID),
+            contentDescription = "Zap",
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TabsButton(
+    navigateTo: (NavDestination) -> Unit,
+    viewModel: BrowserScreenViewModel
+) {
+    val tabCount by viewModel.tabCount.collectAsState()
+
+    ToolbarAction(onClick = { navigateTo(NavDestination.Tabs) }) {
+        BadgedBox(
+            badge = {
+                if (LocalQwantTheme.current.private) {
+                    Badge(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier
+                            .offset(x = (-4).dp, y = 2.dp)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.primaryContainer,
+                                CircleShape
+                            )
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.icons_privacy_mask_small),
+                            contentDescription = "private navigation indicator"
+                        )
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(3.dp)
+        ) {
+            TabCounter(tabCount)
         }
-
-        BrowserMenu()
     }
 }
 
 @Composable
-fun BrowserMenu() {
+fun BrowserMenuButton(
+    navigateTo: (NavDestination) -> Unit,
+    viewModel: BrowserScreenViewModel
+) {
     Box {
         var showMenu by remember { mutableStateOf(false) }
 
-        IconAction(
-            label = "Menu",
-            icon = Icons.Default.Menu
-        ) { showMenu = true }
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest= { showMenu = false }
-        ) {
-            Text("coucou")
-            Text("coucou 2")
-            Text("coucou 3")
+        ToolbarAction(onClick = { showMenu = true }) {
+            Icon(
+                painter = painterResource(id = R.drawable.icons_more_vertical),
+                contentDescription = "Menu",
+                modifier = Modifier.fillMaxSize(),
+                // tint = MaterialTheme.colorScheme.onBackground
+            )
         }
+
+        BrowserMenu(
+            expanded = showMenu,
+            onDismissRequest= { showMenu = false },
+            navigateTo = navigateTo,
+            viewModel = viewModel,
+        )
     }
 }

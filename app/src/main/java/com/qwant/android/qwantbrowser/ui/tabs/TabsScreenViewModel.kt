@@ -30,9 +30,9 @@ class TabsScreenViewModel @Inject constructor(
             initialValue = null
         )
 
-    fun openNewQwantTab(private: Boolean = false) {
+    /* fun openNewQwantTab(private: Boolean = false) {
         useCases.qwantUseCases.openHomePage(viewModelScope, private = private)
-    }
+    } */
 
     fun removeTabs(private: Boolean = false) {
         if (private) {

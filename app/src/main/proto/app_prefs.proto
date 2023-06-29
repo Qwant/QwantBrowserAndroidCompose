@@ -8,7 +8,18 @@ enum ToolbarPosition {
   BOTTOM = 1;
 }
 
+enum TabsViewOption {
+  GRID = 0;
+  LIST = 1;
+}
+
 message AppPreferences {
   bool hide_toolbar_on_scroll = 1;
   ToolbarPosition toolbar_position = 2;
+  TabsViewOption tabs_view = 3;
+  bool open_links_in_app = 4;
+  bool clear_data_on_quit = 5;
+  bool clear_data_history = 6;
+  bool clear_data_tabs = 7;
+  int32 clear_data_browsingdata = 8;
 }

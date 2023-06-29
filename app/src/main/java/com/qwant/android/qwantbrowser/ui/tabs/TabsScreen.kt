@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.tabs
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.ui.PrivacyMode
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.browser.TabOpening
 import com.qwant.android.qwantbrowser.ui.widgets.BigButton
 import mozilla.components.browser.state.state.SessionState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsScreen(
-    onClose: () -> Unit = {},
+    onClose: (openNewTab: TabOpening) -> Unit = {},
     appViewModel: QwantApplicationViewModel = hiltViewModel(),
     tabsViewModel: TabsScreenViewModel = hiltViewModel()
 ) {
@@ -42,6 +42,10 @@ fun TabsScreen(
         onDispose {
             appViewModel.setPrivacyMode(PrivacyMode.SELECTED_TAB_PRIVACY)
         }
+    }
+
+    BackHandler {
+        onClose(TabOpening.NONE)
     }
 
     // TODO remove this replacing toast with snackbar message
@@ -61,7 +65,7 @@ fun TabsScreen(
                         .align(Alignment.CenterStart)
                         .size(48.dp)
                         .padding(12.dp)
-                        .clickable { onClose() }
+                        .clickable { onClose(TabOpening.NONE) }
                 )
 
                 TabPrivacySwitch(
@@ -83,7 +87,7 @@ fun TabsScreen(
                         if (private) {
                             appViewModel.setPrivacyMode(PrivacyMode.NORMAL)
                         } else {
-                            onClose()
+                            onClose(TabOpening.NONE)
                         }
                         // TODO replace toast with snackbar message
                         Toast.makeText(context, deleteSuccessToast, Toast.LENGTH_SHORT).show()
@@ -98,7 +102,7 @@ fun TabsScreen(
     ) { padding ->
         val onTabSelected = { tab: SessionState ->
             tabsViewModel.selectTab(tab.id)
-            onClose()
+            onClose(TabOpening.NONE)
         }
         val onTabDeleted = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
 
@@ -141,8 +145,8 @@ fun TabsScreen(
                     text = if (private) "add private tab" else "add tab",
                     icon = Icons.Outlined.AddCircle,
                     onClick = {
-                        tabsViewModel.openNewQwantTab(private = private)
-                        onClose()
+                        // tabsViewModel.openNewQwantTab(private = private)
+                        onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL)
                     },
                     modifier = Modifier.height(36.dp)
                 )

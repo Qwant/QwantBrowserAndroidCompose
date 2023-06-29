@@ -7,10 +7,11 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.browser.ProgressBar
@@ -23,7 +24,9 @@ fun Toolbar(
     modifier: Modifier = Modifier,
     toolbarState: ToolbarState,
     beforeTextField: @Composable () -> Unit = {},
+    beforeTextFieldVisible: () -> Boolean = { true },
     afterTextField: @Composable () -> Unit = {},
+    afterTextFieldVisible: () -> Boolean = { true },
     animationDurationMs: Int = 1000,
     animationEasing: Easing = FastOutSlowInEasing
 ) {
@@ -43,31 +46,38 @@ fun Toolbar(
         Row(modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .drawBehind { drawRect(Color.White) }
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(vertical = 8.dp)
         ) {
-            AnimatedVisibility(
-                visible = !toolbarState.hasFocus,
-                enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
-                exit = shrinkHorizontally(shrinkTowards = Alignment.Start, animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
+            CompositionLocalProvider(
+                LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer
             ) {
-                beforeTextField()
-            }
+                AnimatedVisibility(
+                    visible = beforeTextFieldVisible(),
+                    enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
+                    exit = shrinkHorizontally(shrinkTowards = Alignment.Start, animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
+                ) {
+                    beforeTextField()
+                }
 
-            ToolbarTextField(
-                toolbarState = toolbarState,
-                onCommit = onTextCommit,
-                modifier = Modifier
-                    .weight(2f, true)
-                    .padding(horizontal = toolbarTextFieldPadding)
-            )
+                ToolbarTextField(
+                    toolbarState = toolbarState,
+                    onCommit = onTextCommit,
+                    modifier = Modifier
+                        .weight(2f, true)
+                        .padding(
+                            start = if (!beforeTextFieldVisible()) 8.dp else toolbarTextFieldPadding,
+                            end = toolbarTextFieldPadding
+                        )
+                )
 
-            AnimatedVisibility(
-                visible = !toolbarState.hasFocus,
-                enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
-                exit = shrinkHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
-            ) {
-                afterTextField()
+                AnimatedVisibility(
+                    visible = afterTextFieldVisible(),
+                    enter = expandHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)),
+                    exit = shrinkHorizontally(animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing))
+                ) {
+                    afterTextField()
+                }
             }
         }
 
@@ -88,7 +98,7 @@ private fun ToolbarProgressBar(
         loadingProgress = loadingProgress,
         modifier = Modifier
             .fillMaxWidth()
-            .height(5.dp)
+            .height(4.dp)
     )
 }
 
@@ -97,14 +107,15 @@ private fun ToolbarSuggest(
     toolbarState: ToolbarState,
     modifier: Modifier = Modifier
 ) {
-    val suggestions by toolbarState.suggestions.collectAsState()
-
-    Suggest(
-        suggestions = suggestions,
-        onSuggestionClicked = { suggestion ->
-            // viewModel.commitSuggestion(suggestion)
-            // focusManager.clearFocus()
-        },
-        modifier = modifier.background(Color.White)
-    )
+    if (toolbarState.hasFocus) {
+        Suggest(
+            suggestions = toolbarState.suggestions,
+            onSuggestionClicked = { suggestion ->
+                // viewModel.commitSuggestion(suggestion)
+                suggestion.onSuggestionClicked?.let { it() }
+                toolbarState.updateFocus(false)
+            },
+            modifier = modifier.background(Color.White)
+        )
+    }
 }

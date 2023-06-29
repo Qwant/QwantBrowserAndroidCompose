@@ -13,16 +13,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.theme.Grey900
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
-fun QwantIconOnBackground(shape: Shape) {
-    Box(modifier = Modifier
-        .background(MaterialTheme.colorScheme.primary, shape)) {
+fun QwantIconOnBackground(shape: Shape, modifier: Modifier = Modifier) {
+    Box(modifier = modifier
+        .background(MaterialTheme.colorScheme.primary, shape) // TODO not good in light
+    ) {
         Icon(
             painterResource(id = R.drawable.qwant_logo),
             contentDescription = "Qwant",
-            tint = MaterialTheme.colorScheme.onPrimary,
+            tint = Grey900, // MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(6.dp)
         )
     }

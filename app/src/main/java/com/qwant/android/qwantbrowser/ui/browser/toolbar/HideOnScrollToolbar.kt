@@ -62,9 +62,9 @@ fun HideOnScrollToolbar(
         toolbar(Modifier
             .fillMaxWidth()
             .align(if (position == HideOnScrollPosition.Top) Alignment.TopCenter else Alignment.BottomCenter)
+            .zIndex(2f)
             .then(
                 if (shouldHideOnScroll) { Modifier
-                    .zIndex(2f)
                     .offset { IntOffset(x = 0, y = offset.roundToInt()) }
                 } else Modifier
             )
@@ -77,10 +77,10 @@ fun HideOnScrollToolbar(
                 consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
             ))
             .fillMaxSize()
+            .zIndex(1f)
             .then(
                 if (shouldHideOnScroll) {
                     if (position == HideOnScrollPosition.Top) { Modifier
-                        .zIndex(1f)
                         .offset { IntOffset(x = 0, y = trueHeight) }
                     } else Modifier
                 } else { Modifier

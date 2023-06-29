@@ -4,20 +4,21 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.qwant.android.qwantbrowser.ui.widgets.IconAction
+import com.qwant.android.qwantbrowser.R
 
 @Composable
 fun ToolbarTextField(
@@ -29,8 +30,14 @@ fun ToolbarTextField(
     val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current))
 
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
     BackHandler(toolbarState.hasFocus) {
         focusManager.clearFocus()
+    }
+    LaunchedEffect(toolbarState.hasFocus) {
+        if (toolbarState.hasFocus) focusRequester.requestFocus()
+        else focusManager.clearFocus()
     }
 
     BasicTextField(
@@ -48,6 +55,7 @@ fun ToolbarTextField(
         textStyle = mergedStyle,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         modifier = modifier
+            .focusRequester(focusRequester)
             .onFocusChanged {
                 toolbarState.updateFocus(it.hasFocus)
             }
@@ -60,8 +68,11 @@ fun ToolbarTextField(
             trailingIcons = {
                 if (toolbarState.hasFocus) {
                     if (toolbarState.text.text.isNotEmpty()) {
-                        IconAction(label = "Clear", icon = Icons.Default.Backspace) {
-                            toolbarState.updateText("")
+                        IconButton(onClick = { toolbarState.updateText("") }) {
+                            Icon(
+                                painterResource(id = R.drawable.icons_close_circled),
+                                contentDescription = "Clear"
+                            )
                         }
                     }
                 }

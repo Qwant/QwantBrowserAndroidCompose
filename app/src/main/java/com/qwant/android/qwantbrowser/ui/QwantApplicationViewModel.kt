@@ -1,13 +1,18 @@
 package com.qwant.android.qwantbrowser.ui
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.lib.state.ext.flow
 import javax.inject.Inject
@@ -27,6 +32,22 @@ class QwantApplicationViewModel @Inject constructor(
 
     private val selectedTabPrivacy = core.store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
+
+    val snackbarHostState = SnackbarHostState()
+    data class SnackbarAction(val label: String, val apply: () -> Unit)
+    fun showSnackbar(
+        message: String,
+        action: SnackbarAction? = null,
+        withDismissAction: Boolean = true,
+        duration: SnackbarDuration = SnackbarDuration.Long
+    ) {
+        viewModelScope.launch {
+            when (snackbarHostState.showSnackbar(message, action?.label, withDismissAction, duration)) {
+                SnackbarResult.ActionPerformed -> { action?.apply?.invoke() }
+                SnackbarResult.Dismissed -> {}
+            }
+        }
+    }
 
     val isPrivate = privacyMode
         .combine(selectedTabPrivacy) { privacyMode, selectedTabPrivacy ->
@@ -57,7 +78,9 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val qwantTabs = core.store.flow()
-        .map { it.tabs.filter { it.content.url.startsWith("https://www.qwant.com/") } }
+        .map { state ->
+            state.tabs.filter { it.content.url.isQwantUrl() }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

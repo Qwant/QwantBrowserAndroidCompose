@@ -1,61 +1,55 @@
 package com.qwant.android.qwantbrowser.ui.nav
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Pageview
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Pageview
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.twotone.Bookmark
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.browser.TabOpening
+
 
 sealed class NavDestination(
-    val route: String,
+    val match: String,
     @StringRes val label: Int,
-    val icon: ImageVector? = null,
-    val selectedIcon: ImageVector? = icon
+    val arguments: List<NamedNavArgument> = listOf()
 ) {
+    open fun route() : String { return this.match }
+
     object Browser : NavDestination(
-        route = "browse",
-        label = R.string.browser_search,
-        icon = Icons.Outlined.Pageview,
-        selectedIcon = Icons.Filled.Pageview
-    )
+        match = "browse?openNewTab={openNewTab}",
+        arguments = listOf(navArgument("openNewTab") {
+            type = NavType.EnumType(TabOpening::class.java)
+            defaultValue = TabOpening.NONE
+        }),
+        label = R.string.browser_search
+    ) {
+        override fun route(): String { return this.route(TabOpening.NONE) }
+        fun route(openNewTab: TabOpening): String {
+            return "browse?openNewTab=${openNewTab}"
+        }
+    }
     object Tabs : NavDestination(
-        route = "tabs",
+        match = "tabs",
         label = R.string.tabs
     )
     object Bookmarks : NavDestination(
-        route = "bookmarks",
-        label = R.string.bookmarks,
-        icon = Icons.TwoTone.Bookmark,
-        selectedIcon = Icons.Filled.Bookmark
+        match = "bookmarks",
+        label = R.string.bookmarks
     )
     object Preferences : NavDestination(
-        route = "preferences",
-        label = R.string.settings,
-        icon = Icons.Outlined.Settings,
-        selectedIcon = Icons.Filled.Settings
+        match = "preferences",
+        label = R.string.settings
     )
     object History : NavDestination(
-        route = "history",
+        match = "history",
         label = R.string.app_name
     )
 }
 
-// Those are needed by menu bars
 val NavDestinations = listOf(
     NavDestination.Browser,
     NavDestination.Tabs,
     NavDestination.History,
     NavDestination.Bookmarks,
-    NavDestination.Preferences
-)
-val NavDestinationsForNavigationBar = listOf(
-    NavDestination.Browser,
-    NavDestination.Bookmarks,
-    NavDestination.Tabs,
     NavDestination.Preferences
 )

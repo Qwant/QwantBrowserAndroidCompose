@@ -31,13 +31,10 @@ fun ToolbarDecorator(
 ) {
     val latestInnerTextField by rememberUpdatedState(innerTextField)
 
-    val borderSize = if (hasFocus) 2.dp else 1.dp
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(50))
-            .border(borderSize, MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
             .padding(4.dp)
     ) {
         QwantIconOnBackground(CircleShape)

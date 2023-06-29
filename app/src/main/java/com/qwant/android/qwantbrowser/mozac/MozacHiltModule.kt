@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.mozac
 
 import android.content.Context
+import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import dagger.Module
 import dagger.Provides
@@ -20,10 +21,12 @@ object MozacHiltModule {
 
     @Singleton
     @Provides fun provideUseCases(
+        @ApplicationContext context: Context,
         core: Core,
+        appPreferencesRepository: AppPreferencesRepository,
         frontEndPreferencesRepository: FrontEndPreferencesRepository
     )
     : UseCases {
-        return UseCases(core, frontEndPreferencesRepository)
+        return UseCases(context, core, appPreferencesRepository, frontEndPreferencesRepository)
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ContentPaste
+import androidx.compose.material.icons.outlined.DeviceUnknown
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -12,25 +13,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.qwant.android.qwantbrowser.suggest.Suggestion
-import com.qwant.android.qwantbrowser.suggest.SuggestionType
+import mozilla.components.concept.awesomebar.AwesomeBar
 
 @Composable
 fun SuggestItem(
-    suggestion: Suggestion,
+    suggestion: AwesomeBar.Suggestion,
+    group: AwesomeBar.SuggestionProviderGroup,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.padding(4.dp)
     ) {
-        when (suggestion.type) {
-            SuggestionType.OPENSEARCH -> Icon(Icons.Outlined.Search, contentDescription = "Logo opensearch")
-            SuggestionType.CLIPBOARD -> Icon(Icons.Outlined.ContentPaste, contentDescription = "Logo clipboard")
-            else -> Icon(Icons.Outlined.ContentPaste, contentDescription = "Logo clipboard")
+        when (group.title) {
+            "Opensearch" -> Icon(Icons.Outlined.Search, contentDescription = "Logo opensearch")
+            "Clipboard" -> Icon(Icons.Outlined.ContentPaste, contentDescription = "Logo clipboard")
+            else -> Icon(Icons.Outlined.DeviceUnknown, contentDescription = "Logo unknown")
         }
 
         Text(
-            text = suggestion.label,
+            text = suggestion.title ?: "No title",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier

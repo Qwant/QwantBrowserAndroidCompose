@@ -2,21 +2,78 @@
 <resources>
     <string name="settings">Settings</string>
 
+    <!-- TODO Should be removed -->
     <string name="settings_frontend_title">Qwant settings</string>
     <string name="settings_frontend_interface_title">Qwant interface</string>
     <string name="settings_frontend_search_title">Qwant search results</string>
     <string name="settings_engine_title">Web engine settings</string>
     <string name="settings_app_title">App settings</string>
 
+    <string name="settings_group_general">Général</string>
+    <string name="settings_group_langue">Langue</string>
+    <string name="settings_group_privacy">Vie privée</string>
+    <string name="settings_group_about">A propos</string>
+
+    <string name="default_browser_label">Définir comme navigateur par défaut</string>
+
+    <string name="toolbar_position_label">Barre d\'outils</string>
     <string name="available_toolbar_position_top">Top</string>
     <string name="available_toolbar_position_bottom">Bottom</string>
 
+    <string name="hide_toolbar_on_scroll_label">Hide toolbar on scroll</string>
+
+    <string name="tabs_view_label">Paramètres des onglets</string>
+    <string name="available_tabs_view_grid">Grille</string>
+    <string name="available_tabs_view_list">Liste</string>
+
+    <string name="appearance_label">Apparence</string>
+    <string name="available_appearance_dark">Sombre</string>
+    <string name="available_appearance_light">Claire</string>
+    <string name="available_appearance_system">Système</string>
+
+    <string name="custom_page_color_label">Thème</string>
+    <string name="custom_page_color_disabled_description">Vous ne pouvez pas modifier la couleur de thème en mode sombre</string>
+    <string name="available_custom_page_color_blue">Bleu</string>
+    <string name="available_custom_page_color_green">Vert</string>
+    <string name="available_custom_page_color_pink">Rose</string>
+    <string name="available_custom_page_color_purple">Violet</string>
+
+    <string name="custom_page_character_label">Personnage</string>
+    <string name="available_custom_page_character_none">Aucun</string>
+    <string name="available_custom_page_character_random">Aléatoire</string>
+    <string name="available_custom_page_character_doudoune">Doudoune</string>
+    <string name="available_custom_page_character_football">Football</string>
+    <string name="available_custom_page_character_turtleneck">Turtleneck</string>
+    <string name="available_custom_page_character_glasses">Glasses</string>
+    <string name="available_custom_page_character_cat">Cat</string>
+    <string name="available_custom_page_character_balloon">Balloon</string>
+    <string name="available_custom_page_character_pull">Pull</string>
+    <string name="available_custom_page_character_hat">Hat</string>
+    <string name="available_custom_page_character_hands">Hands</string>
+
+    <string name="show_news_label">Actualités sur la page d\'accueil</string>
+
+    <string name="show_sponsor_label">Raccourcis sponsorisés sur la page d\'accueil</string>
+
+    <string name="adult_filter_label">Adult filter</string>
+    <string name="available_adult_filter_none">None 👀</string>
+    <string name="available_adult_filter_moderate">Moderate 😇</string>
+    <string name="available_adult_filter_strict">Strict 🙈</string>
+
+    <string name="show_favicon_label">Afficher les icônes des sites</string> <!-- Not adapted in app context -->
+
+    <string name="open_links_in_app_label">Ouvrir les liens dans les applications</string>
+
+    <string name="open_results_in_new_tab_label">Open results in new tab</string>
+
+    <string name="interface_language_label">Interface language</string>
     <string name="available_language_english">English</string>
     <string name="available_language_french">French</string>
     <string name="available_language_german">German</string>
     <string name="available_language_italian">Italian</string>
     <string name="available_language_spanish">Spanish</string>
 
+    <string name="search_region_label">Search region</string>
     <string name="available_region_france">France</string>
     <string name="available_region_great_britain">Great Britain</string>
     <string name="available_region_germany">Germany</string>
@@ -57,7 +114,29 @@
     <string name="available_region_belgium_nl">Belgium (nl)</string>
     <string name="available_region_ireland">Ireland</string>
 
-    <string name="adult_filter_none">None 👀</string>
-    <string name="adult_filter_moderate">Moderate 😇</string>
-    <string name="adult_filter_strict">Strict 🙈</string>
+    <string name="clear_data_settings_label">Paramètres de suppression de navigation</string>
+    <string name="cleardata_allsites">All sites data</string>
+    <string name="cleardata_cache">Cache</string>
+    <string name="cleardata_cookies">Cookies</string>
+    <string name="cleardata_sessions">Sessions</string>
+    <string name="cleardata_storage">Storage</string>
+    <string name="cleardata_permissions">Permissions</string>
+    <string name="cleardata_done">Data has been cleared</string>
+    <string name="cleardata_failed">Error clearing data</string>
+    <string name="cleardata_tabs">Opened normal tabs</string>
+    <string name="cleardata_tabs_private">Opened private tabs</string>
+
+    <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
+
+    <string name="qwant_details_label">Qwant App</string>
+    <string name="qwant_details_description">%1$s\nBuild %2$s - Gecko %3$s</string>
+
+    <string name="privacy_policy_label">Politique de confidentialité</string>
+    <string name="privacy_policy_url">https://about.qwant.com/legal/privacy/</string>
+    <!-- <string name="privacy_policy_url">https://about.qwant.com/privacy-happ/</string> -->
+
+    <string name="licence_label">Licence MPL 2.0</string>
+
+    <string name="rate_us_label">Attribuer une note sur google play</string>
+
 </resources>

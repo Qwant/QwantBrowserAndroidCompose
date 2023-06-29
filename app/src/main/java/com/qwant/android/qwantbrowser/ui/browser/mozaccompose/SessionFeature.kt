@@ -25,6 +25,7 @@ fun SessionFeature(
 
     ComposeFeatureWrapper(feature = feature) {
         if (backEnabled()) {
+            // TODO better handling of session back (if can't go back, go to parent tabs, then homepage, then only leave)
             BackHandler(canGoBack) {
                 goBackUseCase()
             }

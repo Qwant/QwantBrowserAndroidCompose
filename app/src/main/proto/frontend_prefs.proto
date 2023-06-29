@@ -19,12 +19,17 @@ enum CustomPageColor {
 
 enum CustomPageCharacter {
   RANDOM_CHARACTER = 0;
+
   DOUDOUNE = 1;
   FOOTBALL = 2;
   TURTLENECK = 3;
   GLASSES = 4;
   CAT = 5;
   BALLOON = 6;
+  PULL = 8;
+  HAT = 9;
+  HANDS = 10;
+
   NO_CHARACTER = 7;
 }
 
