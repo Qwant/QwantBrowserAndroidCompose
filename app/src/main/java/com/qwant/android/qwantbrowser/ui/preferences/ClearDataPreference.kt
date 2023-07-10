@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.StrikethroughS
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -107,7 +107,7 @@ fun ClearDataPreference(
 
                 BigButton(
                     text = "Use zap now",
-                    icon = Icons.Default.StrikethroughS,
+                    icon = Icons.Default.Clear, // TODO replace icon
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
                         // TODO Zap animation

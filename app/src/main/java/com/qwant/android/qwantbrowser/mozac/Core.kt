@@ -13,6 +13,7 @@ import mozilla.components.feature.session.HistoryDelegate
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.mozac.downloads.DownloadService
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
@@ -53,6 +54,10 @@ class Core(private val context: Context) {
     }
 
     val thumbnailStorage by lazy { ThumbnailStorage(context) }
+
+    val browserIcons by lazy { BrowserIcons(context, client).apply {
+        this.install(engine, store)
+    } }
 
     val historyStorage by lazy { History(context).apply {
         this.restore()

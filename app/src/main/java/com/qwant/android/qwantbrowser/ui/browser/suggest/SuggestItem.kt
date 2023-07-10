@@ -3,8 +3,7 @@ package com.qwant.android.qwantbrowser.ui.browser.suggest
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ContentPaste
-import androidx.compose.material.icons.outlined.DeviceUnknown
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,10 +23,11 @@ fun SuggestItem(
     Row(
         modifier = modifier.padding(4.dp)
     ) {
+        // TODO replace suggest icons
         when (group.title) {
             "Opensearch" -> Icon(Icons.Outlined.Search, contentDescription = "Logo opensearch")
-            "Clipboard" -> Icon(Icons.Outlined.ContentPaste, contentDescription = "Logo clipboard")
-            else -> Icon(Icons.Outlined.DeviceUnknown, contentDescription = "Logo unknown")
+            "Clipboard" -> Icon(Icons.Outlined.Person, contentDescription = "Logo clipboard")
+            else -> Icon(Icons.Outlined.Search, contentDescription = "Logo unknown")
         }
 
         Text(

@@ -5,11 +5,14 @@ package com.qwant.android.qwantbrowser.ui.tabs
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Star
@@ -23,22 +26,20 @@ import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 
-const val LOGTAG = "QB_TABLIST"
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabList(
-    list: List<TabSessionState>,
+    tabs: List<TabSessionState>,
     selectedTabId: String?,
     thumbnailStorage: ThumbnailStorage,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 200.dp),
+    LazyColumn(
         modifier = modifier.fillMaxWidth()
     ) {
-        items(list.reversed()) { tab ->
+        itemsIndexed(tabs, key = { _, tab -> tab.id }) { _, tab ->
             val currentTab by rememberUpdatedState(newValue = tab)
             val dismissState = rememberDismissState(
                 confirmValueChange = { dismissValue ->
@@ -110,7 +111,8 @@ fun TabList(
                         onSelected = onTabSelected,
                         onDeleted = onTabDeleted
                     )
-                }
+                },
+                modifier = Modifier.animateItemPlacement()
             )
         }
     }

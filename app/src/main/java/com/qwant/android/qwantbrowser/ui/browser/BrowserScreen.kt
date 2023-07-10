@@ -172,17 +172,16 @@ fun AfterActions(
     navigateTo: (NavDestination) -> Unit,
     viewModel: BrowserScreenViewModel
 ) {
-
     Row {
-        ZapButton(navigateTo, viewModel)
+        ZapButton()
         TabsButton(navigateTo, viewModel)
         BrowserMenuButton(navigateTo, viewModel)
     }
 }
 
 @Composable fun ZapButton(
-    navigateTo: (NavDestination) -> Unit,
-    viewModel: BrowserScreenViewModel
+    // navigateTo: (NavDestination) -> Unit,
+    // viewModel: BrowserScreenViewModel
 ) {
     val theme = LocalQwantTheme.current
     val zapImageID = when {
@@ -190,7 +189,7 @@ fun AfterActions(
         else -> R.drawable.icons_zap
     }
 
-    ToolbarAction(onClick = { navigateTo(NavDestination.Preferences) }) {
+    ToolbarAction(onClick = { /* navigateTo(NavDestination.Preferences) */ }) {
         Image(
             painter = painterResource(id = zapImageID),
             contentDescription = "Zap",

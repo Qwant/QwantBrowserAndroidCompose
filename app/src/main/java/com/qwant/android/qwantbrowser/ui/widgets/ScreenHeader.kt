@@ -2,12 +2,11 @@ package com.qwant.android.qwantbrowser.ui.widgets
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.PointOfSale
-import androidx.compose.material.icons.filled.Terrain
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -76,7 +75,7 @@ fun ScreenHeader(
     QwantBrowserTheme {
         ScreenHeader(
             title = "Coucou",
-            icon = Icons.Default.PointOfSale
+            icon = Icons.Default.Add
         )
     }
 }
@@ -86,10 +85,10 @@ fun ScreenHeader(
     QwantBrowserTheme {
         ScreenHeader(
             title = "Coucou",
-            icon = Icons.Default.PointOfSale,
+            icon = Icons.Default.Add,
             actions = {
                 IconButton(onClick = {}) {
-                    Icon(Icons.Default.Terrain, contentDescription = "test")
+                    Icon(Icons.Default.Search, contentDescription = "test")
                 }
             }
         )

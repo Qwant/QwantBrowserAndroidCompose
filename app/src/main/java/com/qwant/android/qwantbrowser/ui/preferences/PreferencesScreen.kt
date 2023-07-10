@@ -65,12 +65,7 @@ fun PreferencesScreen(
                 onValueChange = { viewModel.updateHideToolbarOnScroll(it) }
             )
             // Tabs view
-            PreferenceRadioSelectionPopup(
-                label = R.string.tabs_view_label,
-                options = remember { mapOf(
-                    TabsViewOption.GRID to R.string.available_tabs_view_grid,
-                    TabsViewOption.LIST to R.string.available_tabs_view_list
-                ) },
+            TabsViewPreference(
                 value = appPrefs.tabsView,
                 onValueChange = { viewModel.updateTabsView(it) }
             )

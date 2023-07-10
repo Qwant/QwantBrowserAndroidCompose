@@ -36,7 +36,7 @@ fun TabThumbnail(
         Image(
             bitmap = it.asImageBitmap(),
             contentDescription = "Tab Thumbnail",
-            contentScale = ContentScale.FillWidth,
+            contentScale = ContentScale.Crop,
             alignment = Alignment.TopCenter,
             modifier = modifier.fillMaxWidth()
         )

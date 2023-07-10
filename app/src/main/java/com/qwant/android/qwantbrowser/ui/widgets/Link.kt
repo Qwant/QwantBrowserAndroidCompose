@@ -3,8 +3,8 @@ package com.qwant.android.qwantbrowser.ui.widgets
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowRight
-import androidx.compose.material.icons.filled.Kitesurfing
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +35,7 @@ fun Link(
                 .weight(2f)
                 .padding(horizontal = 8.dp)
         )
-        Icon(Icons.Default.ArrowRight, contentDescription = "arrow")
+        Icon(Icons.Default.ArrowForward, contentDescription = "arrow")
     }
 
 }
@@ -46,7 +46,7 @@ fun LinkPreview() {
     QwantBrowserTheme {
         Link(
             text = "test label",
-            icon = Icons.Default.Kitesurfing,
+            icon = Icons.Default.Add,
             onClicked = {}
         )
     }

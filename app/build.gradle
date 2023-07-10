@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'com.qwant.android.qwantbrowser'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.qwant.android.qwantbrowser"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -36,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
         freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
     }
     buildFeatures {
@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Old browser fragment
-    implementation 'androidx.fragment:fragment-ktx:1.5.7'
+    implementation 'androidx.fragment:fragment-ktx:1.6.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
@@ -85,7 +85,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha20"
+    implementation "androidx.paging:paging-compose:3.2.0-rc01"
 
     // Compose debug
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_tooling_version"
@@ -93,8 +93,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_tooling_version"
 
     // Material
-    implementation "androidx.compose.material3:material3:1.2.0-alpha02"
-    implementation "androidx.compose.material:material-icons-extended:1.4.3"
+    implementation "androidx.compose.material3:material3:1.2.0-alpha03"
+    // implementation "androidx.compose.material:material-icons-extended:1.4.3"
 
     // Room
     implementation "androidx.room:room-ktx:$room_version"
@@ -109,6 +109,7 @@ dependencies {
     implementation "org.mozilla.components:browser-state:$mozac_version"
     implementation "org.mozilla.components:browser-session-storage:$mozac_version"
     implementation "org.mozilla.components:browser-thumbnails:$mozac_version"
+    implementation "org.mozilla.components:browser-icons:$mozac_version"
     implementation "org.mozilla.components:feature-session:$mozac_version"
     implementation "org.mozilla.components:feature-tabs:$mozac_version"
     implementation "org.mozilla.components:feature-contextmenu:$mozac_version"
@@ -118,7 +119,7 @@ dependencies {
     implementation "org.mozilla.components:support-ktx:$mozac_version"
     implementation "org.mozilla.components:support-rusthttp:$mozac_version"
 
-    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons
+    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependencie after replacing with our icons
 
     implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
     implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
