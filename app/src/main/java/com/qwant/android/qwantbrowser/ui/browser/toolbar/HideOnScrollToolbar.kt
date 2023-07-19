@@ -10,7 +10,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import kotlin.math.roundToInt
@@ -25,6 +24,7 @@ fun HideOnScrollToolbar(
     toolbar: @Composable (Modifier) -> Unit,
     height: Dp,
     modifier: Modifier = Modifier,
+    lock: () -> Boolean = { false },
     content: @Composable (Modifier) -> Unit = {}
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
@@ -40,7 +40,7 @@ fun HideOnScrollToolbar(
     val heightPx = with(LocalDensity.current) { height.roundToPx() }
 
     val offset by animateFloatAsState(
-        targetValue = if (toolbarState.visible || !shouldHideOnScroll) {
+        targetValue = if (toolbarState.visible || (!shouldHideOnScroll && !lock())) {
             0f
         } else {
             if (position == HideOnScrollPosition.Top) {
@@ -62,6 +62,12 @@ fun HideOnScrollToolbar(
         }
     }
 
+    val nestedScrollConnection = rememberThresholdNestedScrollConnection(
+        onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
+        scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
+        consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
+    )
+
     LaunchedEffect(shouldHideOnScroll, trueHeight) {
         toolbarState.updateTrueHeightPx(trueHeight)
     }
@@ -71,25 +77,30 @@ fun HideOnScrollToolbar(
             .fillMaxWidth()
             .align(if (position == HideOnScrollPosition.Top) Alignment.TopCenter else Alignment.BottomCenter)
             .zIndex(2f)
-            .then(
+            .offset { IntOffset(x = 0, y = offset.roundToInt()) }
+            /* .then(
                 if (shouldHideOnScroll) {
                     Modifier
                         .offset { IntOffset(x = 0, y = offset.roundToInt()) }
                 } else Modifier
-            )
+            ) */
         )
 
         content(Modifier
-            .nestedScroll(
-                rememberThresholdNestedScrollConnection(
-                    onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
-                    scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
-                    consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
-                )
-            )
             .fillMaxSize()
             .zIndex(1f)
             .then(
+                if (!lock()) {
+                    Modifier.nestedScroll(nestedScrollConnection)
+                } else Modifier
+            )
+            .then(
+                if (position == HideOnScrollPosition.Top) {
+                    Modifier
+                        .offset { IntOffset(x = 0, y = trueHeight) }
+                } else Modifier
+            )
+            /* .then(
                 if (shouldHideOnScroll) {
                     if (position == HideOnScrollPosition.Top) {
                         Modifier
@@ -102,7 +113,7 @@ fun HideOnScrollToolbar(
                             bottom = if (position == HideOnScrollPosition.Bottom) height else 0.dp
                         )
                 }
-            )
+            ) */
         )
     }
 }

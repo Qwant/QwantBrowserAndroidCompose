@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import mozilla.components.concept.engine.EngineView
@@ -11,9 +12,8 @@ fun DynamicToolbarFeature(
     enabled: Boolean = true
 ) {
     LaunchedEffect(enabled, engineView, toolbarState.trueHeightPx) {
-        if (enabled)
+        if (enabled) {
             engineView.setDynamicToolbarMaxHeight(toolbarState.trueHeightPx)
-        else
-            engineView.setDynamicToolbarMaxHeight(0)
+        }
     }
 }

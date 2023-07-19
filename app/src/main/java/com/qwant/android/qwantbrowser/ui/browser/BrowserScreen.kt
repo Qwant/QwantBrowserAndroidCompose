@@ -82,7 +82,8 @@ fun BrowserScreen(
                 )
             },
             height = 56.dp,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            lock = { viewModel.showFindInPage }
         ) { modifier ->
             // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
                 GlobalFeatures(appViewModel, viewModel)

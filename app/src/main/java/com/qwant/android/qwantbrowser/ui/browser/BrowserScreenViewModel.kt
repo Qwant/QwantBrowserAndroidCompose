@@ -101,6 +101,9 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
+    var showFindInPage by mutableStateOf(false)
+        private set
+
     val reloadUrl = useCases.sessionUseCases.reload
     val stopLoading = useCases.sessionUseCases.stopLoading
     val goBack = useCases.sessionUseCases.goBack
@@ -117,20 +120,10 @@ class BrowserScreenViewModel @Inject constructor(
     val contextMenuUseCases = useCases.contextMenuUseCases
     val downloadUseCases = useCases.downloadUseCases
 
-    /* fun commitSuggestion(suggestion: Suggestion) {
-        if (suggestion.url != null) {
-            useCases.sessionUseCases.loadUrl(url = suggestion.url.toNormalizedUrl())
-        } else if (suggestion.title != null){
-            commitSearch(suggestion.title)
-        } else {
-            // no-op
-        }
-    } */
-
     fun commitSearch(searchText: String) {
         if (searchText.isUrl()) {
-            useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
-            // useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
+            // useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
+            useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
             useCases.qwantUseCases.loadSERPPage(viewModelScope, searchText)
         }
@@ -184,5 +177,10 @@ class BrowserScreenViewModel @Inject constructor(
         store.dispatch(
             WebExtensionAction.UpdatePopupSessionAction(QwantVIPFeature.ID, popupSession = null)
         )
+    }
+
+    fun updateShowFindInPage(show: Boolean) {
+        toolbarState.updateVisibility(!show)
+        showFindInPage = show
     }
 }

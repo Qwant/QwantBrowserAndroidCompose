@@ -39,7 +39,7 @@ fun BrowserMenu(
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
         AppNavigation(navigateTo)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        PageActions(viewModel)
+        PageActions(viewModel, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
         DropdownMenuItem(
             text = { Text(text = "Settings") },
@@ -126,7 +126,10 @@ fun AppNavigation(navigateTo: (NavDestination) -> Unit) {
 }
 
 @Composable
-fun PageActions(viewModel: BrowserScreenViewModel) {
+fun PageActions(
+    viewModel: BrowserScreenViewModel,
+    onDismissRequest: () -> Unit,
+) {
     val context = LocalContext.current
 
     val currentUrl by viewModel.currentUrl.collectAsState()
@@ -141,7 +144,7 @@ fun PageActions(viewModel: BrowserScreenViewModel) {
             DropdownMenuItem(
                 text = { Text(text = "Partager") },
                 leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_share), contentDescription = "Partager") },
-                onClick = {  context.share(url) }
+                onClick = { context.share(url) }
             )
         }
         DropdownMenuItem(
@@ -158,7 +161,10 @@ fun PageActions(viewModel: BrowserScreenViewModel) {
         DropdownMenuItem(
             text = { Text(text = "Rechercher dans la page") },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "Rechercher dans la page") },
-            onClick = { /* TODO use findInPageFeature*/ }
+            onClick = {
+                viewModel.updateShowFindInPage(true)
+                onDismissRequest()
+            }
         )
     }
 }
