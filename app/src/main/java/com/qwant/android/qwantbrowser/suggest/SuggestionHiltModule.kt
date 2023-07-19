@@ -1,15 +1,11 @@
 package com.qwant.android.qwantbrowser.suggest
 
-import android.content.Context
 import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import mozilla.components.concept.awesomebar.AwesomeBar
-import mozilla.components.feature.awesomebar.provider.ClipboardSuggestionProvider
 import javax.inject.Singleton
 
 @Module
@@ -17,13 +13,24 @@ import javax.inject.Singleton
 object SuggestionHiltModule {
     @Singleton
     @Provides fun provideQwantOpensearchProvider(
-        core: Core,
-        useCases: UseCases
+        core: Core
     ) : QwantOpensearchProvider {
-        return QwantOpensearchProvider(core.client, useCases.qwantUseCases.loadSERPPage)
+        return QwantOpensearchProvider(core.client)
     }
 
     @Singleton
+    @Provides fun aaa() : List<SuggestionProvider> {
+        return listOf<SuggestionProvider>()
+    }
+
+    /* @Singleton
+    @Provides fun provideSuggestionProviders(
+        qwantOpensearchProvider: QwantOpensearchProvider
+    ) : List<SuggestionProvider> {
+        return listOf(qwantOpensearchProvider)
+    } */
+
+    /* @Singleton
     @Provides fun provideClipboardSuggestionProvider(
         @ApplicationContext context: Context,
         useCases: UseCases
@@ -48,12 +55,12 @@ object SuggestionHiltModule {
         return listOf(
             AwesomeBar.SuggestionProviderGroup(
                 listOf(clipboardProvider),
-                priority = 100,
+                // priority = 100,
                 title = "Clipboard"
             ),
             AwesomeBar.SuggestionProviderGroup(
                 listOf(qwantOpensearchProvider),
-                priority = 10,
+                // priority = 10,
                 title = "Opensearch"
             ),
             /* AwesomeBar.SuggestionProviderGroup(
@@ -73,5 +80,5 @@ object SuggestionHiltModule {
             ) */
             /* ... */
         )
-    }
+    } */
 }

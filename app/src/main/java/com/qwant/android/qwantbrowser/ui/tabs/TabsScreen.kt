@@ -21,6 +21,7 @@ import com.qwant.android.qwantbrowser.ui.browser.TabOpening
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
 import com.qwant.android.qwantbrowser.ui.browser.ZapButton
 import com.qwant.android.qwantbrowser.ui.preferences.TabsViewPreferenceSelector
+import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import mozilla.components.browser.state.state.SessionState
@@ -125,7 +126,7 @@ fun TabsMenuMore(
                 contentDescription = "More"
             )
         }
-        DropdownMenu(
+        Dropdown(
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
@@ -152,7 +153,7 @@ fun TabsMenuMore(
         YesNoDialog(
             onDismissRequest = { showViewOptionPopup = false },
             onYes = { showViewOptionPopup = false },
-            onNo = { showViewOptionPopup = false },  // TODO revert to settings before opening popup
+            onNo = { showViewOptionPopup = false },  // TODO revert to settings before opening popup on cancel
             title = "Affichage des onglets",
             yesText = "Ok",
             noText = "Cancel",

@@ -4,7 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,8 +37,9 @@ fun YesNoDialog(
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.extraSmall)
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
-                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), MaterialTheme.shapes.extraSmall)
+                .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
                 .padding(24.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             icon?.let {
                 Icon(
@@ -59,7 +63,9 @@ fun YesNoDialog(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.align(Alignment.End).padding(top = 16.dp)
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(top = 16.dp)
             ) {
                 TextButton(onClick = onNo) {
                     Text(text = noText)

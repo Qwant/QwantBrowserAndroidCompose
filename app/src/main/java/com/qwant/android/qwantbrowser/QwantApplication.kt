@@ -11,6 +11,7 @@ import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.rusthttp.RustHttpConfig
+import mozilla.components.support.webextensions.WebExtensionSupport
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -35,6 +36,28 @@ class QwantApplication : Application() {
 
         mozac.engine.warmUp()
         restoreBrowserState()
+
+        // Should be removed in futur version, once mozilla has fully migrated
+        WebExtensionSupport.initialize(
+            runtime = mozac.engine,
+            store = mozac.store,
+            openPopupInTab = false,
+            onNewTabOverride = { _, engineSession, url ->
+                val tabId = useCases.tabsUseCases.addTab(
+                    url = url,
+                    selectTab = true,
+                    engineSession = engineSession
+                )
+                tabId
+            },
+            onCloseTabOverride = { _, sessionId ->
+                useCases.tabsUseCases.removeTab(sessionId)
+            },
+            onSelectTabOverride = { _, sessionId ->
+                useCases.tabsUseCases.selectTab(sessionId)
+            },
+            onExtensionsLoaded = {}
+        )
     }
 
     @OptIn(DelicateCoroutinesApi::class)

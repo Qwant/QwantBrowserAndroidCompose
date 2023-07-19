@@ -1,33 +1,60 @@
 package com.qwant.android.qwantbrowser.ui.history
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
+import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 
 @Composable
 fun HistoryScreen(
     historyViewModel: HistoryViewModel = hiltViewModel(),
     onClose: () -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+    var showDeleteAllConfirmation by remember { mutableStateOf(false) }
+
     Column {
         ScreenHeader(
             title = "History",
+            scrollableState = lazyListState,
             actions = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = { showDeleteAllConfirmation = true }) {
                     Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Delete history")
                 }
             }
         )
-        HistoryList(historyViewModel,
+        HistoryList(
+            historyViewModel = historyViewModel,
+            lazyListState = lazyListState,
             onItemSelected = { visit, private ->
-                historyViewModel.openNewTab(visit.url)
+                historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
                 onClose()
             }
+        )
+    }
+
+    if (showDeleteAllConfirmation) {
+        YesNoDialog(
+            onDismissRequest = { showDeleteAllConfirmation = false },
+            title = "Effacer mon historique", // TODO text
+            description = "Voulez-vous vraiment supprimer tout votre historique ?",
+            yesText = "Effacer tout",
+            noText = "Annuler",
+            onYes = {
+                historyViewModel.deleteAllHistory()
+                showDeleteAllConfirmation = false
+            },
+            onNo = { showDeleteAllConfirmation = false }
         )
     }
 }

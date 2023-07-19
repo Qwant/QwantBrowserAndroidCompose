@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import kotlin.math.roundToInt
 
 enum class HideOnScrollPosition {
@@ -26,7 +27,14 @@ fun HideOnScrollToolbar(
     modifier: Modifier = Modifier,
     content: @Composable (Modifier) -> Unit = {}
 ) {
-    val position by toolbarState.toolbarPosition.collectAsState()
+    val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
+    val position = remember(toolbarPosition) {
+        when (toolbarPosition) {
+            ToolbarPosition.BOTTOM -> HideOnScrollPosition.Bottom
+            else -> HideOnScrollPosition.Top
+        }
+    }
+
     val shouldHideOnScroll by toolbarState.shouldHideOnScroll.collectAsState()
 
     val heightPx = with(LocalDensity.current) { height.roundToPx() }
@@ -64,30 +72,35 @@ fun HideOnScrollToolbar(
             .align(if (position == HideOnScrollPosition.Top) Alignment.TopCenter else Alignment.BottomCenter)
             .zIndex(2f)
             .then(
-                if (shouldHideOnScroll) { Modifier
-                    .offset { IntOffset(x = 0, y = offset.roundToInt()) }
+                if (shouldHideOnScroll) {
+                    Modifier
+                        .offset { IntOffset(x = 0, y = offset.roundToInt()) }
                 } else Modifier
             )
         )
 
         content(Modifier
-            .nestedScroll(rememberThresholdNestedScrollConnection(
-                onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
-                scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
-                consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
-            ))
+            .nestedScroll(
+                rememberThresholdNestedScrollConnection(
+                    onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
+                    scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
+                    consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
+                )
+            )
             .fillMaxSize()
             .zIndex(1f)
             .then(
                 if (shouldHideOnScroll) {
-                    if (position == HideOnScrollPosition.Top) { Modifier
-                        .offset { IntOffset(x = 0, y = trueHeight) }
+                    if (position == HideOnScrollPosition.Top) {
+                        Modifier
+                            .offset { IntOffset(x = 0, y = trueHeight) }
                     } else Modifier
-                } else { Modifier
-                    .absolutePadding(
-                        top = if (position == HideOnScrollPosition.Top) height else 0.dp,
-                        bottom = if (position == HideOnScrollPosition.Bottom) height else 0.dp
-                    )
+                } else {
+                    Modifier
+                        .absolutePadding(
+                            top = if (position == HideOnScrollPosition.Top) height else 0.dp,
+                            bottom = if (position == HideOnScrollPosition.Bottom) height else 0.dp
+                        )
                 }
             )
         )

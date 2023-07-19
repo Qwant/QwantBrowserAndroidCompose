@@ -7,17 +7,18 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.storage.*
 import mozilla.components.support.utils.StorageUtils.levenshteinDistance
-import mozilla.components.support.utils.segmentAwareDomainMatch
 import java.io.*
 import java.util.*
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
+import com.qwant.android.qwantbrowser.suggest.Suggestion
+import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 
 data class Visit(val timestamp: Long, val type: VisitType): Serializable
 data class PageObservation(val title: String?) : Serializable
 
 const val AUTOCOMPLETE_SOURCE_NAME = "history"
 
-class History(val context: Context) : HistoryStorage {
+class History(val context: Context) : HistoryStorage, SuggestionProvider {
     @VisibleForTesting
     internal var pages: HashMap<String, MutableList<Visit>> = linkedMapOf()
     @VisibleForTesting
@@ -144,12 +145,24 @@ class History(val context: Context) : HistoryStorage {
         throw UnsupportedOperationException("Pagination is not yet supported by the in-memory history storage")
     }
 
-    override fun getAutocompleteSuggestion(query: String): HistoryAutocompleteResult? = synchronized(pages) {
+    override suspend fun getSuggestions(text: String): List<Suggestion> {
+        return pages.keys
+            .sortedByDescending { url -> pages[url]?.maxBy { visit -> visit.timestamp }?.timestamp }
+            .filter {
+                it.contains(text, ignoreCase = true) || pageMeta[it]?.title?.contains(text, ignoreCase = true) == true
+            }
+            .take(3) // TODO make history suggestions provider result maximum dynamic
+            .map {
+                Suggestion.OpenTabSuggestion(this, text, pageMeta[it]?.title, it)
+            }
+    }
+
+    /* override fun getAutocompleteSuggestion(query: String): HistoryAutocompleteResult? = synchronized(pages) {
         segmentAwareDomainMatch(query, pages.keys)?.let { urlMatch ->
             return HistoryAutocompleteResult(
                     query, urlMatch.matchedSegment, urlMatch.url, AUTOCOMPLETE_SOURCE_NAME, pages.size)
         }
-    }
+    } */
 
     override suspend fun deleteEverything() = synchronized(pages + pageMeta) {
         pages.clear()

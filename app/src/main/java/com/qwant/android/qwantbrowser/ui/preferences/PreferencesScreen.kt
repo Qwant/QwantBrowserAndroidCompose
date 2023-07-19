@@ -38,10 +38,10 @@ fun PreferencesScreen(
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
-        ScreenHeader(title = stringResource(id = R.string.settings))
-        if (scrollState.canScrollBackward) {
+        ScreenHeader(title = stringResource(id = R.string.settings), scrollableState = scrollState)
+        /* if (scrollState.canScrollBackward) {
             Divider()
-        }
+        } */
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             // Make default browser
             DefaultBrowserPreference()
@@ -148,7 +148,7 @@ fun PreferencesScreen(
                 value = frontEndPrefs.interfaceLanguage,
                 onValueChange = { viewModel.updateInterfaceLanguage(it) }
             )
-            // TODO Search result language ???
+
             // Search region
             PreferenceRadioSelectionPopup(
                 label = R.string.search_region_label,

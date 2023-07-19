@@ -1,32 +1,61 @@
 package com.qwant.android.qwantbrowser.ui.browser.suggest
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import mozilla.components.concept.awesomebar.AwesomeBar
+import androidx.compose.ui.unit.dp
+import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.legacy.history.History
+import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
+import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
+import com.qwant.android.qwantbrowser.suggest.Suggestion
+import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
+import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
+import mozilla.components.browser.icons.BrowserIcons
+
 
 @Composable
 fun Suggest(
-    suggestions: Map<AwesomeBar.SuggestionProviderGroup, List<AwesomeBar.Suggestion>>,
-    onSuggestionClicked: (suggestion: AwesomeBar.Suggestion) -> Unit,
+    suggestions: Map<SuggestionProvider, List<Suggestion>>,
+    onSuggestionClicked: (suggestion: Suggestion) -> Unit,
+    toolbarPosition: ToolbarPosition,
+    browserIcons: BrowserIcons,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-        suggestions.keys.forEach { group ->
-            suggestions[group]?.let {
-                items(items = it) { suggestion ->
-                    SuggestItem(
+    // TODO provide this from somewhere else ! (SuggestionState ?)
+    val providersOrdered = remember(suggestions.keys) {
+        listOf(
+            suggestions.keys.find { it is QwantOpensearchProvider },
+            suggestions.keys.find { it is SessionTabsProvider },
+            suggestions.keys.find { it is BookmarksStorage },
+            suggestions.keys.find { it is History }
+        )
+    }
+
+    LazyColumn(modifier = modifier
+        .background(MaterialTheme.colorScheme.background)
+    ) {
+        providersOrdered.forEach { provider ->
+            items(items = suggestions.getOrDefault(provider, listOf())) { suggestion ->
+                provider?.let {
+                    SuggestItem( // TODO add key and animateItemPlacement to suggest item
                         suggestion = suggestion,
-                        group = group,
+                        toolbarPosition = toolbarPosition,
+                        browserIcons = browserIcons,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(52.dp)
                             .clickable { onSuggestionClicked(suggestion) }
+                            .padding(horizontal = 16.dp)
                     )
                 }
             }

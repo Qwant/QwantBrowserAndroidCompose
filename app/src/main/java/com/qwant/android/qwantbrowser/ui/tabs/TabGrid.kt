@@ -102,7 +102,7 @@ fun TabCard(
                             Image(painter = it.painter, contentDescription = "icon")
                         }
                         Placeholder {
-                            Image(painter = painterResource(id = R.drawable.icons_shuffle), contentDescription = "icon")
+                            Image(painter = painterResource(id = R.drawable.icons_shuffle), contentDescription = "icon") // TODO replace placeholder icon
                         }
                     }
                 }

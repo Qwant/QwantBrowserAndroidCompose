@@ -1,11 +1,18 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.getTextBeforeSelection
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
+import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
+import com.qwant.android.qwantbrowser.suggest.Suggestion
+import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -15,7 +22,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
-import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
@@ -27,9 +33,16 @@ interface ToolbarStateFactory {
 class ToolbarState @AssistedInject constructor(
     mozac: Core,
     appPreferencesRepository: AppPreferencesRepository,
-    suggestionProviderGroups: List<AwesomeBar.SuggestionProviderGroup>,
+    // suggestionProviders: List<SuggestionProvider>, // TODO use hilt to inject suggestion providers. Add ClipboardProvider
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
+    private val suggestionProviders: List<SuggestionProvider> = listOf(
+        QwantOpensearchProvider(mozac.client),
+        SessionTabsProvider(mozac.store),
+        mozac.historyStorage,
+        mozac.bookmarkStorage
+    )
+
     private val store = mozac.store
 
     var visible by mutableStateOf(true)
@@ -41,23 +54,23 @@ class ToolbarState @AssistedInject constructor(
     var hasFocus by mutableStateOf(false)
         private set
 
-    var trueHeightPx by mutableStateOf(0)
+    var trueHeightPx by mutableIntStateOf(0)
         private set
 
-    var suggestions by mutableStateOf<Map<AwesomeBar.SuggestionProviderGroup, List<AwesomeBar.Suggestion>>>(emptyMap())
+     var suggestions = suggestionProviders.map { it to emptyList<Suggestion>() }.toMutableStateMap()
         private set
 
     init {
         coroutineScope.launch {
-            snapshotFlow { text.text }
+            snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
                 .ifChanged()
                 .onEach { search ->
-                    if (hasFocus) {
-                        suggestionProviderGroups.forEach { group ->
-                            group.providers.forEach { provider ->
-                                updateSuggestions(group, provider, provider.onInputChanged(search))
-                            }
+                    if (hasFocus && search.isNotEmpty()) {
+                        suggestionProviders.forEach { provider ->
+                            suggestions[provider] = provider.getSuggestions(search)
                         }
+                    } else {
+                        suggestions.keys.forEach { suggestions[it] = listOf() }
                     }
                 }
                 .collect()
@@ -65,14 +78,11 @@ class ToolbarState @AssistedInject constructor(
     }
 
     val toolbarPosition = appPreferencesRepository.flow
-        .map { prefs -> when (prefs.toolbarPosition) {
-            ToolbarPosition.BOTTOM -> HideOnScrollPosition.Bottom
-            else -> HideOnScrollPosition.Top
-        }}
+        .map { it.toolbarPosition }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = HideOnScrollPosition.Top
+            initialValue = ToolbarPosition.BOTTOM
         )
 
     val shouldHideOnScroll = appPreferencesRepository.flow
@@ -123,8 +133,7 @@ class ToolbarState @AssistedInject constructor(
         this.hasFocus = hasFocus
         // TODO update toolbar text on focus should clear when on qwant home, display search when on SERP. Else only display full url
         updateTextWithUrl(currentUrl.value ?: "")
-        if (!hasFocus)
-            suggestions = emptyMap()
+        // if (!hasFocus) suggestions = emptyMap()
     }
 
     private fun updateTextWithUrl(url: String) {
@@ -144,7 +153,7 @@ class ToolbarState @AssistedInject constructor(
         trueHeightPx = height
     }
 
-    private fun updateSuggestions(
+    /* private fun updateSuggestions(
         group: AwesomeBar.SuggestionProviderGroup,
         provider:  AwesomeBar.SuggestionProvider,
         newSuggestions: List<AwesomeBar.Suggestion>
@@ -161,5 +170,5 @@ class ToolbarState @AssistedInject constructor(
         val updatedSuggestionMap = suggestionMap.toMutableMap()
         updatedSuggestionMap[group] = updatedSuggestions
         suggestions = updatedSuggestionMap
-    }
+    } */
 }

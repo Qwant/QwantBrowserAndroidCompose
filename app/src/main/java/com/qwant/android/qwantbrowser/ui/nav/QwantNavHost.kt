@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.qwant.android.qwantbrowser.ext.navigateSingleTopTo
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.bookmarks.BookmarksScreen
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreen
 import com.qwant.android.qwantbrowser.ui.browser.TabOpening
 import com.qwant.android.qwantbrowser.ui.history.HistoryScreen
@@ -22,6 +23,8 @@ fun QwantNavHost(
     modifier: Modifier = Modifier,
     appViewModel: QwantApplicationViewModel = hiltViewModel(),
 ) {
+    val onBrowse = { navController.navigateSingleTopTo(NavDestination.Browser.route()) }
+
     NavHost(
         navController = navController,
         startDestination = NavDestination.Browser.match,
@@ -53,13 +56,8 @@ fun QwantNavHost(
                 navController.navigateSingleTopTo(NavDestination.Browser.route(openNewTab) )
             }
         ) }
-        composable(NavDestination.History.match) { HistoryScreen(
-            onClose = { navController.navigateSingleTopTo(NavDestination.Browser.route()) }
-        ) }
-        composable(NavDestination.Bookmarks.match) { Text("Bookmarks") }
-        composable(NavDestination.Preferences.match) { PreferencesScreen(
-            onClose = { navController.navigateSingleTopTo(NavDestination.Browser.route()) }
-        ) }
-        // preferencesGraph(navController, NavDestination.Preferences.match)
+        composable(NavDestination.History.match) { HistoryScreen(onClose = onBrowse) }
+        composable(NavDestination.Bookmarks.match) { BookmarksScreen(onBrowse, appViewModel) }
+        composable(NavDestination.Preferences.match) { PreferencesScreen(onClose = onBrowse) }
     }
 }

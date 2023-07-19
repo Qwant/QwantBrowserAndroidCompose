@@ -14,7 +14,7 @@ object AppPreferencesMigration {
         return SharedPreferencesMigration(
             context, SHARED_PREFS_NAME, keysToMigrate
         ) { sharedPrefs: SharedPreferencesView, currentData: AppPreferences ->
-            // TODO gather all elements
+            // TODO app preferences migrations
             currentData.toBuilder()
                 // .setShowNews(sharedPrefs.getBoolean("pref_key_news_on_homepage", true))
                 .build()

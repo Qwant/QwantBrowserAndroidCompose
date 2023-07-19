@@ -1,0 +1,54 @@
+{
+    "version": "7.3.0.2",
+    "manifest_version": 2,
+    "name": "__MSG_name__",
+    "short_name": "__MSG_short_name__",
+    "author": "Qwant",
+    "default_locale": "en",
+    "description": "__MSG_description__",
+    "icons": {
+        "92": "assets/icons/green-92.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "92": "assets/icons/green-92.png"
+        },
+        "default_title": "__MSG_name__",
+        "default_popup": "pages/popup.html"
+    },
+    "background": {
+        "page": "pages/background.html",
+        "persistent": true
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.qwant.com/*"
+            ],
+            "css": [
+                "assets/css/no-popin.css"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        "/web-accessible-resources/*"
+    ],
+    "applications": {
+        "gecko": {
+            "id": "qwant-vip-android@qwant.com",
+            "strict_min_version": "78.0"
+        }
+    },
+    "permissions": [
+        "storage",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking",
+        "webNavigation",
+        "nativeMessaging",
+        "nativeMessagingFromContent",
+        "geckoViewAddons"
+    ],
+    "optional_permissions": [],
+    "content_security_policy": "script-src 'self' 'sha256-Bm6SGASuSJ/y5W6tMmcnxeShdKrQ2QtIV2mH1Oh8qho='; object-src 'self'"
+}

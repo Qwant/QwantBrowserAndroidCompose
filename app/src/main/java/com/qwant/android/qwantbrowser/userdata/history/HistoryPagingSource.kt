@@ -25,6 +25,6 @@ class HistoryPagingSource(
     }
 
     companion object {
-        const val RESULT_PER_PAGE: Long = 20
+        const val RESULT_PER_PAGE: Long = 50
     }
 }

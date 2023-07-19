@@ -12,7 +12,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import mozilla.components.concept.storage.VisitInfo
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRow
+import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRowWithIcon
 import com.qwant.android.qwantbrowser.ui.theme.GreenUrl
+import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import mozilla.components.browser.icons.BrowserIcons
+import java.text.DecimalFormat
+import java.util.Calendar
+import java.util.Date
 
 
 data class MenuItem(val title: String, @DrawableRes val icon: Int, val onClick: () -> Unit)
@@ -20,19 +27,53 @@ data class MenuItem(val title: String, @DrawableRes val icon: Int, val onClick: 
 @Composable
 fun HistoryItem(
     visit: VisitInfo,
+    browserIcons: BrowserIcons,
     onItemSelected: (visit: VisitInfo, private: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     menuItems: List<MenuItem> = listOf()
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 8.dp)
+    WebsiteRowWithIcon(
+        title = visit.title,
+        url = visit.url,
+        browserIcons = browserIcons,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onItemSelected(visit, false) }
+            .padding(start = 16.dp)
+    ) {
+        if (menuItems.isNotEmpty()) {
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(painter = painterResource(id = R.drawable.icons_more_vertical), contentDescription = "more")
+                }
+                Dropdown(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    menuItems.forEach { menuItem ->
+                        DropdownMenuItem(
+                            text = { Text(menuItem.title) },
+                            onClick = {
+                                menuItem.onClick()
+                                showMenu = false
+                            },
+                            leadingIcon = { Icon(painter = painterResource(id = menuItem.icon), contentDescription = menuItem.title) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /* Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp)
     ) {
         Column(modifier = Modifier
             .weight(2f)
-            .align(Alignment.CenterVertically)
             .clickable { onItemSelected(visit, false) }
+            .padding(end = 8.dp)
         ) {
             if (visit.title?.isNotEmpty() == true) {
                 Text(visit.title ?: "", maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -46,41 +87,28 @@ fun HistoryItem(
                 )
             )
         }
+
+        val calendar = Calendar.getInstance().apply { time = Date(visit.visitTime) }
+        Text(text = "${calendar.get(Calendar.HOUR_OF_DAY)}:${DecimalFormat("00").format(calendar.get(Calendar.MINUTE))}")
+
         if (menuItems.isNotEmpty()) {
             Box {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(painter = painterResource(id = R.drawable.icons_more_vertical), contentDescription = "more")
                 }
-                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                Dropdown(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     menuItems.forEach { menuItem ->
                         DropdownMenuItem(
                             text = { Text(menuItem.title) },
-                            onClick = menuItem.onClick,
+                            onClick = {
+                                menuItem.onClick()
+                                showMenu = false
+                            },
                             leadingIcon = { Icon(painter = painterResource(id = menuItem.icon), contentDescription = menuItem.title) }
                         )
                     }
-                    /* DropdownMenuItem(
-                        text = { Text("Ouvrir le lien dans un nouvel onglet") },
-                        onClick = { onItemSelected(visit, false) },
-                        leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "Open in new tab")}
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Ouvrir le lien dans un nouvel onglet privé") },
-                        onClick = { onItemSelected(visit, true) },
-                        leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "Open in new tab")}
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Copier le lien") },
-                        onClick = { /* TODO */ },
-                        leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "Open in new tab")}
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Supprimer") },
-                        onClick = { /* TODO */ },
-                        leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "Open in new tab")}
-                    ) */
                 }
             }
         }
-    }
+    } */
 }

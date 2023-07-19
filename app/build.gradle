@@ -35,17 +35,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
-    }
+
     buildFeatures {
         viewBinding true
         compose true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
+    }
+    kotlin {
+        jvmToolchain(11)
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.0'
@@ -54,6 +59,9 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    aaptOptions {
+        ignoreAssetsPattern  '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
 }
 
@@ -66,10 +74,14 @@ dependencies {
     implementation 'androidx.paging:paging-runtime:3.1.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
+    // Old preferences for migration. Remove after migration is complete
+    implementation 'androidx.preference:preference:1.2.0'
+
     // Old browser fragment
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    // TODO remove old browser fragment dependencies
+    // implementation 'androidx.fragment:fragment-ktx:1.6.0'
+    // implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    // implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Protobuf
     implementation  "com.google.protobuf:protobuf-javalite:3.21.10"
@@ -118,11 +130,14 @@ dependencies {
     implementation "org.mozilla.components:support-utils:$mozac_version"
     implementation "org.mozilla.components:support-ktx:$mozac_version"
     implementation "org.mozilla.components:support-rusthttp:$mozac_version"
+    implementation "org.mozilla.components:support-webextensions:$mozac_version"
+    implementation "org.mozilla.components:ui-widgets:$mozac_version" // SnackbarDelegate
 
     implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependencie after replacing with our icons
 
-    implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
-    implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
+    // implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
+    // implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
+    // implementation "org.mozilla.telemetry:glean-native:52.2.0"
     // implementation "org.mozilla.geckoview:geckoview-beta-omni:$mozac_version" // feature-awesomebar deps
     // implementation "org.mozilla.telemetry:glean-native:$mozac_version" // feature-awesomebar deps
 

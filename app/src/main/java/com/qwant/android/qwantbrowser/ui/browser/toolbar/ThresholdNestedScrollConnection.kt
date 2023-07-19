@@ -33,7 +33,7 @@ class ThresholdNestedScrollConnection(
     }
 
     override suspend fun onPreFling(available: Velocity): Velocity {
-        // TODO do something there too ? never seems to be called
+        // TODO handle fling there too ? never seems to be called
         Log.d("QWANT_SCROLL", "fling $available")
         return super.onPreFling(available)
     }

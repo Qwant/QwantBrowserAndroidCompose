@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.mozac
 
 import android.content.Context
+import androidx.core.app.NotificationManagerCompat
+import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.store.BrowserStore
@@ -18,6 +20,7 @@ import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
+import mozilla.components.support.base.android.NotificationsDelegate
 
 
 /**
@@ -64,8 +67,17 @@ class Core(private val context: Context) {
         this.setupAutoPersist(30000)
     } }
 
+    val bookmarkStorage by lazy { BookmarksStorage(context).apply {
+        this.restore()
+    } }
+
+    private val notificationManagerCompat = NotificationManagerCompat.from(context)
+    val notificationsDelegate: NotificationsDelegate by lazy { NotificationsDelegate(notificationManagerCompat) }
+
     val downloadStorage by lazy { DownloadStorage(context) }
-    val downloadManager by lazy { FetchDownloadManager(context, store, DownloadService::class) }
+    val downloadManager by lazy {
+        FetchDownloadManager(context, store, DownloadService::class, notificationsDelegate = notificationsDelegate)
+    }
 
     val geckoSitePermissionsStorage by lazy {
         val geckoRuntime = EngineProvider.getOrCreateRuntime(context)

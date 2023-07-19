@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.preferences.frontend
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.session.SessionUseCases
 
@@ -14,7 +15,7 @@ fun QwantUrlEngineSyncFeature(
     LaunchedEffect(qwantUrl) {
         qwantTabs.forEach { tab ->
             val tabUrl = tab.content.url
-            if (tabUrl.startsWith("https://www.qwant.com/")) { // TODO handle maps, music, etc ...
+            if (tabUrl.isQwantUrl()) {
                 val query: String? = if (tabUrl.contains("?q=") || tabUrl.contains("&q=")) {
                     tabUrl.split("?q=", "&q=")[1].split("&")[0]
                 } else null

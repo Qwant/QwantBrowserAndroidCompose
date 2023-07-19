@@ -14,7 +14,7 @@ object FrontEndPreferencesMigration {
         return SharedPreferencesMigration(
             context, SHARED_PREFS_NAME, keysToMigrate
         ) { sharedPrefs: SharedPreferencesView, currentData: FrontEndPreferences ->
-            // TODO gather all elements
+            // TODO frontend preferences migrations
             currentData.toBuilder()
                 .setShowNews(sharedPrefs.getBoolean("pref_key_news_on_homepage", true))
                 .build()

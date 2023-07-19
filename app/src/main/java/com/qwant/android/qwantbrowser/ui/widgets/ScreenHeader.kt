@@ -2,6 +2,8 @@ package com.qwant.android.qwantbrowser.ui.widgets
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,34 +23,39 @@ import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 fun ScreenHeader(
     title: String,
     icon: ImageVector? = null,
+    scrollableState: ScrollableState? = null,
     actions: @Composable () -> Unit = {}
 ) {
     val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            // .background(MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSecondaryContainer) {
-            IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().height(56.dp)
+        ) {
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSecondaryContainer) {
+                IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back") // TODO change arrow icon
+                }
+
+                if (icon != null) {
+                    Icon(icon, contentDescription = title, modifier = Modifier.padding(end = 4.dp))
+                }
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(2f)
+                )
+
+                actions()
             }
-
-            if (icon != null) {
-                Icon(icon, contentDescription = title, modifier = Modifier.padding(end = 4.dp))
-            }
-
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(2f)
-            )
-
-            actions()
+        }
+        if (scrollableState?.canScrollBackward == true) {
+            Divider()
         }
     }
+
 }
 
 

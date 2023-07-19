@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +29,12 @@ fun TabRow(
     onDeleted: (tab: TabSessionState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .background(if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
-        .clickable { onSelected(tab) }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface)
+            .clickable { onSelected(tab) }
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
@@ -43,28 +46,28 @@ fun TabRow(
             TabThumbnail(tab.id, 90.dp, thumbnailStorage)
         }
 
-        Box(modifier = Modifier
-            .weight(1.0f)
-            .height(70.dp)
-            .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
-        ) {
+        Column(modifier = Modifier.weight(2f).padding(start = 12.dp)) {
             Text(
                 tab.content.title,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 18.sp,
-                modifier = Modifier.align(Alignment.TopStart)
+                fontSize = 16.sp,
+                lineHeight = 20.sp
             )
             Text(
                 tab.content.url,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 12.sp,
-                modifier = Modifier.align(Alignment.BottomStart)
+                fontSize = 14.sp,
+                lineHeight = 18.sp,
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
-        Box(modifier = Modifier
+        IconButton(onClick = { onDeleted(tab) }) {
+            Icon(Icons.Default.Close, contentDescription = "Delete")
+        }
+        /* Box(modifier = Modifier
             .width(44.dp)
             .height(70.dp)
             .padding(end = 12.dp)
@@ -75,6 +78,6 @@ fun TabRow(
                 contentDescription = "Delete",
                 modifier = Modifier.align(Alignment.Center)
             )
-        }
+        } */
     }
 }

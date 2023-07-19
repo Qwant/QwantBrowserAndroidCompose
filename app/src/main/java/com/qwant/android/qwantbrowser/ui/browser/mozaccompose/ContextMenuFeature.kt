@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -21,6 +22,8 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.observeAsComposableState
+import mozilla.components.ui.widgets.SnackbarDelegate
+import kotlin.time.toDuration
 
 @Composable
 fun ContextMenuFeature(
@@ -38,7 +41,7 @@ fun ContextMenuFeature(
             tabsUseCases = tabsUseCases,
             contextMenuUseCases = contextMenuUseCases,
             snackBarParentView = view, // Useless with compose, but keeps compatibility with mozac
-            snackbarDelegate = object : ContextMenuCandidate.SnackbarDelegate {
+            snackbarDelegate = object : SnackbarDelegate {
                 override fun show(
                     snackBarParentView: View,
                     text: Int,
@@ -77,13 +80,9 @@ fun ContextMenuFeature(
         hitResult?.let { hit ->
             if (validCandidates.isNotEmpty()) {
                 LocalHapticFeedback.current.performHapticFeedback(HapticFeedbackType.LongPress)
-                DropdownMenu(
+                Dropdown(
                     expanded = validCandidates.isNotEmpty(),
                     onDismissRequest = { contextMenuUseCases.consumeHitResult(session.id) },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .clip(RoundedCornerShape(8.dp))
-                        .padding(0.dp)
                 ) {
                     validCandidates.forEach { candidate ->
                         DropdownMenuItem(text = { Text(candidate.label) }, onClick = {

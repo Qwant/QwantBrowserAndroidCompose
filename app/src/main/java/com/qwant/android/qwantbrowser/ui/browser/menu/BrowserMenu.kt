@@ -19,6 +19,7 @@ import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.theme.Grey000Alpha16
+import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import mozilla.components.support.ktx.android.content.share
 
 @Composable
@@ -28,13 +29,9 @@ fun BrowserMenu(
     navigateTo: (NavDestination) -> Unit,
     viewModel: BrowserScreenViewModel
 ) {
-    DropdownMenu(
+    Dropdown(
         expanded = expanded,
-        onDismissRequest= onDismissRequest,
-        offset = DpOffset(8.dp, 0.dp),
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), MaterialTheme.shapes.extraSmall)
+        onDismissRequest= onDismissRequest
     ) {
         BrowserNavigation(viewModel)
         Divider()
@@ -66,9 +63,16 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
             Icon(painter = painterResource(id = R.drawable.icons_arrow_forward), contentDescription = "go forward")
         }
 
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(painter = painterResource(id = R.drawable.icons_add_bookmark), contentDescription = "add/delete bookmark")
+        if (viewModel.isUrlBookmarked) {
+            IconButton(onClick = { viewModel.removeBookmark() }) {
+                Icon(painter = painterResource(id = R.drawable.icons_check), contentDescription = "delete bookmark")
+            }
+        } else {
+            IconButton(onClick = { viewModel.addBookmark() }) {
+                Icon(painter = painterResource(id = R.drawable.icons_add_bookmark), contentDescription = "add bookmark")
+            }
         }
+
 
         if (loadingProgress != 1f) {
             IconButton(onClick = { viewModel.stopLoading() }) {
