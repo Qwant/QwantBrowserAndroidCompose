@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.preferences
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +25,7 @@ import com.qwant.android.qwantbrowser.preferences.frontend.AdultFilter
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.*
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
+import org.webrtc.voiceengine.BuildInfo
 
 @Composable
 fun PreferencesScreen(
@@ -39,9 +41,7 @@ fun PreferencesScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         ScreenHeader(title = stringResource(id = R.string.settings), scrollableState = scrollState)
-        /* if (scrollState.canScrollBackward) {
-            Divider()
-        } */
+
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             // Make default browser
             DefaultBrowserPreference()
@@ -242,6 +242,25 @@ fun PreferencesScreen(
                 )},
                 onClicked = { context.openAppStorePage() }
             )
+
+            // Log.d("QB_BUILDTYPE", BuildInfo.getBuildType())
+            // TODO test links only in debug builds
+            // if (BuildInfo.getBuildType() == "debug") {
+                PreferenceGroupLabel(label = R.string.settings_tests_label)
+
+                // Tests prompts feature
+                PreferenceRow(
+                    label = R.string.settings_tests_prompts_label,
+                    icon = { Icon(
+                        painter = painterResource(id = R.drawable.icons_open),
+                        contentDescription = "Open"
+                    )},
+                    onClicked = {
+                        viewModel.openTestTabUseCase("prompts")
+                        onClose()
+                    }
+                )
+            // }
         }
     }
 }

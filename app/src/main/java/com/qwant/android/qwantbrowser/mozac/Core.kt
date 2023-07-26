@@ -19,6 +19,7 @@ import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
+import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
 import mozilla.components.support.base.android.NotificationsDelegate
 
@@ -48,6 +49,7 @@ class Core(private val context: Context) {
             middleware = listOf(
                 DownloadMiddleware(context, DownloadService::class.java, downloadStorage = downloadStorage),
                 ThumbnailsMiddleware(thumbnailStorage),
+                PromptMiddleware()
             ) + EngineMiddleware.create(engine)
         )
     }

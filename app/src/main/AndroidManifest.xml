@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:name=".QwantApplication"
@@ -59,6 +60,13 @@
         <service android:name=".mozac.downloads.DownloadService" />
         <provider android:name=".mozac.downloads.DownloadsFileProvider"
             android:authorities="${applicationId}.feature.downloads.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+        </provider>
+
+        <!-- File prompts -->
+        <provider android:name=".mozac.prompts.PromptFileProvider"
+            android:authorities="${applicationId}.feature.prompt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
         </provider>

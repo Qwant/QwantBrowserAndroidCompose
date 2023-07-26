@@ -139,4 +139,7 @@
 
     <string name="rate_us_label">Attribuer une note sur google play</string>
 
+
+    <string name="settings_tests_label" translatable="false">Tests</string>
+    <string name="settings_tests_prompts_label" translatable="false">Prompts</string>
 </resources>

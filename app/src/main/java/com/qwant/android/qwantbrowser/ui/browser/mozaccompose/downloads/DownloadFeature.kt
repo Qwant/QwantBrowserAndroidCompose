@@ -43,15 +43,6 @@ fun DownloadFeature(
     var showPermissionRefused by remember { mutableStateOf(false) }
     var previousTab: SessionState? by remember { mutableStateOf(null) }
 
-    // TODO remove exception here. Handled directly by the download manager once updated to mozac 114+
-    val permissions = remember(downloadManager) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !downloadManager.permissions.contains(POST_NOTIFICATIONS)) {
-            downloadManager.permissions.plus(POST_NOTIFICATIONS)
-        } else {
-            downloadManager.permissions
-        }
-    }
-
     val startDownload = {
         tab?.let { t ->
             downloadState?.let { d ->
@@ -81,7 +72,7 @@ fun DownloadFeature(
             startDownload()
         } else {
             context.activity?.let { activity ->
-                if (permissions.any {
+                if (downloadManager.permissions.any {
                     !ActivityCompat.shouldShowRequestPermissionRationale(activity, it)
                 }) {
                     cancelDownload()
@@ -93,18 +84,16 @@ fun DownloadFeature(
         }
     }
 
-
     val checkPermissionAndStartDownload = {
         showDownloadRequest = false
-        if (permissions.all {
+        if (downloadManager.permissions.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }) {
             startDownload()
         } else {
-            permissionLauncher.launch(permissions)
+            permissionLauncher.launch(downloadManager.permissions)
         }
     }
-
 
     LaunchedEffect(onDownloadStopped) {
         downloadManager.onDownloadStopped = onDownloadStopped
@@ -158,7 +147,7 @@ fun DownloadFeature(
             onDismissRequest = { cancelDownload() },
             onYes = { checkPermissionAndStartDownload() },
             onNo = { cancelDownload() },
-            description = "Downloader really needs this permissions: ${permissions.joinToString(", ")}",
+            description = "Downloader really needs this permissions: ${downloadManager.permissions.joinToString(", ")}",
             icon = R.drawable.icons_download,
             yesText = "Ask me again",
             noText = "Cancel"

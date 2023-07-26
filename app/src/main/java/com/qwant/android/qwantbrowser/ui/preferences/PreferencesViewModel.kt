@@ -109,4 +109,5 @@ class PreferencesViewModel @Inject constructor(
     }
 
     val addTabsUseCase = useCases.tabsUseCases.addTab
+    val openTestTabUseCase = useCases.qwantUseCases.openTestPageUseCase
 }

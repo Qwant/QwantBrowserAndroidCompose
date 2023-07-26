@@ -85,6 +85,28 @@ class QwantUseCases(
         }
     }
 
+    class OpenTestPageUseCase internal constructor(
+        private val context: Context,
+        private val tabsUseCases: TabsUseCases,
+        private val sessionUseCases: SessionUseCases
+    ) {
+        operator fun invoke(test: String) {
+            val testHtml = context.assets.open("tests/$test.html")
+                .bufferedReader().use {
+                    it.readText()
+                }
+
+            sessionUseCases.loadData(
+                data = testHtml,
+                mimeType = "text/html",
+                tabId = tabsUseCases.addTab(
+                    "about:test:$test",
+                    selectTab = true
+                )
+            )
+        }
+    }
+
     class ClearDataUseCase internal constructor(
         val prefs: AppPreferencesRepository,
         val engine: Engine,
@@ -148,6 +170,9 @@ class QwantUseCases(
     }
     val openPrivatePage: OpenPrivatePageUseCase by lazy {
         OpenPrivatePageUseCase(tabsUseCases, sessionUseCases, privateBrowsingHtml)
+    }
+    val openTestPageUseCase: OpenTestPageUseCase by lazy {
+        OpenTestPageUseCase(context, tabsUseCases, sessionUseCases)
     }
     val clearDataUseCase: ClearDataUseCase by lazy {
         ClearDataUseCase(appPreferencesRepository, core.engine, core.historyStorage, tabsUseCases)

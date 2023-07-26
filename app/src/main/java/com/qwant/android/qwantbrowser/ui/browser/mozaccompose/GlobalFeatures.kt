@@ -8,6 +8,7 @@ import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.downloads.DownloadFeature
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.permissions.PermissionsFeature
+import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts.PromptFeature
 import mozilla.components.browser.state.state.content.DownloadState
 
 
@@ -59,6 +60,11 @@ fun GlobalFeatures(
             }
         },
         showSnackbar = { message, action -> appViewModel.showSnackbar(message, action) }
+    )
+
+    PromptFeature(
+        store = viewModel.store,
+        exitFullscreenUseCase = viewModel.sessionUseCases.exitFullscreen
     )
 }
 

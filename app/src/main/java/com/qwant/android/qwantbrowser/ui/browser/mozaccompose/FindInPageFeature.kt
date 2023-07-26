@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
@@ -44,11 +42,7 @@ fun FindInPageFeature(
         state.selectedTab?.engineState?.engineSession
     }
     val findResultState by store.observeAsComposableState { state ->
-        if (state.selectedTab?.content?.findResults?.isNotEmpty() == true) {
-            state.selectedTab?.content?.findResults?.last()
-        } else {
-            null
-        }
+        state.selectedTab?.content?.findResults?.lastOrNull()
     }
 
     var searchText by remember { mutableStateOf("") }
@@ -59,7 +53,6 @@ fun FindInPageFeature(
     }
 
     LaunchedEffect(enabled, density) {
-        Log.d("QB_FIP", "update height to 56 from find in page")
         if (enabled()) {
             engineView.setDynamicToolbarMaxHeight(with(density) { 56.dp.roundToPx() })
         }
@@ -70,7 +63,7 @@ fun FindInPageFeature(
     }
 
     AnimatedVisibility(visible = enabled(), modifier = modifier) {
-        val focusManager = LocalFocusManager.current
+        // val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
 
         LaunchedEffect(true) {
@@ -87,7 +80,8 @@ fun FindInPageFeature(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     findResultState?.let {
                         val ordinal =
-                            if (it.numberOfMatches > 0) it.activeMatchOrdinal + 1 else it.activeMatchOrdinal
+                            if (it.numberOfMatches > 0) it.activeMatchOrdinal + 1
+                            else it.activeMatchOrdinal
                         Text(text = "$ordinal/${it.numberOfMatches}")
 
                         IconButton(onClick = {
@@ -102,6 +96,7 @@ fun FindInPageFeature(
                         }
                         IconButton(onClick = {
                             session?.findNext(forward = true)
+                            // TODO ask mozilla what the engine.clearFocus is for in findInPage
                             // engineView.asView().clearFocus()
                             // focusManager.clearFocus()
                         }) {
