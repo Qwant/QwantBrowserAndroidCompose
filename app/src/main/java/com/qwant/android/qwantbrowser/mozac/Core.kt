@@ -28,6 +28,8 @@ import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.prompts.PromptMiddleware
+import mozilla.components.feature.pwa.ManifestStorage
+import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
 import mozilla.components.support.base.android.NotificationsDelegate
 import javax.inject.Inject
@@ -78,6 +80,8 @@ class Core @Inject constructor(@ApplicationContext private val context: Context)
     val browserIcons by lazy { BrowserIcons(context, client).apply {
         this.install(engine, store)
     } }
+
+    val shortcutManager by lazy { WebAppShortcutManager(context, client, ManifestStorage(context)) }
 
     val historyStorage by lazy { History(context).apply {
         this.restore()

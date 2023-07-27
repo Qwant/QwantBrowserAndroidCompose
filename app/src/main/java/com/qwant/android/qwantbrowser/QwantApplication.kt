@@ -65,7 +65,7 @@ class QwantApplication : Application() {
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
         useCases.tabsUseCases.restore(mozac.sessionStorage).invokeOnCompletion {
             if (mozac.store.state.tabs.isEmpty()) {
-                useCases.qwantUseCases.openHomePage(MainScope())
+                useCases.qwantUseCases.openQwantPage(MainScope())
             }
         }
 

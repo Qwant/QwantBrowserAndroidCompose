@@ -24,9 +24,12 @@
         tools:targetApi="33">
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleInstance"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout|uiMode"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.QwantBrowserCompose">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,12 +37,18 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.APP_BROWSER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".intent.IntentReceiverActivity"
+            android:exported="true">
 
             <!-- Needed for default browser -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="mozilla.components.pwa.category.SHORTCUT" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
@@ -54,12 +63,35 @@
                 <data android:mimeType="text/plain"/>
                 <data android:mimeType="application/xhtml+xml"/>
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.WEB_SEARCH"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="mozilla.components.feature.pwa.VIEW_PWA" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="mozilla.components.pwa.category.SHORTCUT" />
+                <data android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name="com.qwant.android.qwantbrowser.legacy.onboarding.OnboardingActivity"
             android:screenOrientation="portrait"
-        />
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Downloads -->
         <service android:name=".mozac.downloads.DownloadService" />

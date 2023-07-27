@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.usecases
 import android.content.Context
 import android.util.Log
 import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.preferences.app.AppPreferences
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
@@ -32,21 +31,23 @@ class QwantUseCases(
             it.readText()
         }
 
-    class OpenHomePageUseCase internal constructor(
+    class OpenQwantPageUseCase internal constructor(
         private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
-        private val tabsUseCases: TabsUseCases
+        private val tabsUseCases: TabsUseCases,
     ) {
-        suspend operator fun invoke(private: Boolean = false) {
+        suspend operator fun invoke(search: String? = null, private: Boolean = false) {
+            val base = frontEndPreferencesRepository.homeUrl.first()
+            val url = search?.let { "$base&q=${it.urlEncode()}" } ?: base
             tabsUseCases.addTab.invoke(
-                frontEndPreferencesRepository.homeUrl.first(),
+                url,
                 selectTab = true,
                 private = private
             )
         }
 
-        operator fun invoke(coroutineScope: CoroutineScope, private: Boolean = false) {
+        operator fun invoke(coroutineScope: CoroutineScope, search: String? = null, private: Boolean = false) {
             coroutineScope.launch {
-                invoke(private)
+                invoke(search, private)
             }
         }
     }
@@ -161,9 +162,8 @@ class QwantUseCases(
         }
     }
 
-
-    val openHomePage: OpenHomePageUseCase by lazy {
-        OpenHomePageUseCase(frontEndPreferencesRepository, tabsUseCases)
+    val openQwantPage: OpenQwantPageUseCase by lazy {
+        OpenQwantPageUseCase(frontEndPreferencesRepository, tabsUseCases)
     }
     val loadSERPPage: LoadSERPPageUseCase by lazy {
         LoadSERPPageUseCase(frontEndPreferencesRepository, sessionUseCases)

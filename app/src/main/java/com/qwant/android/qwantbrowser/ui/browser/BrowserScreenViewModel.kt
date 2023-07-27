@@ -9,12 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
-import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.selectedTab
 // import mozilla.components.concept.awesomebar.AwesomeBar
@@ -104,6 +104,14 @@ class BrowserScreenViewModel @Inject constructor(
     var showFindInPage by mutableStateOf(false)
         private set
 
+    val isShortcutSupported = useCases.webAppUseCases.isPinningSupported()
+
+    fun addShortcutToHomeScreen() {
+        viewModelScope.launch {
+            useCases.webAppUseCases.addToHomescreen()
+        }
+    }
+
     val reloadUrl = useCases.sessionUseCases.reload
     val stopLoading = useCases.sessionUseCases.stopLoading
     val goBack = useCases.sessionUseCases.goBack
@@ -133,7 +141,7 @@ class BrowserScreenViewModel @Inject constructor(
         if (private) {
             useCases.qwantUseCases.openPrivatePage()
         } else {
-            useCases.qwantUseCases.openHomePage(viewModelScope, private = false)
+            useCases.qwantUseCases.openQwantPage(viewModelScope, private = false)
         }
         toolbarState.updateFocus(true)
     }

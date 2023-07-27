@@ -147,11 +147,13 @@ fun PageActions(
                 onClick = { context.share(url) }
             )
         }
-        DropdownMenuItem(
-            text = { Text(text = "Ajouter à l'écran d'accueil") },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_screen), contentDescription = "Ajouter à l'écran d'accueil") },
-            onClick = { /* TODO use webAppFeature */ }
-        )
+        if (viewModel.isShortcutSupported) {
+            DropdownMenuItem(
+                text = { Text(text = "Ajouter à l'écran d'accueil") },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_screen), contentDescription = "Ajouter à l'écran d'accueil") },
+                onClick = { viewModel.addShortcutToHomeScreen() }
+            )
+        }
         DropdownMenuItem(
             text = { Text(text = "Version ordinateur") },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_laptop), contentDescription = "Version ordinateur") },
