@@ -127,6 +127,7 @@ dependencies {
     implementation "org.mozilla.components:feature-contextmenu:$mozac_version"
     implementation "org.mozilla.components:feature-sitepermissions:$mozac_version"
     implementation "org.mozilla.components:feature-downloads:$mozac_version"
+    implementation "org.mozilla.components:feature-app-links:$mozac_version"
     implementation "org.mozilla.components:feature-prompts:$mozac_version"
     implementation "org.mozilla.components:support-utils:$mozac_version"
     implementation "org.mozilla.components:support-ktx:$mozac_version"

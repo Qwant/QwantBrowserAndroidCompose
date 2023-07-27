@@ -152,6 +152,7 @@ class FrontEndPreferencesRepository @Inject constructor(
         }
     }
 
+    // TODO add VideosOnQwant frontend setting
     suspend fun updateVideosOnQwant(playOnQwant: Boolean) {
         datastore.updateData { preferences ->
             preferences.toBuilder().setVideosOnQwant(playOnQwant).build()
