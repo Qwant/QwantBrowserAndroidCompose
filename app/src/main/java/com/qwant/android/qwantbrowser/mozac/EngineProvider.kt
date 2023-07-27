@@ -12,6 +12,7 @@ import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
+import org.mozilla.geckoview.ContentBlocking
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
 
@@ -23,6 +24,9 @@ object EngineProvider {
         if (runtime == null) {
             val builder = GeckoRuntimeSettings.Builder()
 
+            // TODO explore runtime settings
+            // TODO runtime builder.contentBlocking(...)
+            // TODO set debug attribute of runtime relative to build type
             builder.aboutConfigEnabled(false)
             builder.consoleOutput(false)
             builder.debugLogging(false)

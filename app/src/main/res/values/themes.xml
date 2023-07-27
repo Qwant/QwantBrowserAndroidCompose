@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.QwantBrowserCompose" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Original: <style name="Theme.QwantBrowserCompose" parent="android:Theme.Material.Light.NoActionBar" /> -->
+    <!-- Needed for onboarding compatibility. Revert to original when onboarding migration is complete -->
+    <style name="Theme.QwantBrowserCompose" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

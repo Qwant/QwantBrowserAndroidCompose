@@ -74,6 +74,9 @@ dependencies {
     implementation 'androidx.paging:paging-runtime:3.1.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
+    // Legacy Onboarding
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
     // Old preferences for migration. Remove after migration is complete
     implementation 'androidx.preference:preference:1.2.0'
 

@@ -56,6 +56,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.qwant.android.qwantbrowser.legacy.onboarding.OnboardingActivity"
+            android:screenOrientation="portrait"
+        />
+
         <!-- Downloads -->
         <service android:name=".mozac.downloads.DownloadService" />
         <provider android:name=".mozac.downloads.DownloadsFileProvider"

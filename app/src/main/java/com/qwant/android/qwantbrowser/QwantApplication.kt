@@ -35,6 +35,7 @@ class QwantApplication : Application() {
         }
 
         mozac.engine.warmUp()
+        mozac.engine.speculativeConnect("https://www.qwant.com/")
         restoreBrowserState()
 
         // Should be removed in futur version, once mozilla has fully migrated

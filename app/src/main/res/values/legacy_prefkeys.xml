@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_key_first_launch" translatable="false">pref_key_first_launch</string>
+</resources>
