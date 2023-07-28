@@ -91,7 +91,27 @@
         <activity
             android:name="com.qwant.android.qwantbrowser.legacy.onboarding.OnboardingActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             tools:ignore="LockedOrientationActivity" />
+
+        <!-- Assist -->
+        <activity
+            android:name=".legacy.assist.Assist"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:launchMode="singleTask"
+            android:exported="true" />
+        <receiver
+            android:name=".legacy.assist.WidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/assist_config" />
+        </receiver>
 
         <!-- Downloads -->
         <service android:name=".mozac.downloads.DownloadService" />

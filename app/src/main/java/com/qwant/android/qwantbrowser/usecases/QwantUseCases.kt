@@ -26,17 +26,29 @@ class QwantUseCases(
     sessionUseCases: SessionUseCases,
     tabsUseCases: TabsUseCases,
 ) {
+    var baseUrl = ""
+    init {
+        MainScope().launch {
+            Log.d("QB_WIDGET", "Starting url collection")
+            frontEndPreferencesRepository.homeUrl
+                .collect {
+                    Log.d("QB_WIDGET", "base url changed")
+                    baseUrl = it
+                }
+        }
+    }
+
     private val privateBrowsingHtml = context.assets.open("privatebrowsing.html")
         .bufferedReader().use {
             it.readText()
         }
 
-    class OpenQwantPageUseCase internal constructor(
+    inner class OpenQwantPageUseCase internal constructor(
         private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
         private val tabsUseCases: TabsUseCases,
     ) {
         suspend operator fun invoke(search: String? = null, private: Boolean = false) {
-            val base = frontEndPreferencesRepository.homeUrl.first()
+            val base = baseUrl // frontEndPreferencesRepository.homeUrl.first()
             val url = search?.let { "$base&q=${it.urlEncode()}" } ?: base
             tabsUseCases.addTab.invoke(
                 url,
@@ -48,6 +60,22 @@ class QwantUseCases(
         operator fun invoke(coroutineScope: CoroutineScope, search: String? = null, private: Boolean = false) {
             coroutineScope.launch {
                 invoke(search, private)
+            }
+        }
+    }
+
+    inner class GetQwantUrlUseCase internal constructor(
+        private val frontEndPreferencesRepository: FrontEndPreferencesRepository
+    ) {
+        operator fun invoke(search: String? = null, widget: Boolean = false): String {
+            val base = baseUrl //frontEndPreferencesRepository.homeUrl.first()
+            val withSearch = search?.let { "$base&q=${it.urlEncode()}" } ?: base
+            return if (widget) "$withSearch + &widget=1" else withSearch
+        }
+
+        operator fun invoke(coroutineScope: CoroutineScope, search: String? = null, widget: Boolean = false, then: (String) -> Unit) {
+            coroutineScope.launch {
+                then(invoke(search, widget))
             }
         }
     }
@@ -164,6 +192,9 @@ class QwantUseCases(
 
     val openQwantPage: OpenQwantPageUseCase by lazy {
         OpenQwantPageUseCase(frontEndPreferencesRepository, tabsUseCases)
+    }
+    val getQwantBaseUrl: GetQwantUrlUseCase by lazy {
+        GetQwantUrlUseCase(frontEndPreferencesRepository)
     }
     val loadSERPPage: LoadSERPPageUseCase by lazy {
         LoadSERPPageUseCase(frontEndPreferencesRepository, sessionUseCases)
