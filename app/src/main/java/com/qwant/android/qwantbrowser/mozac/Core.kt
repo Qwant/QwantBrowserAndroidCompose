@@ -49,10 +49,10 @@ class Core @Inject constructor(@ApplicationContext private val context: Context)
             historyTrackingDelegate = HistoryDelegate(lazy { historyStorage }),
             requestInterceptor = appRequestInterceptor,
             // TODO centralise ua
-            userAgentString = "Mozilla/5.0 (Android 10; Mobile; rv:115.0) Gecko/115.0 Firefox/115.0" // context.getString(R.string.qwant_base_useragent) + context.getString(R.string.qwant_useragent_ext)
-             /* remoteDebuggingEnabled = false, // prefs.getBoolean(context.getPreferenceKey(pref_key_remote_debugging), false),
-             trackingProtectionPolicy = TrackingProtectionPolicy.recommended(), // createTrackingProtectionPolicy(prefs),
-             testingModeEnabled = false, */
+            userAgentString = "Mozilla/5.0 (Android 10; Mobile; rv:115.0) Gecko/115.0 Firefox/115.0", // context.getString(R.string.qwant_base_useragent) + context.getString(R.string.qwant_useragent_ext)
+            // trackingProtectionPolicy = TrackingProtectionPolicy.recommended(), // createTrackingProtectionPolicy(prefs),
+            remoteDebuggingEnabled = true, // prefs.getBoolean(context.getPreferenceKey(pref_key_remote_debugging), false),
+            testingModeEnabled = true
         )
         EngineProvider.createEngine(context, defaultSettings)
     }

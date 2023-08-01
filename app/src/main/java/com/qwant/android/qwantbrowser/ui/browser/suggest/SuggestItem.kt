@@ -46,14 +46,15 @@ fun <T> IntRange.toAnnotatedStringRange(item: T) : AnnotatedString.Range<T> =
 ): AnnotatedString {
     val color = LocalContentColor.current
     return AnnotatedString(
-        this,
+        text = this,
         spanStyles = Regex(search, setOf(RegexOption.IGNORE_CASE, RegexOption.LITERAL))
-            .findAll(this)
-            .map { it.range.toAnnotatedStringRange(SpanStyle(
-                color = color.copy(0.8f),
-                fontWeight = FontWeight.Normal
-            )) }
-            .toList()
+            .find(input = this)?.let { listOf(
+                it.range.toAnnotatedStringRange(SpanStyle(
+                    color = color.copy(0.8f),
+                    fontWeight = FontWeight.Normal
+                ))
+            )}
+            ?: listOf()
     )
 }
 

@@ -1,9 +1,10 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,16 +15,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
+import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.*
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.*
@@ -46,6 +51,8 @@ fun BrowserScreen(
     openNewTab: TabOpening = TabOpening.NONE
 ) {
     val currentUrl by viewModel.currentUrl.collectAsState()
+    val tabCount by viewModel.tabCount.collectAsState()
+    val private by appViewModel.isPrivate.collectAsState()
 
     /* TODO Pull To Refresh
     var refreshing by remember { mutableStateOf(false) }
@@ -65,54 +72,75 @@ fun BrowserScreen(
             else -> {}
         }
     }
-
-    if (currentUrl != null /* TODO wait also for toolbar position to be ready before first display */ ) {
-        HideOnScrollToolbar(
-            toolbarState = viewModel.toolbarState,
-            toolbar = { modifier ->
-                Toolbar(
-                    onTextCommit = { text -> viewModel.commitSearch(text) },
-                    modifier = modifier,
-                    toolbarState = viewModel.toolbarState,
-                    browserIcons = viewModel.browserIcons,
-                    beforeTextField = { QwantVIPAction(viewModel) },
-                    beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && !(currentUrl?.isQwantUrl() ?: false) },
-                    afterTextField = { AfterActions(navigateTo, viewModel) },
-                    afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
-                )
-            },
-            height = 56.dp,
-            modifier = Modifier.fillMaxSize(),
-            lock = { viewModel.showFindInPage }
-        ) { modifier ->
-            // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
-                GlobalFeatures(appViewModel, viewModel)
-
-                EngineView(
-                    engine = viewModel.engine,
-                    modifier = modifier
-                ) { engineView ->
-                    EngineViewFeatures(engineView, viewModel)
-                }
-
-                // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-            // }
+    LaunchedEffect(tabCount) {
+        if (tabCount == 0) {
+            viewModel.openNewQwantTab()
         }
-    } else {
-        Icon(
-            painter = painterResource(id = R.drawable.qwant_logo),
-            contentDescription = "Logo qwant",
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(64.dp)
-        )
+    }
+
+    val activity = LocalContext.current.activity
+    Onboarding { success ->
+        if (success) {
+            viewModel.toolbarState.updateFocus(true)
+        } else {
+            activity?.quit()
+        }
+    }
+
+    /* TODO wait for toolbar position to be ready before first display */
+    HideOnScrollToolbar(
+        toolbarState = viewModel.toolbarState,
+        toolbar = { modifier ->
+            Toolbar(
+                onTextCommit = { text -> viewModel.commitSearch(text) },
+                modifier = modifier,
+                toolbarState = viewModel.toolbarState,
+                browserIcons = viewModel.browserIcons,
+                beforeTextField = { QwantVIPAction(viewModel) },
+                beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() ?: false && !(currentUrl?.isQwantUrl() ?: false) },
+                afterTextField = { AfterActions(navigateTo, viewModel, appViewModel) },
+                afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
+            )
+        },
+        height = 56.dp,
+        modifier = Modifier.fillMaxSize(),
+        lock = { viewModel.showFindInPage }
+    ) { modifier ->
+        if (currentUrl != null) {
+            if (currentUrl == "" && private) {
+                HomePrivateBrowsing(modifier)
+            } else {
+                // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
+                    GlobalFeatures(appViewModel, viewModel)
+
+                    EngineView(
+                        engine = viewModel.engine,
+                        modifier = modifier
+                    ) { engineView ->
+                        EngineViewFeatures(engineView, viewModel)
+                    }
+
+                    // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+                //}
+            }
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.qwant_logo),
+                contentDescription = "Logo qwant",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(64.dp)
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to global widgets
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Box(
@@ -120,8 +148,9 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
             .width(40.dp)
             .fillMaxHeight()
             .padding(8.dp)
-            .clickable(
+            .combinedClickable(
                 onClick = onClick,
+                onLongClick = onLongClick,
                 enabled = true,
                 role = Role.Button,
                 interactionSource = remember { MutableInteractionSource() },
@@ -184,66 +213,78 @@ fun QwantVIPAction(
             }
         }
 
-        Dropdown(
+        if (state?.popupSession != null) {
+            Dialog(
+                properties = DialogProperties(usePlatformDefaultWidth = false),
+                onDismissRequest = { viewModel.closeQwantVIPPopup() }
+            ) {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    var engineView: EngineView? by remember { mutableStateOf(null) }
+                    val sessionObserver = remember {
+                        VipSessionObserver(
+                            closePopup = { viewModel.closeQwantVIPPopup() },
+                            loadUrl = {
+                                viewModel.tabsUseCases.addTab(it, selectTab = true)
+                                viewModel.closeQwantVIPPopup()
+                            }
+                        )
+                    }
+
+                    val configuration = LocalConfiguration.current
+
+                    DisposableEffect(engineView, state?.popupSession) {
+                        state?.popupSession?.let {
+                            it.register(sessionObserver)
+                            engineView?.render(it)
+                        }
+                        onDispose {
+                            state?.popupSession?.unregister(sessionObserver)
+                            engineView?.release()
+                        }
+                    }
+
+                    AndroidView(
+                        modifier = Modifier.size(
+                            width = configuration.screenWidthDp.dp.times(0.75f),
+                            height = configuration.screenHeightDp.dp.times(0.75f)
+                        ),
+                        factory = { context ->
+                            viewModel.engine.createView(context).asView()
+                        },
+                        update = { view ->
+                            engineView = view as EngineView
+                        }
+                    )
+                }
+            }
+        }
+        /* Dropdown(
             expanded = state?.popupSession != null,
             onDismissRequest = { viewModel.closeQwantVIPPopup() },
-            modifier = Modifier.background(Color.White).padding(horizontal = 8.dp)
+            modifier = Modifier
+                .background(Color.White)
+                .padding(horizontal = 8.dp)
         ) {
-            var engineView: EngineView? by remember { mutableStateOf(null) }
-            var sessionObserver = remember {
-                VipSessionObserver(
-                    closePopup = { viewModel.closeQwantVIPPopup() },
-                    loadUrl = {
-                        viewModel.tabsUseCases.addTab(it, selectTab = true)
-                        viewModel.closeQwantVIPPopup()
-                    }
-                )
-            }
 
-            val configuration = LocalConfiguration.current
-
-            DisposableEffect(engineView, state?.popupSession) {
-                state?.popupSession?.let {
-                    it.register(sessionObserver)
-                    engineView?.render(it)
-                }
-                onDispose {
-                    state?.popupSession?.unregister(sessionObserver)
-                    engineView?.release()
-                }
-            }
-
-            AndroidView(
-                modifier = Modifier.size(
-                    width = configuration.screenWidthDp.dp.times(0.75f),
-                    height = configuration.screenHeightDp.dp.times(0.75f)
-                ),
-                factory = { context ->
-                    viewModel.engine.createView(context).asView()
-                },
-                update = { view ->
-                    engineView = view as EngineView
-                }
-            )
-        }
+        } */
     }
 }
 
 @Composable
 fun AfterActions(
     navigateTo: (NavDestination) -> Unit,
-    viewModel: BrowserScreenViewModel
+    viewModel: BrowserScreenViewModel,
+    appViewModel: QwantApplicationViewModel
 ) {
     Row {
-        ZapButton()
+        ZapButton { appViewModel.zap() }
         TabsButton(navigateTo, viewModel)
-        BrowserMenuButton(navigateTo, viewModel)
+        BrowserMenuButton(navigateTo, viewModel, appViewModel)
     }
 }
 
 @Composable fun ZapButton(
-    // navigateTo: (NavDestination) -> Unit,
-    // viewModel: BrowserScreenViewModel
+    zap: () -> Unit
 ) {
     val theme = LocalQwantTheme.current
     val zapImageID = when {
@@ -251,7 +292,7 @@ fun AfterActions(
         else -> R.drawable.icons_zap
     }
 
-    ToolbarAction(onClick = { /* navigateTo(NavDestination.Preferences) */ }) {
+    ToolbarAction(onClick = { zap() }) {
         Image(
             painter = painterResource(id = zapImageID),
             contentDescription = "Zap",
@@ -267,34 +308,70 @@ fun TabsButton(
     viewModel: BrowserScreenViewModel
 ) {
     val tabCount by viewModel.tabCount.collectAsState()
+    var showTabsDropdown by remember { mutableStateOf(false) }
 
-    ToolbarAction(onClick = { navigateTo(NavDestination.Tabs) }) {
-        BadgedBox(
-            badge = {
-                if (LocalQwantTheme.current.private) {
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier
-                            .offset(x = (-4).dp, y = 2.dp)
-                            .border(
-                                1.dp,
-                                MaterialTheme.colorScheme.primaryContainer,
-                                CircleShape
-                            )
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.icons_privacy_mask_small),
-                            contentDescription = "private navigation indicator"
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(3.dp)
+    Box {
+        ToolbarAction(
+            onClick = { navigateTo(NavDestination.Tabs) },
+            onLongClick = { showTabsDropdown = true }
         ) {
-            TabCounter(tabCount)
+            BadgedBox(
+                badge = {
+                    if (LocalQwantTheme.current.private) {
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier
+                                .offset(x = (-4).dp, y = 2.dp)
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                    CircleShape
+                                )
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.icons_privacy_mask_small),
+                                contentDescription = "private navigation indicator"
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(3.dp)
+            ) {
+                TabCounter(tabCount)
+            }
+        }
+        Dropdown(
+            expanded = showTabsDropdown,
+            onDismissRequest = { showTabsDropdown = false },
+        ) {
+            DropdownMenuItem(
+                text = { Text("Fermer cet onglet") }, // TODO text
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close this tab")},
+                onClick = {
+                    viewModel.closeCurrentTab()
+                    showTabsDropdown = false
+                }
+            )
+            Divider(modifier = Modifier.padding(horizontal = 16.dp))
+            DropdownMenuItem(
+                text = { Text("Open tab") }, // TODO text
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "add tab")},
+                onClick = {
+                    viewModel.openNewQwantTab(false)
+                    showTabsDropdown = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Open private tab") }, // TODO text
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "add private tab")},
+                onClick = {
+                    viewModel.openNewQwantTab(true)
+                    showTabsDropdown = false
+                }
+            )
         }
     }
 }
@@ -302,7 +379,8 @@ fun TabsButton(
 @Composable
 fun BrowserMenuButton(
     navigateTo: (NavDestination) -> Unit,
-    viewModel: BrowserScreenViewModel
+    viewModel: BrowserScreenViewModel,
+    appViewModel: QwantApplicationViewModel
 ) {
     Box {
         var showMenu by remember { mutableStateOf(false) }
@@ -321,6 +399,7 @@ fun BrowserMenuButton(
             onDismissRequest= { showMenu = false },
             navigateTo = navigateTo,
             viewModel = viewModel,
+            applicationViewModel = appViewModel
         )
     }
 }

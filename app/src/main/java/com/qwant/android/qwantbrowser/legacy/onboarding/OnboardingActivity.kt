@@ -177,12 +177,13 @@ class OnboardingActivity : AppCompatActivity() {
             visibility = View.VISIBLE
             text = getString(R.string.onboarding_navigation_validate)
             setOnClickListener {
-                val prefkey = resources.getString(R.string.pref_key_show_onboarding)
+                // Done in the caller activity
+                /* val prefkey = resources.getString(R.string.pref_key_show_onboarding)
                 val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                 val prefEditor = prefs.edit()
                 prefEditor.putBoolean(prefkey, false)
-                prefEditor.apply()
-
+                prefEditor.apply() */
+                setResult(RESULT_OK)
                 finish()
             }
         }
@@ -224,9 +225,11 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun closeOnboardingAndQuit() {
-        val intent = Intent(this, MainActivity::class.java)
+        setResult(RESULT_CANCELED)
+        finish()
+        /* val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         intent.action = "CLOSE_APP"
-        startActivity(intent)
+        startActivity(intent) */
     }
 }

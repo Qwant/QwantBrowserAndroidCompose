@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.preferences
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceSelectionPopup
 import com.qwant.android.qwantbrowser.ui.widgets.BigButton
 import mozilla.components.concept.engine.Engine
@@ -28,7 +28,8 @@ private data class ClearBrowsingDataOption(
 
 @Composable
 fun ClearDataPreference(
-    viewModel: PreferencesViewModel
+    viewModel: PreferencesViewModel,
+    applicationViewModel: QwantApplicationViewModel
 ) {
     val prefs by viewModel.clearDataPreferences.collectAsState()
 
@@ -86,7 +87,7 @@ fun ClearDataPreference(
                     }
                 }
                 CheckBoxRow(
-                    label = R.string.cleardata_tabs,
+                    label = R.string.cleardata_tabs, // TODO replace with "history" string
                     checked = prefs.history,
                     onCheckedChange = {
                         viewModel.updateClearDataPreferences(prefs.copy(history = it))
@@ -105,17 +106,19 @@ fun ClearDataPreference(
                     enabled = false
                 )
 
+                var zapEnabled by remember { mutableStateOf(true) }
                 BigButton(
                     text = "Use zap now",
                     icon = Icons.Default.Clear, // TODO replace icon
+                    enabled = zapEnabled,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = {
-                        // TODO Zap animation
-                        Log.d("QB_CLEARDATA", "Clearing data $prefs")
-                        viewModel.clearData { success ->
-                            Log.d("QB_CLEARDATA", "Clear data terminated with success $success")
+                    onClick = { applicationViewModel.zap { success ->
+                        if (success) {
+                            zapEnabled = false
+                        } else {
+                            // TODO handle zap failed
                         }
-                    }
+                    } }
                 )
             }
         },

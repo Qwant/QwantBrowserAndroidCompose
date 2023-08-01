@@ -13,6 +13,7 @@ import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.WebExtensionAction
@@ -133,7 +134,7 @@ class BrowserScreenViewModel @Inject constructor(
             // useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
             useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
-            useCases.qwantUseCases.loadSERPPage(viewModelScope, searchText)
+            useCases.qwantUseCases.loadSERPPage(searchText)
         }
     }
 
@@ -141,12 +142,23 @@ class BrowserScreenViewModel @Inject constructor(
         if (private) {
             useCases.qwantUseCases.openPrivatePage()
         } else {
-            useCases.qwantUseCases.openQwantPage(viewModelScope, private = false)
+            useCases.qwantUseCases.openQwantPage(private = false)
         }
-        toolbarState.updateFocus(true)
+        // TODO use invokeOnCompletion from store.dispatch instead of delay,
+        //  but this needs QwantUseCases to be recoded using dispatch directly
+        viewModelScope.launch {
+            delay(100)
+            toolbarState.updateFocus(true)
+        }
     }
 
-    // TODO Move to dedicated VIPExtensionState
+    fun closeCurrentTab() {
+        mozac.store.state.selectedTabId?.let {
+            useCases.tabsUseCases.removeTab(it, selectParentIfExists = true)
+        }
+    }
+
+    // TODO Move to dedicated VIPExtensionState with browser action and icon
     val vipExtensionState = mozac.store.flow()
         .mapNotNull { state -> state.extensions[QwantVIPFeature.ID] }
         .stateIn(

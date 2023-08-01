@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -61,8 +62,9 @@ fun ToolbarTextField(
             }
     ) { innerTextField ->
         ToolbarDecorator(
-            hasFocus = toolbarState.hasFocus,
-            isEmpty = toolbarState.text.text.isEmpty(),
+            // hasFocus = toolbarState.hasFocus,
+            // isEmpty = toolbarState.text.text.isEmpty(),
+            state = toolbarState,
             hintColor = mergedStyle.color.copy(alpha = 0.6f),
             innerTextField = innerTextField,
             trailingIcons = {

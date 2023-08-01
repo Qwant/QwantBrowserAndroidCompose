@@ -9,7 +9,7 @@ fun ProgressBar(
     loadingProgress: Float,
     modifier: Modifier = Modifier
 ) {
-    if (loadingProgress < 1) {
+    if (loadingProgress < 1 && loadingProgress > 0) {
         LinearProgressIndicator(
             progress = loadingProgress,
             modifier = modifier

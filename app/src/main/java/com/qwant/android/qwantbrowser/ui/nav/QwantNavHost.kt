@@ -58,6 +58,6 @@ fun QwantNavHost(
         ) }
         composable(NavDestination.History.match) { HistoryScreen(onClose = onBrowse) }
         composable(NavDestination.Bookmarks.match) { BookmarksScreen(onBrowse, appViewModel) }
-        composable(NavDestination.Preferences.match) { PreferencesScreen(onClose = onBrowse) }
+        composable(NavDestination.Preferences.match) { PreferencesScreen(onClose = onBrowse, applicationViewModel = appViewModel) }
     }
 }

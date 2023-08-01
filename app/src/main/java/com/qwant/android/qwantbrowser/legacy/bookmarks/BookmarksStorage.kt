@@ -101,14 +101,6 @@ class BookmarksStorage(private var context: Context) : SuggestionProvider {
 
     override suspend fun getSuggestions(text: String): List<Suggestion> = getSuggestionsRec(text, bookmarksList)
 
-   /*  {
-        return this.getSuggestions_rec(text, bookmarksList)
-            .filter { it.contains(text, ignoreCase = true) || pageMeta[it]?.title?.contains(text, ignoreCase = true) == true }
-            .sortedByDescending { url -> pages[url]?.maxBy { visit -> visit.timestamp }?.timestamp }
-            .map { Suggestion(this, pageMeta[it]?.title, it) }
-            .take(3) // TODO make history provider result maximum dynamic
-    } */
-
     private fun getSuggestionsRec(text: String, bookmarks: List<BookmarkItemV2>): List<Suggestion> {
        return bookmarks
             .filter { it.type == BookmarkItemV2.BookmarkType.FOLDER && it.children.isNotEmpty() }

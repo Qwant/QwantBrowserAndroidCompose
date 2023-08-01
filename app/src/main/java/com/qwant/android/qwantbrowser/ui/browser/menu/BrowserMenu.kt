@@ -16,6 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ext.activity
+import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.theme.Grey000Alpha16
@@ -27,8 +29,12 @@ fun BrowserMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     navigateTo: (NavDestination) -> Unit,
-    viewModel: BrowserScreenViewModel
+    viewModel: BrowserScreenViewModel,
+    applicationViewModel: QwantApplicationViewModel
 ) {
+
+    val showQuitApp by applicationViewModel.zapOnQuit.collectAsState()
+
     Dropdown(
         expanded = expanded,
         onDismissRequest= onDismissRequest
@@ -42,10 +48,26 @@ fun BrowserMenu(
         PageActions(viewModel, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
         DropdownMenuItem(
-            text = { Text(text = "Settings") },
+            text = { Text(text = "Settings") }, // TODO text + trads
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_settings), contentDescription = "Settings") },
             onClick = { navigateTo(NavDestination.Preferences) }
         )
+        if (showQuitApp) {
+            val activity = (LocalContext.current.activity)
+            DropdownMenuItem(
+                text = { Text(text = "Quit") }, // TODO text + trads
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Quit") },
+                onClick = {
+                    applicationViewModel.zap { success ->
+                        if (success) {
+                            activity?.quit()
+                        } else {
+                            // TODO handle clear on quit fails
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 

@@ -26,8 +26,9 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Used by onboarding when cancelling.
         if (intent.action == "CLOSE_APP") { // should be called with flag Intent.FLAG_ACTIVITY_NEW_TASK
-            this.quitApp()
+            this.quit()
             return
         }
 
@@ -42,12 +43,12 @@ class MainActivity : FragmentActivity() {
             QwantBrowserApp(intent.action)
         }
 
-        checkFirstLaunch()
-        launchOnboardingIfNecessary() // TODO replace onboarding activity by compose component
+        // checkFirstLaunch()
+        // launchOnboardingIfNecessary() // TODO replace onboarding activity by compose component
     }
 
     // TODO replace legacy preferences
-    private fun checkFirstLaunch() {
+    /* private fun checkFirstLaunch() {
         val prefkeyFirstLaunch = resources.getString(R.string.pref_key_first_launch)
         val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val firstLaunch = prefs.getBoolean(prefkeyFirstLaunch, true)
@@ -60,10 +61,10 @@ class MainActivity : FragmentActivity() {
                 commit()
             }
         }
-    }
+    } */
 
     // Legacy onboarding
-    private fun launchOnboardingIfNecessary() {
+    /* private fun launchOnboardingIfNecessary() {
         val prefkey = resources.getString(R.string.pref_key_show_onboarding)
         val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val shouldShowOnboarding = prefs.getBoolean(prefkey, false)
@@ -72,27 +73,9 @@ class MainActivity : FragmentActivity() {
             i.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(i)
         }
-    }
+    } */
 
-    private fun quitApp() {
-        /* QwantUtils.clearDataOnQuit(this,
-            success = {
-                Toast.makeText(this, R.string.cleardata_done, Toast.LENGTH_LONG).show()
-                this.trueQuit()
-            },
-            error = {
-                if (it.message == "disabled") {
-                    this.trueQuit()
-                } else {
-                    Toast.makeText(this, R.string.cleardata_failed, Toast.LENGTH_LONG).show()
-                }
-            }
-        ) */
-        // TODO Automatic zap on quit if active
-        trueQuit()
-    }
-
-    private fun trueQuit() {
+    fun quit() {
         finishAffinity()
         exitProcess(0)
     }

@@ -76,19 +76,10 @@ fun TabsScreen(
             }
 
             Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                /* IconButton(onClick = {}) {
-                    Image(
-                        painter = painterResource(id = if (private) R.drawable.icons_zap_night else R.drawable.icons_zap),
-                        contentDescription = "Zap"
-                    )
-                } */
-                ZapButton()
+                ZapButton(zap = { appViewModel.zap() })
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
                     Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Tabs")
                 }
-                /* IconButton(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
-                    Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Tabs")
-                } */
                 TabsMenuMore(
                     tabsViewOption = tabsViewOption,
                     onTabsViewOptionChange = { tabsViewModel.updateTabsViewOption(it) },

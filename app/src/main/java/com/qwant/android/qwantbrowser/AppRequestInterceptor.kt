@@ -34,6 +34,7 @@ class AppRequestInterceptor @Inject constructor(
     private var openLinksInApp = false
 
     init {
+        // TODO don't use globalscope ! create dedicated scope instead
         GlobalScope.launch {
             appPreferencesRepository.flow
                 .map { it.openLinksInApp }

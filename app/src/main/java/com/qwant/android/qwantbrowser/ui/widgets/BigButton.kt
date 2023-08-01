@@ -20,22 +20,24 @@ fun BigButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Button(
         shape = RoundedCornerShape(50),
         modifier = modifier,
-        onClick = { onClick() }
+        onClick = { onClick() },
+        enabled = enabled
     ) {
         Icon(
             icon, // painter = painterResource(R.drawable.ic_launcher_foreground),
-            tint = Color.White,
+            // tint = Color.White,
             contentDescription = text,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = text,
-            color = Color.White,
+            // color = Color.White,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }

@@ -2,13 +2,6 @@
 <resources>
     <string name="settings">Settings</string>
 
-    <!-- TODO Should be removed -->
-    <string name="settings_frontend_title">Qwant settings</string>
-    <string name="settings_frontend_interface_title">Qwant interface</string>
-    <string name="settings_frontend_search_title">Qwant search results</string>
-    <string name="settings_engine_title">Web engine settings</string>
-    <string name="settings_app_title">App settings</string>
-
     <string name="settings_group_general">Général</string>
     <string name="settings_group_langue">Langue</string>
     <string name="settings_group_privacy">Vie privée</string>
@@ -127,6 +120,7 @@
     <string name="cleardata_tabs_private">Opened private tabs</string>
 
     <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
+    <string name="clear_data_on_quit_description">Use quit button to be sure !!</string> <!-- TODO change this text -->
 
     <string name="qwant_details_label">Qwant App</string>
     <string name="qwant_details_description">%1$s\nBuild %2$s - Gecko %3$s</string>

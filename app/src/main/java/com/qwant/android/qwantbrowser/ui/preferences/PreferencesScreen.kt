@@ -1,11 +1,9 @@
 package com.qwant.android.qwantbrowser.ui.preferences
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,18 +17,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.openAppStorePage
-import com.qwant.android.qwantbrowser.preferences.app.TabsViewOption
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.AdultFilter
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
+import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.*
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
-import org.webrtc.voiceengine.BuildInfo
 
 @Composable
 fun PreferencesScreen(
     onClose: () -> Unit,
-    viewModel: PreferencesViewModel = hiltViewModel()
+    viewModel: PreferencesViewModel = hiltViewModel(),
+    applicationViewModel: QwantApplicationViewModel = hiltViewModel()
 ) {
     val appPrefs by viewModel.appPreferences.collectAsState()
     val frontEndPrefs by viewModel.frontEndPreferences.collectAsState()
@@ -200,10 +198,11 @@ fun PreferencesScreen(
             PreferenceGroupLabel(label = R.string.settings_group_privacy)
 
             // Paramètres de suppression de navigation
-            ClearDataPreference(viewModel)
+            ClearDataPreference(viewModel, applicationViewModel)
             // Supprimer les données à la fermeture
             PreferenceToggle(
                 label = R.string.clear_data_on_quit_label,
+                description = if (appPrefs.clearDataOnQuit) R.string.clear_data_on_quit_description else null,
                 value = appPrefs.clearDataOnQuit,
                 onValueChange = { viewModel.updateClearDataOnQuit(it) }
             )

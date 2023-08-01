@@ -1,7 +1,12 @@
 package com.qwant.android.qwantbrowser.usecases
 
 import android.content.Context
+import android.os.Build
+import android.text.Html
 import android.util.Log
+import androidx.core.text.htmlEncode
+import androidx.core.text.parseAsHtml
+import androidx.core.text.toSpanned
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
@@ -16,7 +21,9 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.urlEncode
+import java.nio.charset.Charset
 
+// TODO Hilt for QwantUseCases
 // TODO separate QwantUseCases into multiple use cases
 class QwantUseCases(
     context: Context,
@@ -28,89 +35,67 @@ class QwantUseCases(
 ) {
     var baseUrl = ""
     init {
+        // TODO use controlled scope for qwantUseCases
         MainScope().launch {
-            Log.d("QB_WIDGET", "Starting url collection")
             frontEndPreferencesRepository.homeUrl
-                .collect {
-                    Log.d("QB_WIDGET", "base url changed")
-                    baseUrl = it
-                }
+                .collect { baseUrl = it }
         }
     }
 
-    private val privateBrowsingHtml = context.assets.open("privatebrowsing.html")
-        .bufferedReader().use {
-            it.readText()
-        }
+    // Needed to get a lazy instance running before usage
+    fun warmUp() {}
+
+    /* private val privateBrowsingHtml = context.assets.open("privatebrowsing.html")
+        .bufferedReader().use { it.readText() }
+        .replace("{TITLE}", "La navigation priv&eacute;e") */
 
     inner class OpenQwantPageUseCase internal constructor(
-        private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
         private val tabsUseCases: TabsUseCases,
     ) {
-        suspend operator fun invoke(search: String? = null, private: Boolean = false) {
-            val base = baseUrl // frontEndPreferencesRepository.homeUrl.first()
-            val url = search?.let { "$base&q=${it.urlEncode()}" } ?: base
+        operator fun invoke(search: String? = null, private: Boolean = false) {
+            val url = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
             tabsUseCases.addTab.invoke(
                 url,
                 selectTab = true,
                 private = private
             )
         }
-
-        operator fun invoke(coroutineScope: CoroutineScope, search: String? = null, private: Boolean = false) {
-            coroutineScope.launch {
-                invoke(search, private)
-            }
-        }
     }
 
-    inner class GetQwantUrlUseCase internal constructor(
-        private val frontEndPreferencesRepository: FrontEndPreferencesRepository
-    ) {
+    inner class GetQwantUrlUseCase internal constructor() {
         operator fun invoke(search: String? = null, widget: Boolean = false): String {
-            val base = baseUrl //frontEndPreferencesRepository.homeUrl.first()
-            val withSearch = search?.let { "$base&q=${it.urlEncode()}" } ?: base
+            val withSearch = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
             return if (widget) "$withSearch + &widget=1" else withSearch
         }
-
-        operator fun invoke(coroutineScope: CoroutineScope, search: String? = null, widget: Boolean = false, then: (String) -> Unit) {
-            coroutineScope.launch {
-                then(invoke(search, widget))
-            }
-        }
     }
 
-    class LoadSERPPageUseCase internal constructor(
-        private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
+    inner class LoadSERPPageUseCase internal constructor(
         private val sessionUseCases: SessionUseCases
     ) {
-        suspend operator fun invoke(search: String) {
-            val base = frontEndPreferencesRepository.homeUrl.first()
-            sessionUseCases.loadUrl(url = "$base&q=${search.urlEncode()}")
-        }
-
-        operator fun invoke(coroutineScope: CoroutineScope, search: String) {
-            coroutineScope.launch {
-                invoke(search)
-            }
+        operator fun invoke(search: String) {
+            sessionUseCases.loadUrl(url = "$baseUrl&q=${search.urlEncode()}")
         }
     }
 
     class OpenPrivatePageUseCase internal constructor(
-        private val tabsUseCases: TabsUseCases,
-        private val sessionUseCases: SessionUseCases,
-        private val HtmlContent: String
+        private val tabsUseCases: TabsUseCases
     ) {
         operator fun invoke() {
-            sessionUseCases.loadData(
-                data = HtmlContent,
+            tabsUseCases.addTab(
+                "",
+                selectTab = true,
+                private = true
+            )
+
+            /* sessionUseCases.loadData(
+                data = htmlContent,
                 mimeType = "text/html",
                 tabId = tabsUseCases.addTab(
                     "about:privatebrowsing",
                     selectTab = true,
                     private = true
                 )
-            )
+            ) */
         }
     }
 
@@ -137,10 +122,10 @@ class QwantUseCases(
     }
 
     class ClearDataUseCase internal constructor(
-        val prefs: AppPreferencesRepository,
-        val engine: Engine,
-        val historyStorage: HistoryStorage,
-        val tabsUseCases: TabsUseCases
+        private val prefs: AppPreferencesRepository,
+        private val engine: Engine,
+        private val historyStorage: HistoryStorage,
+        private val tabsUseCases: TabsUseCases
     ) {
         operator fun invoke(clearDataPreferences: ClearDataPreferences, then: (Boolean) -> Unit = {}) {
             val clearHistoryJob: Job? = if (clearDataPreferences.history) {
@@ -191,16 +176,16 @@ class QwantUseCases(
     }
 
     val openQwantPage: OpenQwantPageUseCase by lazy {
-        OpenQwantPageUseCase(frontEndPreferencesRepository, tabsUseCases)
+        OpenQwantPageUseCase(tabsUseCases)
     }
     val getQwantBaseUrl: GetQwantUrlUseCase by lazy {
-        GetQwantUrlUseCase(frontEndPreferencesRepository)
+        GetQwantUrlUseCase()
     }
     val loadSERPPage: LoadSERPPageUseCase by lazy {
-        LoadSERPPageUseCase(frontEndPreferencesRepository, sessionUseCases)
+        LoadSERPPageUseCase(sessionUseCases)
     }
     val openPrivatePage: OpenPrivatePageUseCase by lazy {
-        OpenPrivatePageUseCase(tabsUseCases, sessionUseCases, privateBrowsingHtml)
+        OpenPrivatePageUseCase(tabsUseCases)
     }
     val openTestPageUseCase: OpenTestPageUseCase by lazy {
         OpenTestPageUseCase(context, tabsUseCases, sessionUseCases)

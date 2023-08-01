@@ -7,6 +7,7 @@ import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.externalPackage
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.feature.pwa.intent.WebAppIntentProcessor
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
@@ -28,7 +29,7 @@ class QwantIntentProcessor(
         }
     }
 
-    private suspend fun processSendIntent(intent: SafeIntent): Boolean {
+    private fun processSendIntent(intent: SafeIntent): Boolean {
         val extraText = intent.getStringExtra(Intent.EXTRA_TEXT)
 
         return if (extraText.isNullOrBlank()) {
@@ -45,7 +46,7 @@ class QwantIntentProcessor(
         }
     }
 
-    private suspend fun processSearchIntent(intent: SafeIntent): Boolean {
+    private fun processSearchIntent(intent: SafeIntent): Boolean {
         val searchQuery = intent.getStringExtra(SearchManager.QUERY)
 
         return if (searchQuery.isNullOrBlank()) {
@@ -69,13 +70,19 @@ class QwantIntentProcessor(
         )
     }
 
-    suspend fun process(intent: Intent): Boolean {
+    fun process(intent: Intent): Boolean {
+        // TODO add WebAppIntentProcessor when supporting special display for pwas
         val safeIntent = SafeIntent(intent)
         return when (safeIntent.action) {
+            WebAppIntentProcessor.ACTION_VIEW_PWA, OLD_SHORTCUTS_ACTION -> processViewIntent(safeIntent)
             Intent.ACTION_VIEW, Intent.ACTION_MAIN -> processViewIntent(safeIntent) // TODO add, test and support nft ACTION_NDEF_DISCOVERED
             Intent.ACTION_SEND -> processSendIntent(safeIntent)
             Intent.ACTION_SEARCH, Intent.ACTION_WEB_SEARCH -> processSearchIntent(safeIntent)
             else -> false
         }
+    }
+
+    companion object {
+        const val OLD_SHORTCUTS_ACTION = "org.mozilla.gecko.BOOKMARK"
     }
 }

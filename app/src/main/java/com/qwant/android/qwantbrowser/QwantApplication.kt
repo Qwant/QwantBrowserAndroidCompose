@@ -36,6 +36,8 @@ class QwantApplication : Application() {
 
         mozac.engine.warmUp()
         mozac.engine.speculativeConnect("https://www.qwant.com/")
+        useCases.qwantUseCases.warmUp()
+
         restoreBrowserState()
 
         // Should be removed in futur version, once mozilla has fully migrated
@@ -63,11 +65,11 @@ class QwantApplication : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
-        useCases.tabsUseCases.restore(mozac.sessionStorage).invokeOnCompletion {
+        useCases.tabsUseCases.restore(mozac.sessionStorage)/* .invokeOnCompletion {
             if (mozac.store.state.tabs.isEmpty()) {
-                useCases.qwantUseCases.openQwantPage(MainScope())
+                useCases.qwantUseCases.openQwantPage()
             }
-        }
+        } */
 
         // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
         mozac.sessionStorage.autoSave(mozac.store)

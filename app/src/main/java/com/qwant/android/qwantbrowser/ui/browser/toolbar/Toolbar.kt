@@ -37,7 +37,8 @@ fun Toolbar(
 
     val toolbarTextFieldPadding by animateDpAsState(
         targetValue = if (toolbarState.hasFocus) 8.dp else 0.dp,
-        animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing)
+        animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing),
+        label = "toolbarTextFieldPadding"
     )
 
     // TODO move commitSuggestion to viewModel, and transmit it as param

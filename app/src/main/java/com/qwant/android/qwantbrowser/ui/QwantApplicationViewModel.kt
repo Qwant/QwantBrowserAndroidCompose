@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui
 
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -8,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.ui.zap.ZapState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,8 +28,9 @@ enum class PrivacyMode {
 @HiltViewModel
 class QwantApplicationViewModel @Inject constructor(
     core: Core,
-    useCases: UseCases,
-    frontEndPreferencesRepository: FrontEndPreferencesRepository
+    private val useCases: UseCases,
+    frontEndPreferencesRepository: FrontEndPreferencesRepository,
+    appPreferencesRepository: AppPreferencesRepository
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
 
@@ -92,4 +96,19 @@ class QwantApplicationViewModel @Inject constructor(
     fun setPrivacyMode(mode: PrivacyMode) {
         privacyMode.update { mode }
     }
+
+
+    val zapOnQuit = appPreferencesRepository.flow
+        .map { it.clearDataOnQuit }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
+
+    val zapState: ZapState = ZapState(useCases.qwantUseCases.clearDataUseCase, viewModelScope)
+    fun zap(then: (Boolean) -> Unit = {}) { zapState.zap {
+        Log.d("QB_ZAP", "zap then called in viewmodel")
+        then.invoke(it)
+    } }
 }

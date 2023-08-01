@@ -77,6 +77,7 @@ public class Assist extends Activity {
         // Get reference to qwant use cases early so it starts collecting url before we actually need it
         QwantApplication application = (QwantApplication) getApplication();
         qwantUseCases = application.useCases.getQwantUseCases();
+        qwantUseCases.warmUp();
 
         // Intent for opening url in browser. URL is set at just before starting activity.
         new_tab_intent = new Intent(this, IntentReceiverActivity.class);

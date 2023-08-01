@@ -1,11 +1,15 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
+import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
+import com.qwant.android.qwantbrowser.ext.isQwantSERPUrl
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
@@ -57,15 +61,18 @@ class ToolbarState @AssistedInject constructor(
     var trueHeightPx by mutableIntStateOf(0)
         private set
 
-     var suggestions = suggestionProviders.map { it to emptyList<Suggestion>() }.toMutableStateMap()
+    var suggestions = suggestionProviders.map { it to emptyList<Suggestion>() }.toMutableStateMap()
+        private set
+
+    var onQwant by mutableStateOf(true)
         private set
 
     init {
         coroutineScope.launch {
             snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
-                .ifChanged()
+                .distinctUntilChanged()
                 .onEach { search ->
-                    if (hasFocus && search.isNotEmpty()) {
+                    if (hasFocus && search.isNotBlank()) {
                         suggestionProviders.forEach { provider ->
                             suggestions[provider] = provider.getSuggestions(search)
                         }
@@ -102,14 +109,23 @@ class ToolbarState @AssistedInject constructor(
             initialValue = 0f
         )
 
+    val siteSecurity = store.flow()
+        .map { state -> state.selectedTab?.content?.securityInfo }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
     private val currentUrl = store.flow()
         .map { state -> state.selectedTab?.content?.url }
-        .ifChanged()
+        .distinctUntilChanged()
         .onEach {
             if (!hasFocus) {
                 updateTextWithUrl(it ?: "")
                 updateVisibility(true)
             }
+            onQwant = it?.isQwantUrl() ?: true
         }
         .stateIn(
             scope = coroutineScope,
@@ -131,20 +147,24 @@ class ToolbarState @AssistedInject constructor(
 
     internal fun updateFocus(hasFocus: Boolean) {
         this.hasFocus = hasFocus
-        // TODO update toolbar text on focus should clear when on qwant home, display search when on SERP. Else only display full url
-        updateTextWithUrl(currentUrl.value ?: "")
-        // if (!hasFocus) suggestions = emptyMap()
+        coroutineScope.launch {
+            delay(10) // Needed else change to toolbar text is overridden by call to onChange.
+            updateTextWithUrl(currentUrl.value ?: "")
+        }
     }
 
     private fun updateTextWithUrl(url: String) {
         coroutineScope.launch {
-            val filteredUrl = if (url.startsWith("data:text/html")) "" else url
-            text = if (!hasFocus) {
+            text = if (url.isQwantUrl()) {
+                url.getQwantSERPSearch()?.let { search ->
+                    if (hasFocus) TextFieldValue(search, selection = TextRange(0, search.length))
+                    else TextFieldValue(search)
+                } ?: TextFieldValue("")
+            } else if (!hasFocus) {
                 // TODO Improve toolbar display url cleaning
-                TextFieldValue(filteredUrl.removePrefix("https://").removePrefix("www."))
+                TextFieldValue(url.removePrefix("https://").removePrefix("www."))
             } else {
-                delay(10) // needed else selection is overridden by the onValueChange
-                TextFieldValue(filteredUrl, selection = TextRange(0, url.length))
+                TextFieldValue(url, selection = TextRange(0, url.length))
             }
         }
     }
@@ -152,23 +172,4 @@ class ToolbarState @AssistedInject constructor(
     internal fun updateTrueHeightPx(height: Int) {
         trueHeightPx = height
     }
-
-    /* private fun updateSuggestions(
-        group: AwesomeBar.SuggestionProviderGroup,
-        provider:  AwesomeBar.SuggestionProvider,
-        newSuggestions: List<AwesomeBar.Suggestion>
-    ) {
-        val suggestionMap = suggestions
-
-        val updatedSuggestions = (suggestionMap[group] ?: emptyList())
-            .filter { suggestion -> suggestion.provider != provider }
-            .toMutableList()
-
-        updatedSuggestions.addAll(newSuggestions)
-        updatedSuggestions.sortByDescending { suggestion -> suggestion.score }
-
-        val updatedSuggestionMap = suggestionMap.toMutableMap()
-        updatedSuggestionMap[group] = updatedSuggestions
-        suggestions = updatedSuggestionMap
-    } */
 }

@@ -15,10 +15,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
 import com.qwant.android.qwantbrowser.ext.navigateSingleTopTo
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
+import com.qwant.android.qwantbrowser.ui.zap.ZapFeature
 
 @Composable
 fun QwantBrowserApp(
-    intent_action: String? = null,
+    intentAction: String? = null,
     applicationViewModel: QwantApplicationViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
@@ -62,12 +63,13 @@ fun QwantBrowserApp(
                     appViewModel = applicationViewModel,
                     modifier = Modifier.padding(scaffoldPadding)
                 )
-
-                LaunchedEffect(intent_action) {
-                    if (intent_action == "CHANGED_LANGUAGE") {
+                LaunchedEffect(intentAction) {
+                    if (intentAction == "CHANGED_LANGUAGE") {
                         navController.navigateSingleTopTo(NavDestination.Preferences.route())
                     }
                 }
+
+                ZapFeature(state = applicationViewModel.zapState)
             }
         }
     } else {

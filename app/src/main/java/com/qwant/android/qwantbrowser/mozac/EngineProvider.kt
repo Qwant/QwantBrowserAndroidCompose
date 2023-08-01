@@ -27,10 +27,10 @@ object EngineProvider {
             // TODO explore runtime settings
             // TODO runtime builder.contentBlocking(...)
             // TODO set debug attribute of runtime relative to build type
-            builder.aboutConfigEnabled(false)
-            builder.consoleOutput(false)
-            builder.debugLogging(false)
-            builder.remoteDebuggingEnabled(false)
+            builder.aboutConfigEnabled(true)
+            builder.consoleOutput(true)
+            builder.debugLogging(true)
+            builder.remoteDebuggingEnabled(true)
 
             runtime = GeckoRuntime.create(context, builder.build())
         }
