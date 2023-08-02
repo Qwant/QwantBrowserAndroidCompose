@@ -22,6 +22,8 @@ fun BoxScope.EngineViewFeatures(
         store = viewModel.store,
         canGoBack = canGoBack,
         goBackUseCase = viewModel.goBack,
+        tabsUseCases = viewModel.tabsUseCases,
+        openQwantUseCase = viewModel.qwantUseCases.openQwantPage,
         backEnabled = { !viewModel.toolbarState.hasFocus }
     )
 

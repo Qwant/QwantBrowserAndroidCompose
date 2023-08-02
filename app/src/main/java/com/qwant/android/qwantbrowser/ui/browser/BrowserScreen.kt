@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
 import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
+import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -53,6 +54,7 @@ fun BrowserScreen(
     val currentUrl by viewModel.currentUrl.collectAsState()
     val tabCount by viewModel.tabCount.collectAsState()
     val private by appViewModel.isPrivate.collectAsState()
+
 
     /* TODO Pull To Refresh
     var refreshing by remember { mutableStateOf(false) }
@@ -87,7 +89,6 @@ fun BrowserScreen(
         }
     }
 
-    /* TODO wait for toolbar position to be ready before first display */
     HideOnScrollToolbar(
         toolbarState = viewModel.toolbarState,
         toolbar = { modifier ->
@@ -111,16 +112,16 @@ fun BrowserScreen(
                 HomePrivateBrowsing(modifier)
             } else {
                 // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
-                    GlobalFeatures(appViewModel, viewModel)
+                GlobalFeatures(appViewModel, viewModel)
 
-                    EngineView(
-                        engine = viewModel.engine,
-                        modifier = modifier
-                    ) { engineView ->
-                        EngineViewFeatures(engineView, viewModel)
-                    }
+                EngineView(
+                    engine = viewModel.engine,
+                    modifier = modifier
+                ) { engineView ->
+                    EngineViewFeatures(engineView, viewModel)
+                }
 
-                    // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+                // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
                 //}
             }
         } else {

@@ -13,10 +13,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -73,21 +75,25 @@ fun RootBookmarkFolderTreeItem(
     val background = if (selectedFolder == null) MaterialTheme.colorScheme.primary else Color.Transparent
 
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(background)
-                .clickable { onSelected(null) }
+        CompositionLocalProvider(LocalContentColor provides
+                if (selectedFolder == null) MaterialTheme.colorScheme.onPrimary else LocalContentColor.current
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.icons_folder), 
-                contentDescription = "Folder icon",
-                modifier = Modifier.padding(horizontal = 12.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .background(background)
+                    .clickable { onSelected(null) }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icons_folder),
+                    contentDescription = "Folder icon",
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
 
-            Text(text = stringResource(id = R.string.bookmarks))
+                Text(text = stringResource(id = R.string.bookmarks))
+            }
         }
         root
             .filter { it != exclude && it.type == BookmarkItemV2.BookmarkType.FOLDER }
@@ -118,33 +124,39 @@ fun BookmarkFolderTreeItem(
             .filter { it != exclude && it.type == BookmarkItemV2.BookmarkType.FOLDER }
             .sortedBy { it.title.lowercase() }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth()
-                .background(background)
-                .clickable { onSelected(currentFolder) }
+        CompositionLocalProvider(LocalContentColor provides
+                if (selectedFolder == currentFolder) MaterialTheme.colorScheme.onPrimary else LocalContentColor.current
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.icons_folder),
-                contentDescription = "Folder icon",
-                modifier = Modifier.padding(horizontal = 12.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .height(48.dp)
+                    .fillMaxWidth()
+                    .background(background)
+                    .clickable { onSelected(currentFolder) }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icons_folder),
+                    contentDescription = "Folder icon",
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
 
-            Text(text = currentFolder.title, modifier = Modifier.weight(2f))
+                Text(text = currentFolder.title, modifier = Modifier.weight(2f))
 
-            if (children.isNotEmpty()) {
-                IconButton(onClick = { open = !open }) {
-                    Icon(painterResource(
-                        id = R.drawable.icons_chevron_forward),
-                        contentDescription = "arrow",
-                        modifier = Modifier.rotate(arrowRotation)
-                    )
+                if (children.isNotEmpty()) {
+                    IconButton(onClick = { open = !open }) {
+                        Icon(
+                            painterResource(
+                                id = R.drawable.icons_chevron_forward
+                            ),
+                            contentDescription = "arrow",
+                            modifier = Modifier.rotate(arrowRotation)
+                        )
+                    }
                 }
             }
         }
-        AnimatedVisibility (open) {
+        AnimatedVisibility(open) {
             Column {
                 children.forEach {
                     BookmarkFolderTreeItem(it, exclude, selectedFolder, onSelected)

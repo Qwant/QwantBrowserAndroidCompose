@@ -48,13 +48,17 @@ class QwantUseCases(
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
     ) {
-        operator fun invoke(search: String? = null, private: Boolean = false) {
+        operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
             val url = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
-            tabsUseCases.addTab.invoke(
-                url,
-                selectTab = true,
-                private = private
-            )
+            if (selectIfExists) {
+                tabsUseCases.selectOrAddTab.invoke(url, private = private)
+            } else {
+                tabsUseCases.addTab.invoke(
+                    url,
+                    selectTab = true,
+                    private = private
+                )
+            }
         }
     }
 

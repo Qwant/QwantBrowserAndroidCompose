@@ -10,6 +10,7 @@ import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
+import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.ui.zap.ZapState
@@ -28,7 +29,7 @@ enum class PrivacyMode {
 @HiltViewModel
 class QwantApplicationViewModel @Inject constructor(
     core: Core,
-    private val useCases: UseCases,
+    useCases: UseCases,
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
     appPreferencesRepository: AppPreferencesRepository
 ) : ViewModel() {
@@ -52,6 +53,14 @@ class QwantApplicationViewModel @Inject constructor(
             }
         }
     }
+
+    val toolbarPosition = appPreferencesRepository.flow
+        .map { it.toolbarPosition }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = ToolbarPosition.UNRECOGNIZED
+        )
 
     val isPrivate = privacyMode
         .combine(selectedTabPrivacy) { privacyMode, selectedTabPrivacy ->
@@ -108,7 +117,6 @@ class QwantApplicationViewModel @Inject constructor(
 
     val zapState: ZapState = ZapState(useCases.qwantUseCases.clearDataUseCase, viewModelScope)
     fun zap(then: (Boolean) -> Unit = {}) { zapState.zap {
-        Log.d("QB_ZAP", "zap then called in viewmodel")
-        then.invoke(it)
+        then(it)
     } }
 }

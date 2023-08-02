@@ -82,6 +82,16 @@ class ToolbarState @AssistedInject constructor(
                 }
                 .collect()
         }
+        coroutineScope.launch {
+            snapshotFlow { hasFocus }
+                .distinctUntilChanged()
+                .onEach {
+                    if (hasFocus) {
+
+                    }
+                }
+                .collect()
+        }
     }
 
     val toolbarPosition = appPreferencesRepository.flow
@@ -89,7 +99,7 @@ class ToolbarState @AssistedInject constructor(
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = ToolbarPosition.BOTTOM
+            initialValue = ToolbarPosition.UNRECOGNIZED
         )
 
     val shouldHideOnScroll = appPreferencesRepository.flow

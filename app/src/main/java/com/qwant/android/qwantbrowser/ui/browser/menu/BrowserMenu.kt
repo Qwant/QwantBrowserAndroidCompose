@@ -54,6 +54,7 @@ fun BrowserMenu(
         )
         if (showQuitApp) {
             val activity = (LocalContext.current.activity)
+            Divider(modifier = Modifier.padding(horizontal = 16.dp))
             DropdownMenuItem(
                 text = { Text(text = "Quit") }, // TODO text + trads
                 leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Quit") },
