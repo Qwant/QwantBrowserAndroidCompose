@@ -6,15 +6,15 @@ import androidx.compose.runtime.Composable
 @Composable
 fun <T> PreferenceRadioSelectionPopup(
     @StringRes label: Int,
-    options: Map<T, Int>,
+    options: List<RadioButtonOption<T>>, // Map<T, Int>,
     value: T,
     onValueChange: (T) -> Unit
 ) {
     PreferenceSelectionPopup(
         label = label,
-        description = options[value],
+        description = options.find { it.value == value }?.label,
         popupContent = { PreferenceRadioButtonSelector(
-            options = options.map { RadioButtonOption(it.key, it.value) },
+            options = options,
             value = value,
             onValueChange = onValueChange
         )}

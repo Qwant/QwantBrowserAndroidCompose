@@ -24,7 +24,7 @@ import mozilla.components.support.ktx.kotlin.urlEncode
 import java.nio.charset.Charset
 
 // TODO Hilt for QwantUseCases
-// TODO separate QwantUseCases into multiple use cases
+// TODO separate QwantUseCases into multiple use cases ?
 class QwantUseCases(
     context: Context,
     core: Core,
@@ -44,10 +44,6 @@ class QwantUseCases(
 
     // Needed to get a lazy instance running before usage
     fun warmUp() {}
-
-    /* private val privateBrowsingHtml = context.assets.open("privatebrowsing.html")
-        .bufferedReader().use { it.readText() }
-        .replace("{TITLE}", "La navigation priv&eacute;e") */
 
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
@@ -86,16 +82,6 @@ class QwantUseCases(
                 selectTab = true,
                 private = true
             )
-
-            /* sessionUseCases.loadData(
-                data = htmlContent,
-                mimeType = "text/html",
-                tabId = tabsUseCases.addTab(
-                    "about:privatebrowsing",
-                    selectTab = true,
-                    private = true
-                )
-            ) */
         }
     }
 

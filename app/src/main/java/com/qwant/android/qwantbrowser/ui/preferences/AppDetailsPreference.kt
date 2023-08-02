@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceRow
+import com.qwant.android.qwantbrowser.ui.theme.ActionBlue300
 import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
 import org.mozilla.geckoview.BuildConfig
 
@@ -33,7 +34,11 @@ fun AppDetailsPreference() {
             PackageInfoCompat.getLongVersionCode(packageInfo).toString(),
             BuildConfig.MOZ_APP_VERSION
         ),
-        icon = { QwantIconOnBackground(shape = RoundedCornerShape(8.dp), modifier = Modifier.size(28.dp)) },
+        trailing = { QwantIconOnBackground(
+            bgColor = ActionBlue300,
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.size(28.dp))
+        },
         onClicked = {}
     )
 }

@@ -15,6 +15,6 @@ fun PreferenceToggle(
     PreferenceRow(
         label = label,
         description = description?.let { stringResource(id = it) },
-        icon = { Switch(checked = value, onCheckedChange = onValueChange) }
+        trailing = { Switch(checked = value, onCheckedChange = onValueChange) }
     )
 }

@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Divider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -18,7 +19,6 @@ import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.ui.browser.suggest.Suggest
 import mozilla.components.browser.icons.BrowserIcons
-
 
 @Composable
 fun Toolbar(
@@ -35,10 +35,16 @@ fun Toolbar(
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
 
-    val toolbarTextFieldPadding by animateDpAsState(
+    val toolbarTextFieldPaddingEnd by animateDpAsState(
         targetValue = if (toolbarState.hasFocus) 8.dp else 0.dp,
         animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing),
-        label = "toolbarTextFieldPadding"
+        label = "toolbarTextFieldPaddingEnd"
+    )
+
+    val toolbarTextFieldPaddingStart by animateDpAsState(
+        targetValue = if (!beforeTextFieldVisible() || toolbarState.hasFocus) 8.dp else 0.dp,
+        animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing),
+        label = "toolbarTextFieldPaddingStart"
     )
 
     // TODO move commitSuggestion to viewModel, and transmit it as param
@@ -60,6 +66,7 @@ fun Toolbar(
                 browserIcons = browserIcons,
                 modifier = Modifier.weight(2f)
             )
+            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             ToolbarProgressBar(toolbarState = toolbarState)
         }
 
@@ -86,8 +93,8 @@ fun Toolbar(
                     modifier = Modifier
                         .weight(2f, true)
                         .padding(
-                            start = if (!beforeTextFieldVisible()) 8.dp else toolbarTextFieldPadding,
-                            end = toolbarTextFieldPadding
+                            start = toolbarTextFieldPaddingStart,
+                            end = toolbarTextFieldPaddingEnd
                         )
                 )
 
@@ -103,6 +110,7 @@ fun Toolbar(
 
         if (toolbarPosition == ToolbarPosition.TOP) {
             ToolbarProgressBar(toolbarState = toolbarState)
+            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             ToolbarSuggest(
                 toolbarState = toolbarState,
                 commitSuggestion = commitSuggestion,

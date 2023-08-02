@@ -18,20 +18,20 @@ import androidx.core.view.WindowCompat
 data class QwantTheme(val dark: Boolean, val private: Boolean)
 val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false) }
 
-private val LightColorScheme = lightColorScheme(
+private val lightColorScheme = lightColorScheme(
     primary = ActionBlue400,
     onPrimary = Color.White,
     primaryContainer = Color.White,
     onPrimaryContainer = Grey900,
     secondaryContainer = ActionBlue50,
     onSecondaryContainer = Grey900,
-    tertiary = ActionBlue500,
+    tertiary = ActionBlue300,
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
     outline = Grey900Alpha12,
 )
 
-private val DarkColorScheme = darkColorScheme(
+private val darkColorScheme = darkColorScheme(
     primary = ActionBlue200,
     onPrimary = Grey900,
     primaryContainer = Grey750,
@@ -44,14 +44,14 @@ private val DarkColorScheme = darkColorScheme(
     outline = Grey000Alpha16,
 )
 
-private val PrivateColorScheme = DarkColorScheme.copy(
+private val privateColorScheme = darkColorScheme.copy(
     primary = Purple200,
     onPrimary = Grey900,
     primaryContainer = Purple700,
     onPrimaryContainer = Color.White,
     secondaryContainer = Grey000Alpha16,
     onSecondaryContainer = Color.White,
-    tertiary = ActionBlue200,
+    tertiary = Purple200,
     tertiaryContainer = PurpleTertiary,
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,
@@ -61,7 +61,8 @@ private val PrivateColorScheme = DarkColorScheme.copy(
 private fun animateColor(targetValue: Color) =
     animateColorAsState(
         targetValue = targetValue,
-        animationSpec = tween(durationMillis = 1000)
+        animationSpec = tween(durationMillis = 1000),
+        label = "theme colors"
     ).value
 
 @Composable
@@ -71,12 +72,15 @@ fun ColorScheme.animatedColors() = copy(
     primaryContainer = animateColor(primaryContainer),
     onPrimaryContainer = animateColor(onPrimaryContainer),
     secondaryContainer = animateColor(secondaryContainer),
-    onSecondaryContainer = animateColor(onSecondaryContainer)
-).copy(
-    surface = primaryContainer,
-    onSurface = onPrimaryContainer,
-    background = primaryContainer,
-    onBackground = onPrimaryContainer
+    onSecondaryContainer = animateColor(onSecondaryContainer),
+    tertiary = animateColor(tertiary),
+    tertiaryContainer = animateColor(tertiaryContainer),
+    onTertiaryContainer = animateColor(onTertiaryContainer),
+    outline = animateColor(outline),
+    surface = animateColor(primaryContainer),
+    onSurface = animateColor(onPrimaryContainer),
+    background = animateColor(primaryContainer),
+    onBackground = animateColor(onPrimaryContainer)
 )
 
 @Composable
@@ -86,22 +90,22 @@ fun QwantBrowserTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        privacy -> PrivateColorScheme
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        privacy -> privateColorScheme
+        darkTheme -> darkColorScheme
+        else -> lightColorScheme
     }.animatedColors()
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            /* window.navigationBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.background.toArgb()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                window.navigationBarDividerColor = Color.Red.toArgb()
-            } */
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-            // WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = darkTheme
+                window.navigationBarDividerColor = colorScheme.outline.toArgb()
+            }
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
         }
     }
 

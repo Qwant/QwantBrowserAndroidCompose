@@ -18,7 +18,7 @@ fun PreferenceRow(
     @StringRes label: Int,
     modifier: Modifier = Modifier,
     description: String? = null,
-    icon: @Composable () -> Unit = {},
+    trailing: @Composable () -> Unit = {},
     onClicked: () -> Unit = {}
 ) {
     Row(
@@ -45,7 +45,7 @@ fun PreferenceRow(
                 )
             }
         }
-        icon()
+        trailing()
     }
 
 }

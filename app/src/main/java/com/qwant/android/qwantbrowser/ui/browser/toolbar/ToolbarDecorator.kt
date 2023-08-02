@@ -1,7 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,7 +32,42 @@ import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
+import mozilla.components.browser.state.state.SecurityInfoState
 
+@Composable
+fun SiteSecurityIcon(securityInfo: SecurityInfoState) {
+    var showSecurityInfo by remember { mutableStateOf(false) }
+    Box {
+        Icon(
+            painter = painterResource(id = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_warning),
+            contentDescription = "security icon",
+            tint = if (securityInfo.secure) LocalContentColor.current else Color.Red, // TODO change "RED" color ?
+            modifier = Modifier
+                .clickable { showSecurityInfo = true }
+                .padding(horizontal = 8.dp)
+                .size(16.dp)
+        )
+        // TODO confirm site security dropdown
+        Dropdown(
+            expanded = showSecurityInfo,
+            onDismissRequest = { showSecurityInfo = false },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = if (!securityInfo.secure) {
+                    "This connection is not secure ! be careful"
+                } else {
+                    "Connection is secure"
+                },
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (securityInfo.secure) {
+                Text(text = "host: ${securityInfo.host}", style = MaterialTheme.typography.labelSmall)
+                Text(text = "issuer: ${securityInfo.issuer}", style = MaterialTheme.typography.labelSmall)
+            }
+        }
+    }
+}
 
 @Composable
 fun ToolbarDecorator(
@@ -53,45 +86,14 @@ fun ToolbarDecorator(
             .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(50))
             .padding(4.dp)
     ) {
-        if (state.hasFocus || state.onQwant) {
-            QwantIconOnBackground(CircleShape)
-        } else {
-            AnimatedVisibility(visible = siteSecurity != null) {
-                siteSecurity?.let { securityInfo ->
-                    // TODO move site security icon to its own composable
-                    var showSecurityInfo by remember { mutableStateOf(false) }
-                    Box {
-                        Icon(
-                            painter = painterResource(id = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_close),
-                            contentDescription = "security icon",
-                            tint = if (securityInfo.secure) LocalContentColor.current else Color.Red, // TODO change "RED" color ?
-                            modifier = Modifier
-                                .clickable { showSecurityInfo = true }
-                                .padding(horizontal = 8.dp)
-                                .size(16.dp)
-                        )
-                        // TODO confirm site security dropdown
-                        Dropdown(
-                            expanded = showSecurityInfo,
-                            onDismissRequest = { showSecurityInfo = false },
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = if (!securityInfo.secure) {
-                                    "This connection is not secure ! be careful"
-                                } else {
-                                    "Connection is secure"
-                                },
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            if (securityInfo.secure) {
-                                Text(text = "host: ${securityInfo.host}", style = MaterialTheme.typography.labelSmall)
-                                Text(text = "issuer: ${securityInfo.issuer}", style = MaterialTheme.typography.labelSmall)
-                            }
-                        }
-                    }
-                }
-            }
+        val shouldShowQwantIcon = state.hasFocus || state.onQwant
+        AnimatedVisibility(visible = shouldShowQwantIcon) {
+            QwantIconOnBackground(shape = CircleShape)
+        }
+        AnimatedVisibility(visible = !shouldShowQwantIcon,) {
+            siteSecurity?.let {
+                SiteSecurityIcon(securityInfo = it)
+            } ?: Box(modifier = Modifier.size(24.dp))
         }
 
         // TODO hide toolbar cursor cleverly.

@@ -27,6 +27,8 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
+
+        resourceConfigurations += ["en", "fr", "de", "es", "it"]
     }
 
     buildTypes {

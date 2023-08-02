@@ -211,7 +211,7 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
     }
 
     override fun canAddUri(uri: String): Boolean {
-        return !uri.isQwantUrl()
+        return !uri.isQwantUrl() && !uri.startsWith("moz-extension://")
     }
 
     override fun cleanup() {

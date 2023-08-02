@@ -20,7 +20,7 @@ fun PreferenceGroupLabel(
         Divider()
         Text(
             text = stringResource(label),
-            color = MaterialTheme.colorScheme.tertiary,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 12.sp,
             lineHeight = 16.sp,
             modifier = Modifier.padding(16.dp)

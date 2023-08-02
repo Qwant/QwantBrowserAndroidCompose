@@ -74,7 +74,7 @@ fun BrowserScreen(
     }
     LaunchedEffect(tabCount) {
         if (tabCount == 0) {
-            viewModel.openNewQwantTab()
+            viewModel.openSafetyTabIfNeeded()
         }
     }
 

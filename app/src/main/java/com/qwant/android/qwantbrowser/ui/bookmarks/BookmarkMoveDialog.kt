@@ -4,10 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -25,9 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import org.mozilla.reference.browser.storage.BookmarkItemV2
+import com.qwant.android.qwantbrowser.R
 
 @Composable
 fun BookmarkMoveDialog(
@@ -74,14 +77,17 @@ fun RootBookmarkFolderTreeItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .minimumInteractiveComponentSize()
+                .height(48.dp)
                 .background(background)
                 .clickable { onSelected(null) }
         ) {
-            IconButton(onClick = {}) {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "arrow")
-            }
-            Text(text = "Bookmarks") // TODO translation
+            Icon(
+                painter = painterResource(id = R.drawable.icons_folder), 
+                contentDescription = "Folder icon",
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+
+            Text(text = stringResource(id = R.string.bookmarks))
         }
         root
             .filter { it != exclude && it.type == BookmarkItemV2.BookmarkType.FOLDER }
@@ -100,8 +106,12 @@ fun BookmarkFolderTreeItem(
     onSelected: (BookmarkItemV2?) -> Unit
 ) {
     val background = if (selectedFolder == currentFolder) MaterialTheme.colorScheme.primary else Color.Transparent
-    var open by remember { mutableStateOf( exclude?.let { currentFolder.isParentOf(exclude) } ?: false) }
-    val arrowRotation by animateFloatAsState(targetValue = if (open) 0f else -90f)
+
+    // if we only want actual selected parents to be open, use as starting value
+    // exclude?.let { currentFolder.isParentOf(exclude) } ?: false
+    var open by remember { mutableStateOf( true) }
+
+    val arrowRotation by animateFloatAsState(targetValue = if (open) 90f else 180f, label = "arrowRotation")
 
     Column(modifier = Modifier.padding(start = 16.dp)) {
         val children = currentFolder.children
@@ -111,22 +121,28 @@ fun BookmarkFolderTreeItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .minimumInteractiveComponentSize()
+                .height(48.dp)
                 .fillMaxWidth()
                 .background(background)
                 .clickable { onSelected(currentFolder) }
         ) {
+            Icon(
+                painter = painterResource(id = R.drawable.icons_folder),
+                contentDescription = "Folder icon",
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+
+            Text(text = currentFolder.title, modifier = Modifier.weight(2f))
+
             if (children.isNotEmpty()) {
-                IconButton(
-                    modifier = Modifier.rotate(arrowRotation),
-                    onClick = { open = !open }
-                ) {
-                    Icon(Icons.Default.ArrowDropDown, contentDescription = "arrow") // TODO change arrow icon
+                IconButton(onClick = { open = !open }) {
+                    Icon(painterResource(
+                        id = R.drawable.icons_chevron_forward),
+                        contentDescription = "arrow",
+                        modifier = Modifier.rotate(arrowRotation)
+                    )
                 }
-            } else {
-                Box(modifier = Modifier.minimumInteractiveComponentSize())
             }
-            Text(text = currentFolder.title)
         }
         AnimatedVisibility (open) {
             Column {

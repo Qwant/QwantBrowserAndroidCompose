@@ -11,7 +11,7 @@
     <string name="available_language_italian">Italien</string>
     <string name="available_language_spanish">Espagnol</string>
 
-    <string name="available_adult_filter_none">Désactivé 👀</string>
-    <string name="available_adult_filter_moderate">Modéré 😇</string>
-    <string name="available_adult_filter_strict">Strict 🙈</string>
+    <string name="available_adult_filter_none">Désactivé</string>
+    <string name="available_adult_filter_moderate">Modéré</string>
+    <string name="available_adult_filter_strict">Strict</string>
 </resources>

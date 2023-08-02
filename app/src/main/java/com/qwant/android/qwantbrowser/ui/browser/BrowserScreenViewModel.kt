@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.selectedTab
-// import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
@@ -149,6 +148,16 @@ class BrowserScreenViewModel @Inject constructor(
         viewModelScope.launch {
             delay(100)
             toolbarState.updateFocus(true)
+        }
+    }
+
+    fun openSafetyTabIfNeeded() {
+        if (tabCount.value == 0) {
+            viewModelScope.launch {
+                delay(50)
+                if (tabCount.value == 0)
+                    openNewQwantTab()
+            }
         }
     }
 

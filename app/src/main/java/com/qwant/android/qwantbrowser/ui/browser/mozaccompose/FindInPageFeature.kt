@@ -90,7 +90,7 @@ fun FindInPageFeature(
                             // focusManager.clearFocus()
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.icons_arrow_backward_up),
+                                painter = painterResource(id = R.drawable.icons_arrow_up),
                                 contentDescription = "previous"
                             )
                         }
@@ -101,7 +101,7 @@ fun FindInPageFeature(
                             // focusManager.clearFocus()
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.icons_arrow_backward_down),
+                                painter = painterResource(id = R.drawable.icons_arrow_down),
                                 contentDescription = "next"
                             )
                         }

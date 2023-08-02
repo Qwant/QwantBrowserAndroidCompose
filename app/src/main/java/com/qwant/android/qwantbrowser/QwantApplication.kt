@@ -40,7 +40,9 @@ class QwantApplication : Application() {
 
         restoreBrowserState()
 
-        // Should be removed in futur version, once mozilla has fully migrated
+        // TODO
+        //  Should be removed in futur version, once mozilla has fully migrated
+        //  meanwhile move this elsewhere
         WebExtensionSupport.initialize(
             runtime = mozac.engine,
             store = mozac.store,
@@ -65,12 +67,7 @@ class QwantApplication : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
-        useCases.tabsUseCases.restore(mozac.sessionStorage)/* .invokeOnCompletion {
-            if (mozac.store.state.tabs.isEmpty()) {
-                useCases.qwantUseCases.openQwantPage()
-            }
-        } */
-
+        useCases.tabsUseCases.restore(mozac.sessionStorage)
         // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
         mozac.sessionStorage.autoSave(mozac.store)
             .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)

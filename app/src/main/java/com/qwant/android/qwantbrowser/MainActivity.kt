@@ -1,50 +1,28 @@
 package com.qwant.android.qwantbrowser
 
-
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.preference.PreferenceManager
 import com.qwant.android.qwantbrowser.ext.core
-import com.qwant.android.qwantbrowser.legacy.onboarding.OnboardingActivity
+import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.ui.QwantBrowserApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
-    @Inject lateinit var localeManager: LocaleManager
+class MainActivity : AppCompatActivity() {
+    @Inject lateinit var frontEndPreferencesRepository: FrontEndPreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Used by onboarding when cancelling.
-        if (intent.action == "CLOSE_APP") { // should be called with flag Intent.FLAG_ACTIVITY_NEW_TASK
-            this.quit()
-            return
-        }
-
-        runBlocking { localeManager.setLocale() }
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                localeManager.watchLocale()
-            }
-        }
-
         setContent {
             QwantBrowserApp(intent.action)
         }
-
-        // checkFirstLaunch()
-        // launchOnboardingIfNecessary() // TODO replace onboarding activity by compose component
     }
 
     // TODO replace legacy preferences
@@ -63,21 +41,18 @@ class MainActivity : FragmentActivity() {
         }
     } */
 
-    // Legacy onboarding
-    /* private fun launchOnboardingIfNecessary() {
-        val prefkey = resources.getString(R.string.pref_key_show_onboarding)
-        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val shouldShowOnboarding = prefs.getBoolean(prefkey, false)
-        if (shouldShowOnboarding) {
-            val i = Intent(this, OnboardingActivity::class.java)
-            i.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-            startActivity(i)
-        }
-    } */
-
     fun quit() {
         finishAffinity()
         exitProcess(0)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        AppCompatDelegate.getApplicationLocales()[0]?.language?.let {
+            lifecycleScope.launch {
+                frontEndPreferencesRepository.updateInterfaceLanguage(it)
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

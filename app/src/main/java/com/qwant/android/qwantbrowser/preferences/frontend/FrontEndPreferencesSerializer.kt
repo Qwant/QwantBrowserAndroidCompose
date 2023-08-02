@@ -9,6 +9,9 @@ import java.io.OutputStream
 
 object FrontEndPreferencesSerializer : Serializer<FrontEndPreferences> {
     override val defaultValue: FrontEndPreferences = FrontEndPreferences.getDefaultInstance()
+        .toBuilder()
+        .build()
+
     override suspend fun readFrom(input: InputStream): FrontEndPreferences {
         try {
             return FrontEndPreferences.parseFrom(input)

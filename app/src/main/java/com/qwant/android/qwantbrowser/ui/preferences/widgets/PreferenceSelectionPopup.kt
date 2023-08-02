@@ -5,12 +5,11 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -35,7 +34,7 @@ fun PreferenceSelectionPopup(
         PreferenceRow(
             label = label,
             description = description?.let { stringResource(it) },
-            icon = icon,
+            trailing = icon,
             onClicked = { showPopup = true }
         )
         if (showPopup) {
@@ -45,21 +44,19 @@ fun PreferenceSelectionPopup(
                     onDismissRequest = { showPopup = false }
                 ) {
                     Surface(modifier = Modifier.fillMaxSize()) {
+                        val scrollState = rememberScrollState()
                         Column {
-                            ScreenHeader(title = stringResource(id = label))
-                            popupContent()
+                            ScreenHeader(title = stringResource(id = label), scrollableState = scrollState)
+                            Box(modifier = Modifier.verticalScroll(scrollState)) {
+                                popupContent()
+                            }
                         }
                     }
                 }
             } else {
                 Dropdown(
                     expanded = true,
-                    onDismissRequest = { showPopup = false },
-                    /* offset = DpOffset(16.dp, 0.dp),
-                    properties = PopupProperties(usePlatformDefaultWidth = true),
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), MaterialTheme.shapes.extraSmall) */
+                    onDismissRequest = { showPopup = false }
                 ) {
                     popupContent()
                 }

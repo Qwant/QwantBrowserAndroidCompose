@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,14 +18,19 @@ import com.qwant.android.qwantbrowser.ui.theme.Grey900
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
-fun QwantIconOnBackground(shape: Shape, modifier: Modifier = Modifier) {
+fun QwantIconOnBackground(
+    color: Color = Grey900,
+    bgColor: Color = MaterialTheme.colorScheme.tertiary,
+    shape: Shape,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier
-        .background(MaterialTheme.colorScheme.primary, shape) // TODO not good in light
+        .background(bgColor, shape)
     ) {
         Icon(
             painterResource(id = R.drawable.qwant_logo),
             contentDescription = "Qwant",
-            tint = Grey900, // MaterialTheme.colorScheme.onPrimary,
+            tint = color,
             modifier = Modifier.padding(6.dp)
         )
     }

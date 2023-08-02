@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.lib.state.ext.flow
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import java.net.URI
 
 @AssistedFactory
 interface ToolbarStateFactory {
@@ -161,9 +161,15 @@ class ToolbarState @AssistedInject constructor(
                     else TextFieldValue(search)
                 } ?: TextFieldValue("")
             } else if (!hasFocus) {
-                // TODO Improve toolbar display url cleaning
-                TextFieldValue(url.removePrefix("https://").removePrefix("www."))
+                // TextFieldValue(url.removePrefix("https://").removePrefix("www."))
+                TextFieldValue(try {
+                    URI(url).normalize().host.removePrefix("www.")
+                } catch (e: Exception) {
+                    Log.w("QB_TOOLBAR", "Could not normalize url and get the host. Fallback to empty string for security concerns")
+                    ""
+                })
             } else {
+                // TODO Constraint url to a maximum size
                 TextFieldValue(url, selection = TextRange(0, url.length))
             }
         }
