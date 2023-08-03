@@ -80,18 +80,6 @@ class FrontEndPreferencesRepository @Inject constructor(
         }
     }
 
-    suspend fun getQwantUrl(
-        query: String? = null,
-        widget: Boolean = false
-    ) : String {
-        var url = homeUrl.first()
-
-        if (query != null) url += "&q=$query"
-        if (widget) url += "&widget=1"
-
-        return url
-    }
-
     suspend fun updateShowNews(show: Boolean) {
         datastore.updateData { preferences ->
             preferences.toBuilder().setShowNews(show).build()

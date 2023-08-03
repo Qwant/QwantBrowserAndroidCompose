@@ -1,12 +1,7 @@
 package com.qwant.android.qwantbrowser.usecases
 
 import android.content.Context
-import android.os.Build
-import android.text.Html
 import android.util.Log
-import androidx.core.text.htmlEncode
-import androidx.core.text.parseAsHtml
-import androidx.core.text.toSpanned
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
@@ -21,7 +16,6 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.urlEncode
-import java.nio.charset.Charset
 
 // TODO Hilt for QwantUseCases
 // TODO separate QwantUseCases into multiple use cases ?
@@ -33,10 +27,12 @@ class QwantUseCases(
     sessionUseCases: SessionUseCases,
     tabsUseCases: TabsUseCases,
 ) {
+    private val coroutineScope = MainScope()
+
     var baseUrl = ""
     init {
-        // TODO use controlled scope for qwantUseCases
-        MainScope().launch {
+        // TODO use controlled scope for qwantUseCases ?
+        coroutineScope.launch {
             frontEndPreferencesRepository.homeUrl
                 .collect { baseUrl = it }
         }
