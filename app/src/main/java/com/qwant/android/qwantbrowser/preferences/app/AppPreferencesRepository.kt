@@ -70,7 +70,6 @@ class AppPreferencesRepository @Inject constructor(
     }
 
     suspend fun updateClearDataPreferences(preferences: ClearDataPreferences) {
-        Log.d("QB", "Clear data browsing set to " + preferences.browsingData.types)
         datastore.updateData { prefs ->
             prefs.toBuilder()
                 .setClearDataBrowsingdata(preferences.browsingData.types)

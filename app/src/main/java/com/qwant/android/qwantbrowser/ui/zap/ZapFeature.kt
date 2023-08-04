@@ -1,7 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.zap
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -17,11 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
-
+import com.qwant.android.qwantbrowser.R
 
 @Composable
 fun ZapFeature(
@@ -35,7 +35,6 @@ fun ZapFeature(
         else -> {}
     }
 }
-
 
 @Composable
 internal fun ZapAnimation(
@@ -109,28 +108,22 @@ internal fun ZapAnimation(
 
 @Composable
 internal fun ZapConfirmDialog(state: ZapState) {
-    // TODO zap confirm texts
     YesNoDialog(
         onDismissRequest = { state.confirmZap(false) },
         onYes = { state.confirmZap(true) },
         onNo = { state.confirmZap(false) },
-        title = "Zap",
-        description = "Ca va tout effacer !!",
-        yesText = "Effacer tout",
-        noText = "Annuler"
+        description = stringResource(id = R.string.cleardata_confirm_text),
+        yesText = stringResource(id = R.string.delete)
     )
 }
 
 @Composable
 internal fun ZapErrorDialog(state: ZapState) {
-    // TODO zap error texts
     YesNoDialog(
         onDismissRequest = { state.clearError() },
         onYes = { state.confirmZap(true) },
         onNo = { state.clearError() },
-        title = "Zap",
-        description = "Erreur pendant le zap",
-        yesText = "Try again",
-        noText = "Annuler"
+        description = stringResource(id = R.string.cleardata_failed),
+        yesText = stringResource(id = R.string.try_again)
     )
 }

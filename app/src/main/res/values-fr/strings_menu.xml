@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_add_to_homescreen">Ajouter à l\'accueil</string>
+    <string name="menu_request_desktop_site">Voir version ordinateur</string>
+    <string name="menu_quit_app">Quitter l\'application</string>
+    <string name="menu_find_in_page">Rechercher dans la page</string>
+</resources>

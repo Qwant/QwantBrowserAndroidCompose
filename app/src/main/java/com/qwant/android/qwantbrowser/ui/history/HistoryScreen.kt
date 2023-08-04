@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
@@ -25,7 +26,7 @@ fun HistoryScreen(
 
     Column {
         ScreenHeader(
-            title = "History",
+            title = stringResource(id = R.string.history),
             scrollableState = lazyListState,
             actions = {
                 IconButton(onClick = { showDeleteAllConfirmation = true }) {
@@ -46,10 +47,9 @@ fun HistoryScreen(
     if (showDeleteAllConfirmation) {
         YesNoDialog(
             onDismissRequest = { showDeleteAllConfirmation = false },
-            title = "Effacer mon historique", // TODO text
-            description = "Voulez-vous vraiment supprimer tout votre historique ?",
-            yesText = "Effacer tout",
-            noText = "Annuler",
+            title = stringResource(id = R.string.history_clear_all_confirm_title),
+            description = stringResource(id = R.string.history_clear_all_confirm_message),
+            yesText = stringResource(id = R.string.history_clear_all_confirm_ok),
             onYes = {
                 historyViewModel.deleteAllHistory()
                 showDeleteAllConfirmation = false

@@ -31,8 +31,6 @@ fun AuthenticationDialog(
                 TextField(value = login, onValueChange = { login = it })
             }
             TextField(value = password, onValueChange = { password = it })
-        },
-        yesText = stringResource(mozacR.string.mozac_feature_prompts_ok),
-        noText = stringResource(mozacR.string.mozac_feature_prompts_cancel)
+        }
     )
 }

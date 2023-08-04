@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_add_to_homescreen">Add to homescreen</string>
+    <string name="menu_request_desktop_site">Request desktop site</string>
+    <string name="menu_quit_app">Close the app</string>
+    <string name="menu_find_in_page">Find in Page</string>
+</resources>

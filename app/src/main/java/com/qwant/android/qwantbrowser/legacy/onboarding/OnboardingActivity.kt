@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.legacy.onboarding
 
-import android.app.Activity
 import android.app.role.RoleManager
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,7 +19,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.MainActivity
 import com.qwant.android.qwantbrowser.R
 
 
@@ -119,8 +117,6 @@ class OnboardingActivity : AppCompatActivity() {
             }
             buttonMore.visibility = View.GONE */
         } else {
-            Log.e("QWANT_BROWSER_ONBOARD", "fallback to default settings view for default browser")
-
             // Sending to default browser system settings (or skip)
             buttonValidate.apply {
                 visibility = View.VISIBLE
@@ -147,19 +143,10 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun initOnboardingForNavigation() {
-        Log.e("QWANT_BROWSER_ONBOARD", "init onboarding for nav")
-
         currentPage = OnboardingPage.NAVIGATION
 
-        Log.e("QWANT_BROWSER_ONBOARD", "init onboarding for nav a")
-
         layout.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.onboarding_qwant_green_light_v2, theme))
-
-        Log.e("QWANT_BROWSER_ONBOARD", "init onboarding for nav b")
-
         image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.onboarding_navigation_2_x))
-
-        Log.e("QWANT_BROWSER_ONBOARD", "init onboarding for nav c")
 
         title.text = getString(R.string.onboarding_navigation_title)
         textTop.visibility = View.GONE
@@ -171,18 +158,10 @@ class OnboardingActivity : AppCompatActivity() {
             visibility = View.VISIBLE
         }
 
-        Log.e("QWANT_BROWSER_ONBOARD", "init onboarding for nav d")
-
         buttonValidate.apply {
             visibility = View.VISIBLE
             text = getString(R.string.onboarding_navigation_validate)
             setOnClickListener {
-                // Done in the caller activity
-                /* val prefkey = resources.getString(R.string.pref_key_show_onboarding)
-                val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-                val prefEditor = prefs.edit()
-                prefEditor.putBoolean(prefkey, false)
-                prefEditor.apply() */
                 setResult(RESULT_OK)
                 finish()
             }
@@ -191,8 +170,6 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        Log.e("QWANT_BROWSER_ONBOARD", "onboarding resumed")
-
         if (shouldShowNavigationOnResume || currentPage == OnboardingPage.NAVIGATION) {
             shouldShowNavigationOnResume = false
             initOnboardingForNavigation()
@@ -201,13 +178,11 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        Log.e("QWANT_BROWSER_ONBOARD", "onboarding saveInstanceState")
         outState.putInt("onboarding_page", currentPage.ordinal)
         super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        Log.e("QWANT_BROWSER_ONBOARD", "onboarding restoreInstanceState")
         super.onRestoreInstanceState(savedInstanceState)
         val page = savedInstanceState.getInt("onboarding_page", OnboardingPage.ANONYMOUS.ordinal)
         if (page == OnboardingPage.NAVIGATION.ordinal) {
@@ -227,9 +202,5 @@ class OnboardingActivity : AppCompatActivity() {
     private fun closeOnboardingAndQuit() {
         setResult(RESULT_CANCELED)
         finish()
-        /* val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.action = "CLOSE_APP"
-        startActivity(intent) */
     }
 }

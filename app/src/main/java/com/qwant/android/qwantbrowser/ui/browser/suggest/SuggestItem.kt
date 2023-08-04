@@ -19,8 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +74,7 @@ fun SuggestItem(
         subtitle = when (suggestion) {
             is Suggestion.SearchSuggestion -> null
             is Suggestion.OpenTabSuggestion -> suggestion.url
-            is Suggestion.SelectTabSuggestion -> "Aller à l'onglet" // TODO translation !!
+            is Suggestion.SelectTabSuggestion -> stringResource(id = R.string.browser_go_to_tab)
         },
         leading = {
             when (suggestion.provider) {
@@ -99,7 +99,7 @@ fun SuggestItem(
                     )
                 // "Clipboard" -> Icon(Icons.Outlined.Person, contentDescription = "Logo clipboard")
                 // "Domains" -> ...
-                // "Search histtory" -> ...
+                // "Search history" -> ...
                 else -> SuggestIcon(R.drawable.icons_search)
             }
         },
@@ -187,8 +187,9 @@ fun WebsiteRowWithIcon(
                 url = url,
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(RoundedCornerShape(4.dp)
-                )
+                    .clip(
+                        RoundedCornerShape(4.dp)
+                    )
             )
         }
     )

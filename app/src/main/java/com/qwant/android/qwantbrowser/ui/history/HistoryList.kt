@@ -15,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -24,6 +25,7 @@ import mozilla.components.concept.storage.VisitInfo
 import com.qwant.android.qwantbrowser.R
 import java.util.Calendar
 import java.util.Date
+import mozilla.components.feature.contextmenu.R as mozacR
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -33,6 +35,8 @@ fun HistoryList(
     lazyListState: LazyListState = rememberLazyListState()
 ) {
     val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
+    val todayString = stringResource(id = R.string.history_today)
+    val yesterdayString = stringResource(id = R.string.history_yesterday)
 
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer) {
         LazyColumn(
@@ -41,20 +45,11 @@ fun HistoryList(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            if (visits.loadState.refresh == LoadState.Loading) {
-                item {
-                    Text(
-                        text = "Waiting for items to load from the backend", // TODO replace text by loading icon
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-                }
-            }
-
-
+            // TODO History lazylist loading icon
+            /* if (visits.loadState.refresh == LoadState.Loading) {
+                item { Loading indicator ... }
+            } */
             if (visits.itemCount > 0) {
-
                 val calendar = Calendar.getInstance()
                 val todayDayOfYear = calendar.apply { time = Date() }.get(Calendar.DAY_OF_YEAR)
                 var lastDayOfYear: Int? = null
@@ -66,15 +61,13 @@ fun HistoryList(
                         val visitDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
                         if (lastDayOfYear == null || visitDayOfYear != lastDayOfYear) {
                             val dateString = when (todayDayOfYear - calendar.get(Calendar.DAY_OF_YEAR)) {
-                                0 -> "Today" // TODO translations
-                                1 -> "Yesterday"
+                                0 -> todayString
+                                1 -> yesterdayString
                                 else -> "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH)}"
                             }
-
                             item(key = "date-$dateString-${calendar.get(Calendar.YEAR)}") {
                                 Text(text = dateString, modifier = Modifier.padding(start = 8.dp))
                             }
-
                             lastDayOfYear = visitDayOfYear
                         }
 
@@ -85,16 +78,28 @@ fun HistoryList(
                                 browserIcons = historyViewModel.browserIcons,
                                 onItemSelected = onItemSelected,
                                 menuItems = listOf(
-                                    MenuItem("Ouvrir le lien dans un nouvel onglet", R.drawable.icons_search) {
+                                    MenuItem(
+                                        stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab),
+                                        R.drawable.icons_search
+                                    ) {
                                         onItemSelected(item,false)
                                     },
-                                    MenuItem("Ouvrir le lien dans un nouvel onglet privé", R.drawable.icons_privacy_mask) {
+                                    MenuItem(
+                                        stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab),
+                                        R.drawable.icons_privacy_mask
+                                    ) {
                                         onItemSelected(item,true)
                                     },
-                                    MenuItem("Copier le lien", R.drawable.icons_download) {
+                                    MenuItem(
+                                        stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
+                                        R.drawable.icons_download
+                                    ) {
                                         clipboardManager.setText(AnnotatedString(item.url))
                                     },
-                                    MenuItem("Supprimer", R.drawable.icons_close) {
+                                    MenuItem(
+                                        stringResource(R.string.delete),
+                                        R.drawable.icons_close
+                                    ) {
                                         historyViewModel.deleteUrlFromHistory(item.url)
                                     }
                                 ),

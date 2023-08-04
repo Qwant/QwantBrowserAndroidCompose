@@ -1,7 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.qwant.android.qwantbrowser.ui.tabs
-
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -9,24 +6,20 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import com.qwant.android.qwantbrowser.R
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TabList(
     tabs: List<TabSessionState>,
@@ -71,14 +64,14 @@ fun TabList(
                             DismissValue.Default -> MaterialTheme.colorScheme.secondaryContainer
                             DismissValue.DismissedToEnd -> MaterialTheme.colorScheme.primaryContainer
                             DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error
-                        }
+                        }, label = "tabSwipeColor"
                     )
                     val iconSize by animateDpAsState(
                         targetValue = when (dismissState.targetValue) {
                             DismissValue.Default -> 24.dp
                             DismissValue.DismissedToEnd -> 36.dp
                             DismissValue.DismissedToStart -> 36.dp
-                        }
+                        }, label = "tabSwipeIconSize"
                     )
 
                     Box(
@@ -88,14 +81,14 @@ fun TabList(
                             .padding(horizontal = 20.dp)
                     ) {
                         Icon(
-                            Icons.Outlined.Star,
+                            painter = painterResource(id = R.drawable.icons_add_bookmark), // TODO Tab swipe icons
                             contentDescription = "Bookmark icon",
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
                                 .size(iconSize)
                         )
                         Icon(
-                            Icons.Outlined.Delete,
+                            painter = painterResource(id = R.drawable.icons_close_circled), // TODO Tab swipe icons
                             contentDescription = "Delete icon",
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)

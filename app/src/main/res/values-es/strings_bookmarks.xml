@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bookmarks">Marcadores</string>
+    <string name="bookmarks_folder">carpeta</string> <!-- bookmark_edit_folder without maj -->
+    <string name="bookmarks_bookmark">marcador</string>
+</resources>

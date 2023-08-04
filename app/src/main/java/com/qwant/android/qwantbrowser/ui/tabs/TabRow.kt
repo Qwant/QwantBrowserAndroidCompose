@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,11 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import com.qwant.android.qwantbrowser.R
 
 @Composable
 fun TabRow(
@@ -46,7 +46,9 @@ fun TabRow(
             TabThumbnail(tab.id, 90.dp, thumbnailStorage)
         }
 
-        Column(modifier = Modifier.weight(2f).padding(start = 12.dp)) {
+        Column(modifier = Modifier
+            .weight(2f)
+            .padding(start = 12.dp)) {
             Text(
                 tab.content.title,
                 maxLines = 2,
@@ -65,19 +67,7 @@ fun TabRow(
         }
 
         IconButton(onClick = { onDeleted(tab) }) {
-            Icon(Icons.Default.Close, contentDescription = "Delete")
+            Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Delete")
         }
-        /* Box(modifier = Modifier
-            .width(44.dp)
-            .height(70.dp)
-            .padding(end = 12.dp)
-            .clickable { onDeleted(tab) }
-        ) {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = "Delete",
-                modifier = Modifier.align(Alignment.Center)
-            )
-        } */
     }
 }

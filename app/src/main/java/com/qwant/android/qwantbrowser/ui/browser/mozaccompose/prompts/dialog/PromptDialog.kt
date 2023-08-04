@@ -37,9 +37,7 @@ fun PromptDialog(
             additionalContent = {
                 TextField(value = promptValue, onValueChange = { promptValue = it })
                 abusingControls()
-            },
-            yesText = "Ok", // TODO text and traduction
-            noText = "Cancel" // TODO text and traduction
+            }
         )
     }
 

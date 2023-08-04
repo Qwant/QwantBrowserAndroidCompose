@@ -10,7 +10,6 @@
 
     <ImageView
         android:src="@drawable/assist_search_icon_with_background"
-        android:id="@+id/suggest_icon"
         android:layout_width="32dp"
         android:layout_height="match_parent"
         android:paddingVertical="4dp"

@@ -101,9 +101,9 @@ fun QwantBrowserTheme(
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
             window.navigationBarColor = colorScheme.background.toArgb()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 window.navigationBarDividerColor = colorScheme.outline.toArgb()
-            }
+            } */
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
         }

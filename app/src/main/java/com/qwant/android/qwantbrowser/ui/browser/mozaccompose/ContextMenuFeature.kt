@@ -1,18 +1,12 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
 import android.view.View
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
@@ -23,7 +17,6 @@ import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.widgets.SnackbarDelegate
-import kotlin.time.toDuration
 
 @Composable
 fun ContextMenuFeature(

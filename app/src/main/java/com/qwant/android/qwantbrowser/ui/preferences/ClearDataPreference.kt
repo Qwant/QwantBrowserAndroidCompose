@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -49,7 +47,7 @@ fun ClearDataPreference(
     }
 
     PreferenceSelectionPopup(
-        label = R.string.clear_data_settings_label,
+        label = R.string.cleardata_settings_label,
         popupContent = {
             Column(modifier = Modifier.fillMaxSize()) {
                 CheckBoxRow(
@@ -87,7 +85,7 @@ fun ClearDataPreference(
                     }
                 }
                 CheckBoxRow(
-                    label = R.string.cleardata_tabs, // TODO replace with "history" string
+                    label = R.string.history,
                     checked = prefs.history,
                     onCheckedChange = {
                         viewModel.updateClearDataPreferences(prefs.copy(history = it))
@@ -108,8 +106,8 @@ fun ClearDataPreference(
 
                 var zapEnabled by remember { mutableStateOf(true) }
                 BigButton(
-                    text = "Use zap now",
-                    icon = Icons.Default.Clear, // TODO replace icon
+                    text = R.string.cleardata_use_now,
+                    icon = R.drawable.icons_zap, // TODO change zap icon if night or private theme
                     enabled = zapEnabled,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = { applicationViewModel.zap { success ->

@@ -8,8 +8,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
-import com.qwant.android.qwantbrowser.ext.isQwantSERPUrl
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
+import com.qwant.android.qwantbrowser.ext.urlDecode
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
@@ -78,16 +78,6 @@ class ToolbarState @AssistedInject constructor(
                         }
                     } else {
                         suggestions.keys.forEach { suggestions[it] = listOf() }
-                    }
-                }
-                .collect()
-        }
-        coroutineScope.launch {
-            snapshotFlow { hasFocus }
-                .distinctUntilChanged()
-                .onEach {
-                    if (hasFocus) {
-
                     }
                 }
                 .collect()
@@ -167,8 +157,8 @@ class ToolbarState @AssistedInject constructor(
         coroutineScope.launch {
             text = if (url.isQwantUrl()) {
                 url.getQwantSERPSearch()?.let { search ->
-                    if (hasFocus) TextFieldValue(search, selection = TextRange(0, search.length))
-                    else TextFieldValue(search)
+                    if (hasFocus) TextFieldValue(search.urlDecode(), selection = TextRange(0, search.length))
+                    else TextFieldValue(search.urlDecode())
                 } ?: TextFieldValue("")
             } else if (!hasFocus) {
                 // TextFieldValue(url.removePrefix("https://").removePrefix("www."))

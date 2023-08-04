@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser
 
 import android.content.Context
+import com.qwant.android.qwantbrowser.ext.UA
+import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.isQwantUrlValid
@@ -26,10 +28,8 @@ class AppRequestInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appPreferencesRepository: AppPreferencesRepository
 ) : RequestInterceptor {
-    // TODO centralise ua
-    private val uaGlobal = "Mozilla/5.0 (Android 10; Mobile; rv:115.0) Gecko/115.0 Firefox/115.0" // context.getString(R.string.qwant_base_useragent)
-    private val uaQwantExt = "QwantMobile/5.0" // context.getString(R.string.qwant_useragent_ext)
-    private val uaQwant = "$uaGlobal $uaQwantExt"
+    private val uaGlobal = context.UA
+    private val uaQwant = context.UAQwant
 
     private val coroutineScope = MainScope()
     private var openLinksInApp = false
@@ -65,7 +65,7 @@ class AppRequestInterceptor @Inject constructor(
             engineSession.settings.userAgentString = uaQwant
             if (!uri.isQwantUrlValid()) {
                 return RequestInterceptor.InterceptionResponse.Url(
-                    context.useCases.qwantUseCases.getQwantBaseUrl(search = uri.getQwantSERPSearch())
+                    context.useCases.qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch())
                 )
             }
         } else {

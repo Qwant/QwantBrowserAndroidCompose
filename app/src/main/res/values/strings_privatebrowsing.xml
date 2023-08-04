@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="privatebrowsing_title">La navigation privée</string>
-    <string name="privatebrowsing_paragraph_1">Les sites consultés dans des onglets privés ne s\'affichent pas dans votre historique Qwant, et leurs cookies sont toujours supprimés lorsque vous fermez l\'onglet. Sans la navigation privée, votre historique est stocké sur votre téléphone et n’est pas visible par Qwant (nous respectons votre vie privée !).</string>
-    <string name="privatebrowsing_paragraph_2">Sachez que la navigation privée ne vous rend pas invisible sur Internet. Les onglets privés n\'empêchent pas votre opérateur mobile ou le propriétaire de votre réseau wifi de connaitre les sites que vous consultez ou votre adresse IP publique.</string>
+    <string name="privatebrowsing_title">Private browsing</string>
+    <string name="privatebrowsing_paragraph_1">Sites viewed in private tabs are not displayed in your Qwant history, and their cookies are always deleted when you close the tab. Without private browsing, your search history is stored on your phone but is not visible to Qwant (we respect your privacy!).</string>
+    <string name="privatebrowsing_paragraph_2">Please be aware that private browsing does not make you invisible on the Internet. Private tabs do not prevent your mobile operator or Wi-Fi network owner tracking the sites you visit or your public IP address.</string>
 </resources>

@@ -3,6 +3,8 @@ package com.qwant.android.qwantbrowser.legacy.assist;
 import static android.content.ClipDescription.MIMETYPE_TEXT_HTML;
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
+import static com.qwant.android.qwantbrowser.ext.ContextKt.getUAQwant;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,7 +20,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -88,9 +89,8 @@ public class Assist extends Activity {
         webview.getSettings().setBuiltInZoomControls (false);
         webview.getSettings().setDisplayZoomControls(false);
         webview.getSettings().setJavaScriptEnabled(true);
-        // TODO centralise user agent
-        // webview.getSettings().setUserAgentString(getString(R.string.qwant_base_useragent) + getString(R.string.qwant_useragent_ext));
-        webview.getSettings().setUserAgentString("Mozilla/5.0 (Android 10; Mobile; rv:115.0) Gecko/115.0 Firefox/115.0 QwantMobile/5.0");
+
+        webview.getSettings().setUserAgentString(getUAQwant(this));
 
         // Maps settings
         webview.getSettings().setGeolocationEnabled(true);
@@ -216,7 +216,6 @@ public class Assist extends Activity {
 
         search_input_layout = findViewById(R.id.widget_search_bar_layout);
         search_text.setOnFocusChangeListener((v, hasFocus) -> {
-            Log.d("QWANT_BROWSER_ASSIST", "focus changed: " + hasFocus);
             if (hasFocus) {
                 if (search_text.getText() != null && search_text.getText().length() == 0) {
                     webview.setVisibility(View.INVISIBLE);
@@ -264,7 +263,7 @@ public class Assist extends Activity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.addPrimaryClipChangedListener(() -> reload_clipboard());
+            clipboard.addPrimaryClipChangedListener(this::reload_clipboard);
             reload_clipboard();
         }
     }
@@ -289,24 +288,16 @@ public class Assist extends Activity {
     }
 
     @Override public void onBackPressed() {
-        Log.d("QWANT_BROWSER_ASSIST", "back pressed");
         if (suggest_recyclerview.getVisibility() == View.VISIBLE) {
-            Log.d("QWANT_BROWSER_ASSIST", "back pressed on suggest. hiding suggest");
             suggest_recyclerview.setVisibility(View.INVISIBLE);
-            Log.d("QWANT_BROWSER_ASSIST", "back pressed on suggest. back_to_webview is " + back_to_webview);
             if (back_to_webview) {
-                Log.d("QWANT_BROWSER_ASSIST", "back pressed on suggest. should show webview now");
                 webview.setVisibility(View.VISIBLE);
-            } else {
-                Log.d("QWANT_BROWSER_ASSIST", "back pressed on suggest. should show home now");
             }
         } else if (webview.getVisibility() == View.VISIBLE) {
-            Log.d("QWANT_BROWSER_ASSIST", "back pressed on webview. back to home !");
             webview.setVisibility(View.INVISIBLE);
             back_to_webview = false;
             reset_searchbar();
         } else {
-            Log.d("QWANT_BROWSER_ASSIST", "back pressed on home. quit !");
             super.onBackPressed();
         }
     }
@@ -362,7 +353,7 @@ public class Assist extends Activity {
 
             // Get search url and load
             if (qwantUseCases != null) {
-                webview.loadUrl(qwantUseCases.getGetQwantBaseUrl().invoke(query, true));
+                webview.loadUrl(qwantUseCases.getGetQwantUrl().invoke(query, true));
             }
 
             // Force hide keyboard

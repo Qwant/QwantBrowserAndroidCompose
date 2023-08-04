@@ -12,8 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import org.mozilla.reference.browser.storage.BookmarkItemV2
 
@@ -23,10 +26,11 @@ fun BookmarkEditDialog(
     onDismiss: () -> Unit = {},
     onSubmit: (title: String, url: String?) -> Unit = { _,_ -> }
 ) {
+    val placeholderTitle = stringResource(id = R.string.bookmarks_folder_title_placeholder)
     var itemTitle by remember {
         val text =
             if (item?.title?.isNotEmpty() == true) item.title
-            else "Folder name" // TODO translate/change placeholder text ?
+            else placeholderTitle
         mutableStateOf(TextFieldValue(
             text = item?.title ?: text,
             TextRange(0, text.length))
@@ -35,23 +39,25 @@ fun BookmarkEditDialog(
     var itemUrl by remember { mutableStateOf(item?.url) }
 
     val context = LocalContext.current
-
+    val allFieldsRequiredWarning = stringResource(id = R.string.all_fields_required)
     YesNoDialog(
         onDismissRequest = { onDismiss() },
-
-        title = (if (item == null) "Create" else "Edit") + // TODO bookmark create/edit title text
-                (if (item?.type == BookmarkItemV2.BookmarkType.BOOKMARK) " bookmark" else " folder"),
+        title =
+            (if (item == null) stringResource(id = R.string.create)
+            else stringResource(id = R.string.edit))
+            + " " +
+            (if (item?.type == BookmarkItemV2.BookmarkType.BOOKMARK) stringResource(id = R.string.bookmarks_bookmark)
+            else stringResource(id = R.string.bookmarks_folder)),
         onYes = {
             if (itemTitle.text.isEmpty() || (item?.type == BookmarkItemV2.BookmarkType.BOOKMARK && itemUrl?.isEmpty() == true)) {
-                Toast.makeText(context, "all_fields_required", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, allFieldsRequiredWarning, Toast.LENGTH_LONG).show()
             } else {
                 onSubmit(itemTitle.text, itemUrl)
                 onDismiss()
             }
         },
         onNo = { onDismiss() },
-        yesText = "Ok", // TODO translate
-        noText = "Cancel",
+        yesText = stringResource(id = R.string.save),
         additionalContent = {
             val focusRequester = remember { FocusRequester() }
             LaunchedEffect(true) {
@@ -62,7 +68,6 @@ fun BookmarkEditDialog(
                 onValueChange = { itemTitle = it },
                 modifier = Modifier.focusRequester(focusRequester)
             )
-            // TODO folder selection popup
             if (item?.type == BookmarkItemV2.BookmarkType.BOOKMARK) {
                 TextField(
                     value = itemUrl ?: "",

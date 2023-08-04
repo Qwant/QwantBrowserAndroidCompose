@@ -2,27 +2,24 @@ package com.qwant.android.qwantbrowser.ui.widgets
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.ScrollState
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
 fun ScreenHeader(
     title: String,
-    icon: ImageVector? = null,
+    @DrawableRes icon: Int? = null,
     scrollableState: ScrollableState? = null,
     actions: @Composable () -> Unit = {}
 ) {
@@ -31,15 +28,21 @@ fun ScreenHeader(
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().height(56.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         ) {
             CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSecondaryContainer) {
                 IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back") // TODO change arrow icon
+                    Icon(painterResource(id = R.drawable.icons_arrow_backward), contentDescription = "Back")
                 }
 
                 if (icon != null) {
-                    Icon(icon, contentDescription = title, modifier = Modifier.padding(end = 4.dp))
+                    Icon(
+                        painter = painterResource(id = icon),
+                        contentDescription = title,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
                 }
 
                 Text(
@@ -82,7 +85,7 @@ fun ScreenHeader(
     QwantBrowserTheme {
         ScreenHeader(
             title = "Coucou",
-            icon = Icons.Default.Add
+            icon = R.drawable.icons_lock
         )
     }
 }
@@ -92,10 +95,11 @@ fun ScreenHeader(
     QwantBrowserTheme {
         ScreenHeader(
             title = "Coucou",
-            icon = Icons.Default.Add,
+            icon = R.drawable.icons_lock,
             actions = {
                 IconButton(onClick = {}) {
-                    Icon(Icons.Default.Search, contentDescription = "test")
+                    Icon(
+                        painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "test")
                 }
             }
         )

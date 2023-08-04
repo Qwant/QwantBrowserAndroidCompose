@@ -31,7 +31,7 @@ fun UrlIcon(
 @Composable
 fun UrlIconPlaceholder(modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.icons_shuffle), // TODO replace url placeholder icon
+        painter = painterResource(id = R.drawable.icons_internet),
         contentDescription = "icon",
         modifier = modifier
     )

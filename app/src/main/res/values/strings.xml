@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name" translatable="false">QwantBrowserCompose</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+
+    <string name="all_fields_required">All fields are required</string>
+
+    <!-- translations to find or create -->
+    <string name="create">Create</string>
+    <string name="edit">Edit</string>
+    <string name="try_again">Try again</string>
+
+    <!-- TODO confirm texts -->
+    <string name="permission_permanently_refused">You permanently refused permissions. You need to enable them through system settings now"</string>
+    <string name="take_me_there">Take me there</string>
+
+    <!-- TODO move to gradle -->
+    <string name="app_name" translatable="false">Qwant 5.0</string>
+    <string name="user_agent_qwant_ext" translatable="false">QwantMobile/%1$s</string>
+    <string name="store_url" translatable="false">https://play.google.com/store/apps/details?id=com.qwant.liberty</string>
 </resources>

@@ -18,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import mozilla.components.feature.prompts.R
+import com.qwant.android.qwantbrowser.R
 
 @Composable
 fun ColorPicker(
@@ -72,10 +71,10 @@ fun ColorPicker(
                     .padding(top = 16.dp)
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(R.string.mozac_feature_prompts_cancel))
+                    Text(text = stringResource(R.string.cancel))
                 }
                 Button(onClick = { onConfirm(colorPickerState.color) }) {
-                    Text(text = stringResource(R.string.mozac_feature_prompts_ok))
+                    Text(text = stringResource(R.string.ok))
                 }
             }
         }

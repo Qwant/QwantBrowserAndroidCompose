@@ -8,22 +8,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.qwant.android.qwantbrowser.R
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ToolbarTextField(
     toolbarState: ToolbarState,
@@ -67,8 +63,6 @@ fun ToolbarTextField(
             }
     ) { innerTextField ->
         ToolbarDecorator(
-            // hasFocus = toolbarState.hasFocus,
-            // isEmpty = toolbarState.text.text.isEmpty(),
             state = toolbarState,
             hintColor = mergedStyle.color.copy(alpha = 0.6f),
             innerTextField = innerTextField,
@@ -78,7 +72,7 @@ fun ToolbarTextField(
                         IconButton(onClick = { toolbarState.updateText("") }) {
                             Icon(
                                 painterResource(id = R.drawable.icons_close_circled),
-                                contentDescription = "Clear"
+                                contentDescription = "clear"
                             )
                         }
                     }

@@ -3,14 +3,12 @@ package com.qwant.android.qwantbrowser.ui.browser
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
-import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature

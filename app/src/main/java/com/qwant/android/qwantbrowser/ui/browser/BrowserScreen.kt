@@ -3,13 +3,11 @@ package com.qwant.android.qwantbrowser.ui.browser
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -27,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
 import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
-import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -127,7 +125,7 @@ fun BrowserScreen(
         } else {
             Icon(
                 painter = painterResource(id = R.drawable.qwant_logo),
-                contentDescription = "Logo qwant",
+                contentDescription = "logo qwant",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .fillMaxSize()
@@ -259,15 +257,6 @@ fun QwantVIPAction(
                 }
             }
         }
-        /* Dropdown(
-            expanded = state?.popupSession != null,
-            onDismissRequest = { viewModel.closeQwantVIPPopup() },
-            modifier = Modifier
-                .background(Color.White)
-                .padding(horizontal = 8.dp)
-        ) {
-
-        } */
     }
 }
 
@@ -296,7 +285,7 @@ fun AfterActions(
     ToolbarAction(onClick = { zap() }) {
         Image(
             painter = painterResource(id = zapImageID),
-            contentDescription = "Zap",
+            contentDescription = "zap",
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -349,8 +338,8 @@ fun TabsButton(
             onDismissRequest = { showTabsDropdown = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Fermer cet onglet") }, // TODO text
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close this tab")},
+                text = { Text(stringResource(id = R.string.browser_close_tab)) },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close tab")},
                 onClick = {
                     viewModel.closeCurrentTab()
                     showTabsDropdown = false
@@ -358,16 +347,16 @@ fun TabsButton(
             )
             Divider(modifier = Modifier.padding(horizontal = 16.dp))
             DropdownMenuItem(
-                text = { Text("Open tab") }, // TODO text
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "add tab")},
+                text = { Text(stringResource(id = R.string.browser_new_tab)) },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "new tab")},
                 onClick = {
                     viewModel.openNewQwantTab(false)
                     showTabsDropdown = false
                 }
             )
             DropdownMenuItem(
-                text = { Text("Open private tab") }, // TODO text
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "add private tab")},
+                text = { Text(stringResource(id = R.string.browser_new_tab_private)) },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "new private tab")},
                 onClick = {
                     viewModel.openNewQwantTab(true)
                     showTabsDropdown = false
@@ -389,9 +378,8 @@ fun BrowserMenuButton(
         ToolbarAction(onClick = { showMenu = true }) {
             Icon(
                 painter = painterResource(id = R.drawable.icons_more_vertical),
-                contentDescription = "Menu",
-                modifier = Modifier.fillMaxSize(),
-                // tint = MaterialTheme.colorScheme.onBackground
+                contentDescription = "menu",
+                modifier = Modifier.fillMaxSize()
             )
         }
 

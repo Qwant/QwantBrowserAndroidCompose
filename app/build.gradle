@@ -30,6 +30,24 @@ android {
 
         resourceConfigurations += ["en", "fr", "de", "es", "it"]
     }
+    bundle {
+        density {
+            enableSplit true
+        }
+        abi {
+            enableSplit true
+        }
+        language {
+            enableSplit = false
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+        }
+    }
 
     buildTypes {
         release {
@@ -67,13 +85,21 @@ android {
     }
 }
 
+/* def baseVersionCode = project.property("baseVersionCode")
+
+android.applicationVariants.configureEach { variant ->
+    variant.outputs.configureEach { output ->
+        output.versionCode = baseVersionCode
+    }
+} */
+
 dependencies {
     // Android
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
     implementation 'androidx.datastore:datastore:1.0.0'
-    implementation 'androidx.paging:paging-runtime:3.1.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Legacy Onboarding
@@ -81,7 +107,7 @@ dependencies {
     // Legacy assistant
     implementation 'com.google.android.material:material:1.9.0'
     // Old preferences for migration. Remove after migration is complete
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.preference:preference:1.2.1'
 
     // Old browser fragment
     // TODO remove old browser fragment dependencies
@@ -103,7 +129,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
-    implementation "androidx.paging:paging-compose:3.2.0-rc01"
+    implementation "androidx.paging:paging-compose:3.2.0"
 
     // Compose debug
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_tooling_version"
@@ -136,7 +162,7 @@ dependencies {
     implementation "org.mozilla.components:feature-prompts:$mozac_version"
     implementation "org.mozilla.components:feature-pwa:$mozac_version"
     implementation "org.mozilla.components:feature-intent:$mozac_version"
-    implementation "org.mozilla.components:feature-search:$mozac_version" // Needed for providing our own SearchUseCase
+    implementation "org.mozilla.components:feature-webcompat:$mozac_version"
     implementation "org.mozilla.components:support-utils:$mozac_version"
     implementation "org.mozilla.components:support-ktx:$mozac_version"
     implementation "org.mozilla.components:support-rusthttp:$mozac_version"

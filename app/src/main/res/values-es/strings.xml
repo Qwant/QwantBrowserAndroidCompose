@@ -1,0 +1,13 @@
+<resources>
+    <string name="ok">Vale</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="save">Guardar</string>
+    <string name="delete">Eliminar</string>
+    <string name="share">Compartir</string>
+
+    <string name="all_fields_required">Todos los campos son obligatorios</string>
+
+    <!-- confirm texts ? -->
+    <string name="take_me_there">Llévame allí</string>
+</resources>

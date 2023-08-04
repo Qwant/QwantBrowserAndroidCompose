@@ -1,0 +1,13 @@
+<resources>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+
+    <string name="save">Speichern</string>
+    <string name="delete">Löschen</string>
+    <string name="share">Teilen</string>
+
+    <string name="all_fields_required">Alle Felder sind erforderlich</string>
+
+    <!-- confirm texts ? -->
+    <string name="take_me_there">Bring mich dorthin</string>
+</resources>

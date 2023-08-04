@@ -26,8 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.qwant.android.qwantbrowser.R
 import mozilla.components.concept.engine.prompt.Choice
-import mozilla.components.feature.prompts.R as mozacR
 
 @Composable
 fun ChoiceDialog(
@@ -74,10 +74,10 @@ fun ChoiceDialog(
                         .padding(top = 16.dp)
                 ) {
                     TextButton(onClick = onDismissRequest) {
-                        Text(text = stringResource(mozacR.string.mozac_feature_prompts_cancel))
+                        Text(text = stringResource(R.string.cancel))
                     }
                     Button(onClick = { onSelected(selection?.toTypedArray() ?: arrayOf()) }) {
-                        Text(text = stringResource(mozacR.string.mozac_feature_prompts_ok))
+                        Text(text = stringResource(R.string.ok))
                     }
                 }
             }

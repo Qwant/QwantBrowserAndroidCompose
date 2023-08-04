@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bookmarks">Segnalibri</string>
+    <string name="bookmarks_folder">una cartella</string>
+    <string name="bookmarks_bookmark">un segnalibro</string>
+</resources>

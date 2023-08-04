@@ -164,7 +164,7 @@ class QwantUseCases(
     val openQwantPage: OpenQwantPageUseCase by lazy {
         OpenQwantPageUseCase(tabsUseCases)
     }
-    val getQwantBaseUrl: GetQwantUrlUseCase by lazy {
+    val getQwantUrl: GetQwantUrlUseCase by lazy {
         GetQwantUrlUseCase()
     }
     val loadSERPPage: LoadSERPPageUseCase by lazy {

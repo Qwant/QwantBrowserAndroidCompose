@@ -20,10 +20,8 @@ object QwantVIPFeature {
      */
     fun install(runtime: WebExtensionRuntime) {
         runtime.listInstalledWebExtensions({ list ->
-            Log.d("QWANT_BROWSER_EXTENSION", "Extension count installed at start: ${list.size}")
             var extensionFound = false
             list.forEach { ext ->
-                Log.d("QWANT_BROWSER_EXTENSION", "Extension found: ${ext.id} - ${ext.getMetadata()}")
                 if (ext.id == ID && ext.getMetadata()?.version == LAST_VERSION) {
                     extensionFound = true
                     // TODO update qwant vip at launch
@@ -39,17 +37,12 @@ object QwantVIPFeature {
                 }
             }
             if (!extensionFound) {
-                Log.d("QWANT_BROWSER_EXTENSION", "Qwant extension not found. installing")
                 runtime.installWebExtension(
                     ID, URL,
                     onSuccess = { ext ->
-                        Log.d("QWANT_BROWSER_EXTENSION", "Qwant Extension installed: ${ext.getMetadata()}")
                         runtime.setAllowedInPrivateBrowsing(
                             ext,
                             allowed = true,
-                            onSuccess = {
-                                Log.d("QWANT_BROWSER_EXTENSION", "Qwant Extension allowed in private browsing")
-                            },
                             onError = { throwable ->
                                 Log.e("QWANT_BROWSER_EXTENSION","Error allowing Qwant WebExtension in private browsing", throwable)
                             }

@@ -60,10 +60,8 @@ fun FilePicker(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissionsGrant ->
         if (permissionsGrant.all { it.value }) {
-            Log.d("QB_PROMPTS", "permissions granted !")
-            permissionGranted = true // should open chooser
+            permissionGranted = true
         } else {
-            Log.d("QB_PROMPTS", "permissions refused !")
             // TODO show file prompt permission rational if needed
         }
     }

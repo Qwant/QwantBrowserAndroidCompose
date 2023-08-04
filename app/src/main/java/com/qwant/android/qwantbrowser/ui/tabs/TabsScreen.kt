@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
@@ -82,6 +83,7 @@ fun TabsScreen(
                 }
                 TabsMenuMore(
                     tabsViewOption = tabsViewOption,
+                    private = private,
                     onTabsViewOptionChange = { tabsViewModel.updateTabsViewOption(it) },
                     onRemoveTabs = {
                         tabsViewModel.removeTabs(private)
@@ -104,6 +106,7 @@ fun TabsScreen(
 @Composable
 fun TabsMenuMore(
     tabsViewOption: TabsViewOption,
+    private: Boolean,
     onTabsViewOptionChange: (TabsViewOption) -> Unit,
     onRemoveTabs: () -> Unit
 ) {
@@ -122,16 +125,16 @@ fun TabsMenuMore(
             onDismissRequest = { showMenu = false }
         ) {
             DropdownMenuItem(
-                text = { Text(text = "Fermer tous les onglets") },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "add tab") },
+                text = { Text(text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs)) },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close all tabs") },
                 onClick = {
                     showMenu = false
                     onRemoveTabs()
                 }
             )
             DropdownMenuItem(
-                text = { Text(text = "Affichage des onglets") },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "add tab") },
+                text = { Text(text = stringResource(id = R.string.tabs_view_label)) },
+                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_grid), contentDescription = "tabs settings") },
                 onClick = {
                     showMenu = false
                     showViewOptionPopup = true
@@ -140,14 +143,11 @@ fun TabsMenuMore(
         }
     }
     if (showViewOptionPopup) {
-
         YesNoDialog(
             onDismissRequest = { showViewOptionPopup = false },
             onYes = { showViewOptionPopup = false },
             onNo = { showViewOptionPopup = false },  // TODO revert to settings before opening popup on cancel
-            title = "Affichage des onglets",
-            yesText = "Ok",
-            noText = "Cancel",
+            title = stringResource(id = R.string.tabs_view_label),
             additionalContent = {
                 Box(modifier = Modifier.padding(top = 8.dp)) {
                     TabsViewPreferenceSelector(
@@ -157,22 +157,6 @@ fun TabsMenuMore(
                 }
             }
         )
-        /* Dialog(onDismissRequest = { showViewOptionPopup = false }) {
-            Box(modifier = Modifier
-                .clip(MaterialTheme.shapes.extraSmall)
-                .background(MaterialTheme.colorScheme.tertiaryContainer)
-                .border(
-                    BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                    MaterialTheme.shapes.extraSmall
-                )
-                .padding(24.dp)
-            ) {
-                TabsViewPreferenceSelector(
-                    value = tabsViewOption,
-                    onValueChange = onTabsViewOptionChange
-                )
-            }
-        } */
     }
 }
 
@@ -194,7 +178,7 @@ fun AnimatedTabList(
             tabsViewModel.selectTab(tab.id)
             onClose(TabOpening.NONE)
         }
-        val onTabDeleted = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
+        val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
 
         AnimatedVisibility(
             visible = private,

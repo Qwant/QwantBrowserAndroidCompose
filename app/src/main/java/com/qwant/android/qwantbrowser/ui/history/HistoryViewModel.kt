@@ -6,7 +6,7 @@ import androidx.paging.InvalidatingPagingSourceFactory
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.qwant.android.qwantbrowser.userdata.history.HistoryPagingSource
+import com.qwant.android.qwantbrowser.storage.history.HistoryPagingSource
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel

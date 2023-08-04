@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="assist_clipboard">Clipboard</string>
-    <string name="assist_qwant_widget_text">Search in private mode</string>
+    <string name="assist_qwant_widget_text" translatable="false">@string/browser_toolbar_hint</string>
 
     <dimen name="assist_default_min_width">180dp</dimen>
 

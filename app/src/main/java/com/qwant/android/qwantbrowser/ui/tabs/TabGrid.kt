@@ -79,7 +79,7 @@ fun TabCard(
             onDeleted(tab)
             deleting = false
         }
-    })
+    }, label = "tabSwipeScale")
 
     Column(modifier = modifier
         .scale(scale)
@@ -102,7 +102,7 @@ fun TabCard(
                             Image(painter = it.painter, contentDescription = "icon")
                         }
                         Placeholder {
-                            Image(painter = painterResource(id = R.drawable.icons_shuffle), contentDescription = "icon") // TODO replace placeholder icon
+                            Image(painter = painterResource(id = R.drawable.icons_internet), contentDescription = "icon")
                         }
                     }
                 }
@@ -122,11 +122,11 @@ fun TabCard(
             Box(modifier = Modifier
                 .defaultMinSize(150.dp, 175.dp)
                 .padding(top = 0.dp, bottom = 4.dp, start = 4.dp, end = 4.dp)
-                .height(175.dp) // TODO height relative to calculated width ?
+                .height(175.dp)
                 .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 12.dp)),
                 propagateMinConstraints = true
             ) {
-                // TODO size equal to calculated width
+                // TODO size equal to calculated size ?
                 TabThumbnail(tabId = tab.id, size = 200.dp, thumbnailStorage = thumbnailStorage)
             }
         }

@@ -16,7 +16,7 @@ import javax.inject.Inject
 class PreferencesViewModel @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository,
     private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    private val useCases: UseCases
+    useCases: UseCases
 ) : ViewModel() {
     val appPreferences = appPreferencesRepository.flow.stateIn(
         scope = viewModelScope,
@@ -92,20 +92,12 @@ class PreferencesViewModel @Inject constructor(
         viewModelScope.launch { frontEndPreferencesRepository.updateOpenResultsInNewTab(openInNewTab) }
     }
 
-    fun updateInterfaceLanguage(language: String) {
-        viewModelScope.launch { frontEndPreferencesRepository.updateInterfaceLanguage(language) }
-    }
-
     fun updateSearchResultRegion(region: String) {
         viewModelScope.launch { frontEndPreferencesRepository.updateSearchResultRegion(region) }
     }
 
     fun updateClearDataPreferences(preferences: ClearDataPreferences) {
         viewModelScope.launch { appPreferencesRepository.updateClearDataPreferences(preferences) }
-    }
-
-    fun clearData(then: (Boolean) -> Unit) {
-        useCases.qwantUseCases.clearDataUseCase(viewModelScope, then)
     }
 
     val addTabsUseCase = useCases.tabsUseCases.addTab

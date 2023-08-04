@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.bookmarks
 
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
@@ -31,7 +31,7 @@ fun BookmarksScreen(
 
     Column {
         ScreenHeader(
-            title = viewModel.currentFolder?.title ?: "Bookmarks", // TODO translations
+            title = viewModel.currentFolder?.title ?: stringResource(id = R.string.bookmarks), // TODO translations
             scrollableState = lazyListState,
             actions = { NewFolderAction(viewModel) }
         )

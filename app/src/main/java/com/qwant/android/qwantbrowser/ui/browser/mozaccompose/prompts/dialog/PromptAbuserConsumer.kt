@@ -11,7 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts.dialog.internalcopy.PromptAbuserDetector
+import mozilla.components.feature.prompts.R as mozacR
 
 @Composable
 fun PromptAbuserConsumer(
@@ -43,7 +45,7 @@ fun PromptAbuserConsumer(
                                 stopAbusingCheckbox = it
                             }
                         )
-                        Text(text = "Block dialogs") // TODO text and traduction
+                        Text(text = stringResource(id = mozacR.string.mozac_feature_prompts_no_more_dialogs)) // TODO text and traduction
                     }
                 }
             }

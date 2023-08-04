@@ -19,7 +19,6 @@ import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
-import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import mozilla.components.browser.icons.BrowserIcons
 
 

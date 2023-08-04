@@ -9,14 +9,12 @@
 
     <ImageView
         android:src="@drawable/assist_qwant_logo_v2_round"
-        android:id="@+id/custom_notification_widget_logo"
         android:layout_marginStart="2dp"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:padding="8dp" />
 
     <TextView
-        android:id="@+id/custom_notification_widget_text"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -27,7 +25,6 @@
 
     <ImageView
         android:src="@drawable/assist_icons_regular_icon_search"
-        android:id="@+id/custom_notification_widget_magnifier"
         android:layout_height="match_parent"
         android:layout_width="28dp"
         android:layout_marginEnd="16dp"

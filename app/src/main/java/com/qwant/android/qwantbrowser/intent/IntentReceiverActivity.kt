@@ -10,8 +10,6 @@ class IntentReceiverActivity: Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        useCases.qwantUseCases.warmUp()
-
         val intent = intent?.let { Intent(it) } ?: Intent()
 
         val processor = QwantIntentProcessor(useCases.tabsUseCases, useCases.qwantUseCases)
@@ -21,6 +19,4 @@ class IntentReceiverActivity: Activity() {
         startActivity(intent)
         finish()
     }
-
-
 }

@@ -26,8 +26,7 @@ fun RepostDialog(
             title = stringResource(mozacR.string.mozac_feature_prompt_repost_title),
             description = stringResource(mozacR.string.mozac_feature_prompt_repost_message),
             additionalContent = { abusingControls() },
-            yesText = stringResource(mozacR.string.mozac_feature_prompt_repost_positive_button_text),
-            noText = stringResource(mozacR.string.mozac_feature_prompt_repost_negative_button_text),
+            yesText = stringResource(mozacR.string.mozac_feature_prompt_repost_positive_button_text)
         )
     }
 }

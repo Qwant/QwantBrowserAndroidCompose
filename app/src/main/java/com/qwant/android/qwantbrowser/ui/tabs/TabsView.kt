@@ -2,7 +2,6 @@ package com.qwant.android.qwantbrowser.ui.tabs
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.qwant.android.qwantbrowser.preferences.app.TabsViewOption
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.state.TabSessionState

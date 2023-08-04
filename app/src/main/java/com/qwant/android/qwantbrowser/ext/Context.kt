@@ -8,13 +8,15 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresApi
 import com.qwant.android.qwantbrowser.MainActivity
 import com.qwant.android.qwantbrowser.QwantApplication
+import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.mozac.UseCases
+import org.mozilla.geckoview.BuildConfig
+import mozilla.components.feature.downloads.R as downloadsR
 
 
 /**
@@ -56,27 +58,36 @@ fun Context.openFileInApp(contentUri: Uri, contentType: String?) {
             setDataAndType(contentUri, contentType)
             flags = Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
-        val chooserIntent = Intent.createChooser(intent, "Open with").apply {
+        val chooserIntent = Intent.createChooser(
+            intent,
+            this.getString(downloadsR.string.mozac_feature_downloads_third_party_app_chooser_dialog_title),
+        ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
         this.startActivity(chooserIntent)
     } catch (e: ActivityNotFoundException) {
-        Toast.makeText(this, "Could not find any app to open this file", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            this.getString(downloadsR.string.mozac_feature_downloads_unable_to_open_third_party_app),
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
 
 fun Context.openAppStorePage() = startActivity(
-    Intent("android.intent.action.VIEW", Uri.parse(
-        "https://play.google.com/store/apps/details?id=com.qwant.liberty"
-        // if (BuildConfig.BUILD_TYPE == "appgallery") "market://details?id=com.qwant.liberty"
-        // else "https://play.google.com/store/apps/details?id=com.qwant.liberty"
-    ))
+    Intent("android.intent.action.VIEW", Uri.parse(getString(R.string.store_url)))
 )
 
+@RequiresApi(Build.VERSION_CODES.N)
 fun Context.openDefaultAppsSystemSettings() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        startActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
-    } else {
-        Log.e("DEFAULT_BROWSER", "Android version too old")
-    }
+    startActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
 }
+
+val Context.UA: String
+    // TODO detect tablet devices to set appropriate USER_AGENT_GECKOVIEW_TABLET
+    get() = BuildConfig.USER_AGENT_GECKOVIEW_MOBILE
+
+val Context.UAQwant: String
+    get() = "$UA ${getString(R.string.user_agent_qwant_ext, getQwantVersion())}"
+
+fun getQwantVersion(): String = "5.0" // TODO get this from gradle

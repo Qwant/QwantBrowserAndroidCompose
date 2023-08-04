@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="browser_search">Rechercher</string>
+    <string name="browser_downloads">Téléchargements</string>
+
+    <string name="browser_new_tab">Nouvel onglet</string>
+    <string name="browser_new_tab_private">Nouvel onglet privé</string>
+    <string name="browser_close_all_tabs">Fermer tous les onglets</string>
+    <string name="browser_close_private_tabs">Fermer les onglets privés</string>
+    <string name="browser_close_tab">Fermer cet onglet</string>
+    <string name="browser_go_to_tab">Aller à l\’onglet</string>
+
+    <string name="browser_toolbar_hint">Rechercher ou saisir une adresse</string>
 </resources>

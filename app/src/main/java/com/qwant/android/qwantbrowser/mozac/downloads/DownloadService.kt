@@ -7,7 +7,6 @@ package com.qwant.android.qwantbrowser.mozac.downloads
 import com.qwant.android.qwantbrowser.ext.core
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
-import mozilla.components.support.base.android.NotificationsDelegate
 
 class DownloadService : AbstractFetchDownloadService() {
     override val httpClient by lazy { core.client }

@@ -1,8 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.preferences
 
-import android.os.Build
-import android.text.Html
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -11,24 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.os.LocaleListCompat
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.openAppStorePage
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
@@ -36,6 +28,7 @@ import com.qwant.android.qwantbrowser.preferences.frontend.AdultFilter
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.*
+import com.qwant.android.qwantbrowser.ui.widgets.HtmlText
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 import java.util.Locale
 
@@ -71,7 +64,7 @@ fun PreferencesScreen(
                 value = appPrefs.toolbarPosition,
                 onValueChange = { viewModel.updateToolbarPosition(it) }
             )
-            // Hide toolbar on scroll ? // TODO confirm presence
+            // Hide toolbar on scroll
             PreferenceToggle(
                 label = R.string.hide_toolbar_on_scroll_label,
                 value = appPrefs.hideToolbarOnScroll,
@@ -349,9 +342,7 @@ fun PreferencesScreen(
                 onClicked = { context.openAppStorePage() }
             )
 
-            // Log.d("QB_BUILDTYPE", BuildInfo.getBuildType())
-            // TODO test links only in debug builds
-            // if (BuildInfo.getBuildType() == "debug") {
+            if (BuildConfig.DEBUG) {
                 PreferenceGroupLabel(label = R.string.settings_tests_label)
 
                 // Tests prompts feature
@@ -366,23 +357,7 @@ fun PreferencesScreen(
                         onClose()
                     }
                 )
-            // }
+            }
         }
     }
-}
-
-@Composable
-fun HtmlText(
-    html: String,
-    modifier: Modifier = Modifier
-) {
-    val textColor = LocalContentColor.current
-    AndroidView(
-        modifier = modifier,
-        factory = { context -> TextView(context) },
-        update = {
-            it.setTextColor(textColor.toArgb())
-            it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
-        }
-    )
 }

@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -45,16 +42,16 @@ fun BookmarkMoveDialog(
 
     YesNoDialog(
         onDismissRequest = { onDismiss() },
-        title = "Move " + // TODO bookmark create/edit title text
-                (if (item.type == BookmarkItemV2.BookmarkType.BOOKMARK) "bookmark" else "folder") +
-                " to",
+        title = stringResource(id = R.string.bookmarks_move_x_to, stringResource(
+            if (item.type == BookmarkItemV2.BookmarkType.BOOKMARK) R.string.bookmarks_bookmark
+            else R.string.bookmarks_folder
+        )),
         onYes = {
             onSubmit(selectedItem)
             onDismiss()
         },
         onNo = { onDismiss() },
-        yesText = "Ok", // TODO translations
-        noText = "Cancel" // TODO translations
+        yesText = stringResource(id = R.string.save)
     ) {
         RootBookmarkFolderTreeItem(
             root = bookmarksRoot,
@@ -113,8 +110,8 @@ fun BookmarkFolderTreeItem(
 ) {
     val background = if (selectedFolder == currentFolder) MaterialTheme.colorScheme.primary else Color.Transparent
 
-    // if we only want actual selected parents to be open, use as starting value
-    // exclude?.let { currentFolder.isParentOf(exclude) } ?: false
+    // if we only want actual selected parents to be open, use as starting value for open
+    //      exclude?.let { currentFolder.isParentOf(exclude) } ?: false
     var open by remember { mutableStateOf( true) }
 
     val arrowRotation by animateFloatAsState(targetValue = if (open) 90f else 180f, label = "arrowRotation")
@@ -149,7 +146,7 @@ fun BookmarkFolderTreeItem(
                             painterResource(
                                 id = R.drawable.icons_chevron_forward
                             ),
-                            contentDescription = "arrow",
+                            contentDescription = "Arrow",
                             modifier = Modifier.rotate(arrowRotation)
                         )
                     }

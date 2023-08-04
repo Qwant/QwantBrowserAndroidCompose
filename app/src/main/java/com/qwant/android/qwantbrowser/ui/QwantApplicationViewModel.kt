@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui
 
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -20,7 +19,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.lib.state.ext.flow
 import javax.inject.Inject
-
 
 enum class PrivacyMode {
     NORMAL, PRIVATE, SELECTED_TAB_PRIVACY
@@ -101,11 +99,11 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val loadUrlUseCase = useCases.sessionUseCases.loadUrl
+    val getQwantUrlUseCase = useCases.qwantUseCases.getQwantUrl
 
     fun setPrivacyMode(mode: PrivacyMode) {
         privacyMode.update { mode }
     }
-
 
     val zapOnQuit = appPreferencesRepository.flow
         .map { it.clearDataOnQuit }

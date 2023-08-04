@@ -2,7 +2,6 @@ package com.qwant.android.qwantbrowser.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
@@ -13,9 +12,7 @@ import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
-import com.qwant.android.qwantbrowser.ext.navigateSingleTopTo
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
-import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.zap.ZapFeature
 
 @Composable
@@ -49,7 +46,8 @@ fun QwantBrowserApp(
             QwantUrlEngineSyncFeature(
                 it,
                 qwantTabs,
-                applicationViewModel.loadUrlUseCase
+                applicationViewModel.loadUrlUseCase,
+                applicationViewModel.getQwantUrlUseCase
             )
         }
 
@@ -69,7 +67,7 @@ fun QwantBrowserApp(
             }
         }
     } else {
-        // TODO splash screen
+        // TODO splash screen ?
     }
 }
 

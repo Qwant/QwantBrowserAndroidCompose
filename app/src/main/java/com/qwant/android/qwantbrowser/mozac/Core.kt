@@ -3,6 +3,7 @@ package com.qwant.android.qwantbrowser.mozac
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import com.qwant.android.qwantbrowser.AppRequestInterceptor
+import com.qwant.android.qwantbrowser.ext.UA
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
@@ -15,15 +16,9 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.session.HistoryDelegate
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.mozac.downloads.DownloadService
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.concept.base.crash.CrashReporting
-import mozilla.components.concept.engine.EngineSession
-import mozilla.components.feature.app.links.AppLinksInterceptor
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
@@ -45,12 +40,12 @@ class Core @Inject constructor(@ApplicationContext private val context: Context)
     @Inject lateinit var appRequestInterceptor: AppRequestInterceptor
 
     val engine: Engine by lazy {
+        // TODO explore engine settings
         val defaultSettings = DefaultSettings(
             historyTrackingDelegate = HistoryDelegate(lazy { historyStorage }),
             requestInterceptor = appRequestInterceptor,
-            // TODO centralise ua
-            userAgentString = "Mozilla/5.0 (Android 10; Mobile; rv:115.0) Gecko/115.0 Firefox/115.0", // context.getString(R.string.qwant_base_useragent) + context.getString(R.string.qwant_useragent_ext)
-            // trackingProtectionPolicy = TrackingProtectionPolicy.recommended(), // createTrackingProtectionPolicy(prefs),
+            userAgentString = context.UA,
+            // TODO move debugging options to gradle
             remoteDebuggingEnabled = true, // prefs.getBoolean(context.getPreferenceKey(pref_key_remote_debugging), false),
             testingModeEnabled = true
         )

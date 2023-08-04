@@ -2,11 +2,11 @@ package com.qwant.android.qwantbrowser.ui.browser.mozaccompose.downloads
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
@@ -22,6 +22,7 @@ import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.downloads.manager.onDownloadStopped
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.support.ktx.kotlin.isSameOriginAs
+import mozilla.components.feature.downloads.R as mozacR
 
 // TODO Dialog translations
 
@@ -134,23 +135,25 @@ fun DownloadFeature(
             onDismissRequest = { cancelDownload() },
             onYes = { checkPermissionAndStartDownload() },
             onNo = { cancelDownload() },
-            title = "Download (${downloadState?.contentLength?.toMegabyteOrKilobyteString()})",
+            title = stringResource(
+                id = mozacR.string.mozac_feature_downloads_dialog_title2,
+                downloadState?.contentLength?.toMegabyteOrKilobyteString() ?: ""
+            ),
             description = "${downloadState?.fileName}",
             icon = R.drawable.icons_download,
-            yesText = "Download",
-            noText = "Cancel"
+            yesText = stringResource(id = mozacR.string.mozac_feature_downloads_dialog_download)
         )
     }
 
     if (showAskPermissionAgain) {
+
         YesNoDialog(
             onDismissRequest = { cancelDownload() },
             onYes = { checkPermissionAndStartDownload() },
             onNo = { cancelDownload() },
-            description = "Downloader really needs this permissions: ${downloadManager.permissions.joinToString(", ")}",
+            description = stringResource(id = mozacR.string.mozac_feature_downloads_write_external_storage_permissions_needed_message),
             icon = R.drawable.icons_download,
-            yesText = "Ask me again",
-            noText = "Cancel"
+            yesText = stringResource(id = mozacR.string.mozac_feature_downloads_button_try_again)
         )
     }
 
@@ -159,10 +162,9 @@ fun DownloadFeature(
             onDismissRequest = { showPermissionRefused = false },
             onYes = { context.openAppSystemSettings() },
             onNo = { showPermissionRefused = false },
-            description = "You permanently refused permissions for the downloader. You need to enable them through system settings now",
+            description = stringResource(id = R.string.permission_permanently_refused),
             icon = R.drawable.icons_download,
-            yesText = "Take me there",
-            noText = "Cancel"
+            yesText = stringResource(id = R.string.take_me_there)
         )
     }
 }
