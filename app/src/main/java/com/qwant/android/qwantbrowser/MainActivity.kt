@@ -20,6 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        core.notificationsDelegate.bindToActivity(this)
+
         setContent {
             QwantBrowserApp()
         }

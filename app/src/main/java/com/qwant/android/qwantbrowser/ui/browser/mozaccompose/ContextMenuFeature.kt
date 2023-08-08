@@ -42,19 +42,23 @@ fun ContextMenuFeature(
                     action: Int,
                     listener: ((v: View) -> Unit)?
                 ) {
-                    showSnackbar(
-                        context.getString(text),
-                        QwantApplicationViewModel.SnackbarAction(context.getString(action)) {
-                            listener?.invoke(view)
-                        },
-                        false,
-                        when (duration) {
-                            SnackbarDuration.Short.ordinal -> SnackbarDuration.Short
-                            SnackbarDuration.Long.ordinal -> SnackbarDuration.Long
-                            SnackbarDuration.Indefinite.ordinal -> SnackbarDuration.Indefinite
-                            else -> SnackbarDuration.Short
-                        }
-                    )
+                    if (text != 0) {
+                        showSnackbar(
+                            context.getString(text),
+                            if (action != 0) {
+                                QwantApplicationViewModel.SnackbarAction(context.getString(action)) {
+                                    listener?.invoke(view)
+                                }
+                            } else null,
+                            false,
+                            when (duration) {
+                                SnackbarDuration.Short.ordinal -> SnackbarDuration.Short
+                                SnackbarDuration.Long.ordinal -> SnackbarDuration.Long
+                                SnackbarDuration.Indefinite.ordinal -> SnackbarDuration.Indefinite
+                                else -> SnackbarDuration.Short
+                            }
+                        )
+                    }
                 }
             }
         )
