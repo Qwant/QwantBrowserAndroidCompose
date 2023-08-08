@@ -25,3 +25,5 @@ val Red100 = Color(0xFFffd6d7)
 val GreySecondary = Color(0xFF2f3237)
 
 val GreenUrl = Color(0xFF57c78f)
+
+val ZapYellow = Color(0xFFFFF35B)

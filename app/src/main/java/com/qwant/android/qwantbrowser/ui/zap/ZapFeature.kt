@@ -1,27 +1,46 @@
 package com.qwant.android.qwantbrowser.ui.zap
 
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.theme.Grey900
+import com.qwant.android.qwantbrowser.ui.theme.ZapYellow
 
 @Composable
 fun ZapFeature(
@@ -40,67 +59,143 @@ fun ZapFeature(
 internal fun ZapAnimation(
     state: ZapState
 ) {
-    val outOffset = LocalConfiguration.current.screenHeightDp.dp / 2
-    val inOffset = 0.dp
-    val targetOffset = remember(state.animationState) {
-        when (state.animationState) {
-            ZapState.AnimationState.In, ZapState.AnimationState.Wait  -> inOffset
-            ZapState.AnimationState.Out, ZapState.AnimationState.Idle -> outOffset
+    // TODO use updateTransition to group zap animations
+
+    val stepDuration = 200
+    val easing = EaseIn
+
+    var showBackground by remember { mutableStateOf(false) }
+    var showIcon by remember { mutableStateOf(false) }
+    var showBlackOverlay  by remember { mutableStateOf(false) }
+    var exitBlackOverlay  by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.animationState) {
+        if (state.animationState == ZapState.AnimationState.In) {
+            showBackground = true
+        }
+        if (state.animationState == ZapState.AnimationState.Out) {
+            showIcon = false
         }
     }
 
-    val verticalOffset by animateDpAsState(
-        targetValue = targetOffset,
-        label = "vertical offset",
-        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+    val background by animateColorAsState(
+        targetValue = if (showBackground) ZapYellow else ZapYellow.copy(0f),
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapYellowBackground",
         finishedListener = {
-            when (state.animationState) {
-                ZapState.AnimationState.In -> state.updateAnimationState(ZapState.AnimationState.Wait)
-                ZapState.AnimationState.Out -> state.updateAnimationState(ZapState.AnimationState.Idle)
-                else -> {}
+            if (showBackground) {
+                showIcon = true
+            } else {
+                state.updateAnimationState(ZapState.AnimationState.Idle)
             }
         }
     )
 
+    val iconAlpha by animateFloatAsState(
+        targetValue = if (showIcon) 1f else 0f,
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapIconAlpha"
+    )
+    val iconOffsetX by animateDpAsState(
+        targetValue = if (showIcon) 0.dp else 50.dp,
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapIconOffsetX"
+    )
+    val iconOffsetY by animateDpAsState(
+        targetValue = if (showIcon) 0.dp else 100.dp,
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapIconOffsetY",
+        finishedListener = {
+            if (showIcon) {
+                showBlackOverlay = true
+            } else {
+                showBackground = false
+            }
+        }
+    )
+
+    val blackOverlayColor by animateColorAsState(
+        targetValue = if (showBlackOverlay && !exitBlackOverlay) Grey900 else Grey900.copy(0f),
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapBlackOverlayAlpha",
+        finishedListener = {
+            if (exitBlackOverlay) {
+                showBlackOverlay = false
+                exitBlackOverlay = false
+                state.updateAnimationState(ZapState.AnimationState.Wait)
+            } else {
+                exitBlackOverlay = true
+            }
+        }
+    )
+    val blackOverlayMaxSizeDp = maxOf(LocalConfiguration.current.screenHeightDp, LocalConfiguration.current.screenWidthDp)
+    val blackOverlaySize by animateDpAsState(
+        targetValue = if (showBlackOverlay) blackOverlayMaxSizeDp.dp else 0.dp,
+        animationSpec = tween(durationMillis = stepDuration, easing = easing),
+        label = "ZapBlackOverlaySize"
+    )
+    val blackOverlayCornerPercent by animateIntAsState(
+        targetValue = if (showBlackOverlay) 0 else 50,
+        animationSpec = keyframes {
+            durationMillis = stepDuration
+            50.at(0)
+            50.at(stepDuration * 9 / 10)
+            0.at(stepDuration)
+        },
+        label = "blackOverlayCornerPercent"
+    )
+
+    val infiniteRotation = if (state.animationState == ZapState.AnimationState.Wait) {
+        rememberInfiniteTransition(label = "ZapInfiniteTransition").animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 400, delayMillis = 800, easing = EaseInOut)
+            ),
+            label = "ZapInfiniteRotation"
+        )
+    } else remember { mutableFloatStateOf(0f) }
+
     if (state.animationState != ZapState.AnimationState.Idle) {
-        // TODO replace animation dialog with surface, but we need first to modify fullscreen preferences (which are also dialogs ...)
+        // TODO ? replace animation dialog with surface, but we need first to modify fullscreen preferences (which are also dialogs ...)
         Dialog(
             properties = DialogProperties(
                 usePlatformDefaultWidth = false,
                 dismissOnBackPress = false,
                 dismissOnClickOutside = false
             ),
-            onDismissRequest = {}
+            onDismissRequest = {},
         ) {
-            if (state.animationState == ZapState.AnimationState.Wait) {
-                Surface(
-                    color = Color.Yellow,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {}
-            } else {
-                Box(
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(background)
+                    .rotate(infiniteRotation.value)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.zap_top_full),
+                    contentDescription = "zap top",
+                    contentScale = ContentScale.None,
                     modifier = Modifier
                         .fillMaxSize()
-                ) {
-                    Surface(
-                        color = Color.Green,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.5f)
-                            .align(Alignment.TopCenter)
-                            .offset(0.dp, -verticalOffset)
-                    ) {}
-                    Surface(
-                        color = Color.Blue,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.5f)
-                            .align(Alignment.BottomCenter)
-                            .offset(0.dp, verticalOffset)
-                    ) {}
-                }
+                        .graphicsLayer(alpha = iconAlpha)
+                        .offset(iconOffsetX, -iconOffsetY)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.zap_bottom_full),
+                    contentDescription = "zap bottom",
+                    contentScale = ContentScale.None,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(alpha = iconAlpha)
+                        .offset(-iconOffsetX, iconOffsetY)
+                )
+                Box(modifier = Modifier
+                    .requiredSize(blackOverlaySize)
+                    .clip(RoundedCornerShape(percent = blackOverlayCornerPercent))
+                    .background(blackOverlayColor)
+                )
             }
         }
     }

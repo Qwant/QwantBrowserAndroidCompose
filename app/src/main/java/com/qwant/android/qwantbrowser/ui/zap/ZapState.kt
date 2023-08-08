@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.zap
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,8 +14,7 @@ import kotlinx.coroutines.launch
 
 class ZapState(
     private val clearDataUseCase: QwantUseCases.ClearDataUseCase,
-    private val coroutineScope: CoroutineScope = MainScope(),
-    private val minDurationMs: Int = MIN_DURATION_MS_DEFAULT
+    private val coroutineScope: CoroutineScope = MainScope()
 ) {
     enum class State { Zapping, Confirm, Waiting, Error }
     enum class AnimationState { Idle, In, Wait, Out }
@@ -28,8 +26,6 @@ class ZapState(
         private set
 
     private var endCallback: ((Boolean) -> Unit)? = null
-
-    private var minEndTime = System.currentTimeMillis()
 
     fun updateAnimationState(s: AnimationState) {
         animationState = s
@@ -44,18 +40,15 @@ class ZapState(
         if (doIt) {
             state = State.Zapping
             animationState = AnimationState.In
-            minEndTime = System.currentTimeMillis() + minDurationMs
             clearDataUseCase(coroutineScope) { success ->
                 // TODO handle zap fails globally ?
-
-                val currentTime = System.currentTimeMillis()
-                if (minEndTime > currentTime) {
-                    coroutineScope.launch {
-                        delay(minEndTime - currentTime)
-                        zapEnd(success)
+                coroutineScope.launch {
+                    while (animationState != AnimationState.Wait) {
+                        delay(50)
                     }
-                } else {
-                    zapEnd(success)
+                    state = if (success) State.Waiting else State.Error
+                    animationState = AnimationState.Out
+                    endCallback?.invoke(success)
                 }
             }
         } else {
@@ -64,20 +57,9 @@ class ZapState(
         }
     }
 
-    private fun zapEnd(success: Boolean) {
-        Log.d("QB_ZAP", "zap end called")
-        state = if (success) State.Waiting else State.Error
-        animationState = AnimationState.Out
-        endCallback?.invoke(success)
-    }
-
     internal fun clearError() {
         if (state == State.Error)
             state = State.Waiting
-    }
-
-    companion object {
-        private const val MIN_DURATION_MS_DEFAULT = 1000
     }
 }
 
