@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qwant.android.qwantbrowser.legacy.ClFeature
 import com.qwant.android.qwantbrowser.mozac.downloads.openDownloadedFile
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
@@ -70,5 +71,7 @@ fun GlobalFeatures(
         store = viewModel.store,
         exitFullscreenUseCase = viewModel.sessionUseCases.exitFullscreen
     )
+
+    ClFeature()
 }
 

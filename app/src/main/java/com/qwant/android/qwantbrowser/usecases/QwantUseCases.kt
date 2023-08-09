@@ -1,7 +1,10 @@
 package com.qwant.android.qwantbrowser.usecases
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
@@ -20,7 +23,7 @@ import mozilla.components.support.ktx.kotlin.urlEncode
 // TODO Hilt for QwantUseCases
 // TODO separate QwantUseCases into multiple use cases ?
 class QwantUseCases(
-    context: Context,
+    val context: Context,
     core: Core,
     appPreferencesRepository: AppPreferencesRepository,
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
@@ -31,7 +34,6 @@ class QwantUseCases(
 
     var baseUrl = ""
     init {
-        // TODO use controlled scope for qwantUseCases ?
         coroutineScope.launch {
             frontEndPreferencesRepository.homeUrl
                 .collect { baseUrl = it }
@@ -44,8 +46,20 @@ class QwantUseCases(
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
     ) {
+        private val firstRequestKey = "pref_key_first_request"
+
+        @SuppressLint("ApplySharedPref")
         operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
-            val url = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
+            var url = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
+
+            // TODO find a different way of handling fs=1 one time parameter
+            val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val firstRequest = prefs.getBoolean(firstRequestKey, true)
+            if (firstRequest) {
+                prefs.edit().putBoolean(firstRequestKey, false).commit()
+                url += "&fs=1"
+            }
+
             if (selectIfExists) {
                 tabsUseCases.selectOrAddTab.invoke(url, private = private)
             } else {

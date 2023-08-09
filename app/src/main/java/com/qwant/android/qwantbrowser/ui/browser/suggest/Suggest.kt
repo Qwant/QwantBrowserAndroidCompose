@@ -18,6 +18,8 @@ import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
+import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import mozilla.components.browser.icons.BrowserIcons
 
@@ -33,7 +35,9 @@ fun Suggest(
     // TODO provide this from somewhere else ! (SuggestionState ?)
     val providersOrdered = remember(suggestions.keys) {
         listOf(
+            suggestions.keys.find { it is ClipboardProvider },
             suggestions.keys.find { it is QwantOpensearchProvider },
+            suggestions.keys.find { it is DomainProvider },
             suggestions.keys.find { it is SessionTabsProvider },
             suggestions.keys.find { it is BookmarksStorage },
             suggestions.keys.find { it is History }

@@ -1,19 +1,65 @@
 package com.qwant.android.qwantbrowser.preferences.frontend
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.datastore.core.DataStore
+import androidx.preference.PreferenceManager
+import com.qwant.android.qwantbrowser.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 private const val LOGTAG: String = "FrontEndPreferencesRepo"
+
+// TODO move saved client to internal datastore instead of shared prefs
+@Singleton
+class ClientHolder @Inject constructor(
+    @ApplicationContext val context: Context
+) {
+    private var instance: String? = null
+
+    private val prefKey = "pref_key_saved_client"
+    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    fun getClient(): String {
+        return instance
+            ?: prefs.getString(prefKey, null)?.also {
+                instance = it
+            }
+            ?: context.getString(R.string.app_client_string).also {
+                instance = it
+                with(prefs.edit()) {
+                    putString(prefKey, it)
+                    apply()
+                }
+            }
+    }
+}
+
+// TODO move saved cl to internal datastore instead of shared prefs
+@Singleton
+class ClHolder @Inject constructor(
+    @ApplicationContext val context: Context
+) {
+    private val prefKey = "pref_key_utm_campaign"
+    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    fun getCl(): String? {
+        return prefs.getString(prefKey, null)
+    }
+}
 
 // Not needed, while this class remains stateless
 // @Module
 // @InstallIn(ActivityRetainedComponent::class)
 class FrontEndPreferencesRepository @Inject constructor(
-    private val datastore: DataStore<FrontEndPreferences>
+    private val datastore: DataStore<FrontEndPreferences>,
+    private val clientHolder: ClientHolder,
+    private val clHolder: ClHolder
 ) {
     companion object {
         private const val QwantBaseUrl = "https://www.qwant.com/"
@@ -30,10 +76,9 @@ class FrontEndPreferencesRepository @Inject constructor(
         }
 
     val homeUrl = flow.map { prefs ->
-        val client = "qwantbrowsercompose" // TODO get real client - getClient(context, prefs)
         buildString {
             append(QwantBaseUrl)
-            append("?client=").append(client)
+            append("?client=").append(clientHolder.getClient())
             append("&theme=").append(when(prefs.appearance) {
                 Appearance.LIGHT -> 0
                 Appearance.DARK -> 1
@@ -73,8 +118,8 @@ class FrontEndPreferencesRepository @Inject constructor(
             if (prefs.openResultsInNewTab) append("&b=1") else append("&b=0")
             append("&l=").append(prefs.interfaceLanguage)
             append("&locale=").append(prefs.searchResultRegion)
-            // TODO add cl preference
-            // TODO f=1 in the first url
+
+            clHolder.getCl()?.let { append("&cl=").append(it) }
 
             append("&qbc=1") // Certifies validity for the url interceptor
         }

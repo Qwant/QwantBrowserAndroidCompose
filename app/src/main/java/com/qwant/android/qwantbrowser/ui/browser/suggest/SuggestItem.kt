@@ -33,6 +33,8 @@ import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
+import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
+import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import com.qwant.android.qwantbrowser.ui.widgets.UrlIcon
 import mozilla.components.browser.icons.BrowserIcons
@@ -78,7 +80,9 @@ fun SuggestItem(
         },
         leading = {
             when (suggestion.provider) {
+                is ClipboardProvider -> SuggestIcon(R.drawable.icons_paste)
                 is QwantOpensearchProvider -> SuggestIcon(R.drawable.icons_search)
+                is DomainProvider -> SuggestIcon(R.drawable.icons_internet)
                 is BookmarksStorage ->
                     SuggestUrlIcon(
                         browserIcons = browserIcons,

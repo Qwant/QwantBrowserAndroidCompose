@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -16,10 +17,13 @@ import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
+import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -37,11 +41,13 @@ interface ToolbarStateFactory {
 class ToolbarState @AssistedInject constructor(
     mozac: Core,
     appPreferencesRepository: AppPreferencesRepository,
-    // suggestionProviders: List<SuggestionProvider>, // TODO use hilt to inject suggestion providers. Add ClipboardProvider
+    @ApplicationContext context: Context,
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
     private val suggestionProviders: List<SuggestionProvider> = listOf(
+        ClipboardProvider(context),
         QwantOpensearchProvider(mozac.client),
+        DomainProvider(context),
         SessionTabsProvider(mozac.store),
         mozac.historyStorage,
         mozac.bookmarkStorage
