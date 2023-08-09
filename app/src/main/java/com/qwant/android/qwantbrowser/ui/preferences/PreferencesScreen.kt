@@ -161,7 +161,7 @@ fun PreferencesScreen(
                         Image(painter = painterResource(R.drawable.icons_flags_spain), contentDescription = "flag")
                     })
                 ) },
-                value = AppCompatDelegate.getApplicationLocales()[0]?.language ?: "",
+                value = AppCompatDelegate.getApplicationLocales()[0]?.language ?: Locale.getDefault().language,
                 onValueChange = { AppCompatDelegate.setApplicationLocales(
                     LocaleListCompat.create(Locale(it))
                 ) }

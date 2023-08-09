@@ -1,8 +1,12 @@
 package com.qwant.android.qwantbrowser.ui
 
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
@@ -35,6 +39,15 @@ class QwantApplicationViewModel @Inject constructor(
 
     private val selectedTabPrivacy = core.store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
+
+    var hasHistory by mutableStateOf(core.historyStorage.size != 0)
+        private set
+
+    init {
+        core.historyStorage.onSizeChanged = {
+            hasHistory = (it != 0)
+        }
+    }
 
     val snackbarHostState = SnackbarHostState()
     data class SnackbarAction(val label: String, val apply: () -> Unit)
@@ -114,7 +127,9 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val zapState: ZapState = ZapState(useCases.qwantUseCases.clearDataUseCase, viewModelScope)
-    fun zap(then: (Boolean) -> Unit = {}) { zapState.zap {
-        then(it)
-    } }
+    fun zap(then: (Boolean) -> Unit = {}) {
+        zapState.zap {
+            then(it)
+        }
+    }
 }

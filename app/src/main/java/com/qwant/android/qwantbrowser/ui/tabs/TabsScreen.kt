@@ -76,8 +76,11 @@ fun TabsScreen(
                 )
             }
 
-            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                ZapButton(zap = { appViewModel.zap() })
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                ZapButton(appViewModel)
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
                     Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Tabs")
                 }

@@ -74,7 +74,7 @@ class FrontEndPreferencesRepository @Inject constructor(
             append("&l=").append(prefs.interfaceLanguage)
             append("&locale=").append(prefs.searchResultRegion)
             // TODO add cl preference
-            // TODO f=1 in the first url ?
+            // TODO f=1 in the first url
 
             append("&qbc=1") // Certifies validity for the url interceptor
         }
@@ -87,6 +87,7 @@ class FrontEndPreferencesRepository @Inject constructor(
     }
 
     suspend fun updateInterfaceLanguage(language: String) {
+        // TODO update also search region with interface language ?
         datastore.updateData { preferences ->
             preferences.toBuilder().setInterfaceLanguage(language).build()
         }

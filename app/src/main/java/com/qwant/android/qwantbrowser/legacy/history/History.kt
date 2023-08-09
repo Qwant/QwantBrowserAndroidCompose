@@ -24,9 +24,14 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
     @VisibleForTesting
     internal var pageMeta: HashMap<String, PageObservation> = hashMapOf()
 
+    var size = pages.size
+    var onSizeChanged: ((Int) -> Unit)? = null
+
     override suspend fun recordVisit(uri: String, visit: PageVisit) {
-        if (visit.visitType == VisitType.LINK)
+        if (visit.visitType == VisitType.LINK) {
             recordVisit(uri, visit, System.currentTimeMillis())
+            onSizeChanged?.invoke(pages.size)
+        }
     }
 
     private fun recordVisit(uri: String, visit: PageVisit, timestamp: Long) {
@@ -35,6 +40,7 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
                 pages[uri] = mutableListOf(Visit(timestamp, visit.visitType))
             } else {
                 pages[uri]!!.add(Visit(timestamp, visit.visitType))
+                onSizeChanged?.invoke(pages.size)
             }
         }
     }
@@ -167,6 +173,7 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
     override suspend fun deleteEverything() = synchronized(pages + pageMeta) {
         pages.clear()
         pageMeta.clear()
+        onSizeChanged?.invoke(0)
         this.persist()
     }
 
@@ -195,6 +202,7 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
     override suspend fun deleteVisit(url: String, timestamp: Long) = synchronized(pages) {
         if (pages.containsKey(url)) {
             pages[url] = pages[url]!!.filter { it.timestamp != timestamp }.toMutableList()
+            onSizeChanged?.invoke(pages.size)
         }
     }
 
