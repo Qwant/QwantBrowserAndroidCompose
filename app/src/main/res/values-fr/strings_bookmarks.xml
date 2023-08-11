@@ -3,4 +3,6 @@
     <string name="bookmarks">Favoris</string>
     <string name="bookmarks_folder">un dossier</string>
     <string name="bookmarks_bookmark">un favori</string>
+    <string name="bookmarks_folder_title_placeholder">Nom du dossier</string>
+    <string name="bookmarks_move_x_to">Déplacer %1$s vers</string>
 </resources>

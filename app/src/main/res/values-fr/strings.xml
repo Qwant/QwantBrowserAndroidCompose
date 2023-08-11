@@ -11,5 +11,7 @@
     <string name="all_fields_required">Tous les champs sont requis</string>
 
     <!-- TODO confirm texts ? -->
+    <string name="try_again">Réessayer</string>
+    <string name="permission_permanently_refused">Vous avez refusé la permission de manière permanente. Vous pouvez l’activer depuis les paramètres Android maintenant.</string>
     <string name="take_me_there">Y aller</string>
 </resources>

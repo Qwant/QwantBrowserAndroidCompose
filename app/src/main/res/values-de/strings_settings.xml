@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="show_favicon_label">Website Icons anzeigen</string>
+    <string name="toolbar_position_label">Toolbar</string>
+    <string name="available_toolbar_position_top">Oben</string>
+    <string name="available_toolbar_position_bottom">Unten</string>
+    <string name="hide_toolbar_on_scroll_label">Die Toolbar beim Scrollen ausblenden</string>
+    <string name="appearance_label">Auftreten</string>
+    <string name="available_appearance_system">Automatisch</string>
+    <string name="cleardata_storage">Lagerung</string>
     <string name="settings">Einstellungen</string>
 
     <string name="settings_group_general">Allgemein</string>
@@ -38,6 +46,7 @@
 
     <string name="show_news_label">News auf Homepage</string>
 
+    <string name="show_sponsor_label">Gesponserte Verknüpfungen auf der Homepage</string>
     <string name="adult_filter_label">Filter für Erwachseneninhalte</string>
     <string name="available_adult_filter_none">Keiner</string>
     <string name="available_adult_filter_moderate">Moderat</string>

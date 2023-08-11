@@ -17,6 +17,7 @@
     <string name="available_tabs_view_grid">Grille</string>
     <string name="available_tabs_view_list">Liste</string>
 
+    <string name="hide_toolbar_on_scroll_label">Cacher la barre d’outils</string>
     <string name="appearance_label">Apparence</string>
     <string name="available_appearance_dark">Sombre</string>
     <string name="available_appearance_light">Claire</string>

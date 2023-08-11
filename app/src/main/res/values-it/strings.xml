@@ -9,5 +9,9 @@
     <string name="all_fields_required">Tutti i campi sono obbligatori</string>
 
     <!-- confirm texts ? -->
+    <string name="create">Creare</string>
+    <string name="edit">Modificare</string>
+    <string name="try_again">Riprova</string>
+    <string name="permission_permanently_refused">Has rechazado permanentemente los permisos. Ahora debes habilitarlos a través de la configuración del sistema</string>
     <string name="take_me_there">Portami lì</string>
 </resources>

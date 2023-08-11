@@ -63,6 +63,8 @@ fun FilePicker(
             permissionGranted = true
         } else {
             // TODO show file prompt permission rational if needed
+            request.onDismiss()
+            consume()
         }
     }
 

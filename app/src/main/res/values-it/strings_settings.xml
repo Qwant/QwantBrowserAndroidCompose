@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="toolbar_position_label">Barra degli strumenti</string>
+    <string name="available_toolbar_position_top">In alto</string>
+    <string name="available_toolbar_position_bottom">In fondo</string>
+    <string name="hide_toolbar_on_scroll_label">Nascondere la barra degli strumenti</string>
+    <string name="appearance_label">Apparenza</string>
+    <string name="available_appearance_system">Automatici</string>
+    <string name="cleardata_storage">Archiviazione</string>
     <string name="settings">Impostazioni</string>
 
     <string name="settings_group_general">Generali</string>
@@ -38,6 +45,7 @@
 
     <string name="show_news_label">Notizie sulla pagina iniziale</string>
 
+    <string name="show_sponsor_label">Scorciatoie sponsorizzate sulla home page</string>
     <string name="adult_filter_label">Filtro contenuti per adulti</string>
     <string name="available_adult_filter_none">Nessuno</string>
     <string name="available_adult_filter_moderate">Moderato</string>

@@ -14,8 +14,8 @@ android {
         applicationId "com.qwant.liberty"
         minSdk 21
         targetSdk 34
-        versionCode 50000000
-        versionName "5.0.0.0"
+        versionCode 50000050
+        versionName "5.0.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -83,20 +83,13 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    // To include every files in the assets folder (and not ignore VIP)
     aaptOptions {
         ignoreAssetsPattern  '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
 }
 
 dependencies {
-    // Android
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
-    implementation 'androidx.datastore:datastore:1.0.0'
-    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-
     // Legacy Onboarding
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Legacy assistant
@@ -104,11 +97,13 @@ dependencies {
     // Old preferences for migration. Remove after migration is complete
     implementation 'androidx.preference:preference:1.2.1'
 
-    // Old browser fragment
-    // TODO remove old browser fragment dependencies
-    // implementation 'androidx.fragment:fragment-ktx:1.6.0'
-    // implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    // implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    // Android
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
+    implementation 'androidx.datastore:datastore:1.0.0'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Protobuf
     implementation  "com.google.protobuf:protobuf-javalite:3.21.10"

@@ -3,4 +3,6 @@
     <string name="bookmarks">Lesezeichen</string>
     <string name="bookmarks_folder">ordner</string>
     <string name="bookmarks_bookmark">lesezeichen</string>
+    <string name="bookmarks_folder_title_placeholder">Ordnername</string>
+    <string name="bookmarks_move_x_to">Verschiebe %1$s nach</string>
 </resources>

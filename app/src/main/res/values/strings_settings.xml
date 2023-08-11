@@ -5,7 +5,7 @@
 
     <!-- new -->
     <string name="toolbar_position_label">Toolbar</string>
-    <string name="available_toolbar_position_top">Top</string>
+    <string name="available_toolbar_position_top">At the top</string>
     <string name="available_toolbar_position_bottom">Bottom</string>
 
     <string name="hide_toolbar_on_scroll_label">Hide toolbar on scroll</string>

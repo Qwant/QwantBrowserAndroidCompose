@@ -27,10 +27,10 @@ object FrontEndPreferencesMigration {
             context, SHARED_PREFS_NAME, keysToMigrate
         ) { sharedPrefs: SharedPreferencesView, currentData: FrontEndPreferences ->
             with (currentData.toBuilder()) {
-                appearance = when (sharedPrefs.getInt("pref_key_general_dark_theme", 2)) {
-                    0 -> Appearance.LIGHT
-                    1 -> Appearance.DARK
-                    2 -> Appearance.SYSTEM_SETTINGS
+                appearance = when (sharedPrefs.getString("pref_key_general_dark_theme", "2")) {
+                    "0" -> Appearance.LIGHT
+                    "1" -> Appearance.DARK
+                    "2" -> Appearance.SYSTEM_SETTINGS
                     else -> Appearance.SYSTEM_SETTINGS
                 }
                 customPageColor = when (sharedPrefs.getString("pref_key_general_custom_color", "blue")) {
@@ -58,10 +58,10 @@ object FrontEndPreferencesMigration {
                 showSponsor = sharedPrefs.getBoolean("pref_key_general_tiles", true)
                 showFavicons = sharedPrefs.getBoolean("pref_key_general_favicononserp", true)
                 openResultsInNewTab = sharedPrefs.getBoolean("pref_key_general_resultsinnewtab", false)
-                adultFilter = when (sharedPrefs.getInt("pref_key_general_adultcontent", 1)) {
-                    0 -> AdultFilter.NO_FILTER
-                    1 -> AdultFilter.MODERATE
-                    2 -> AdultFilter.STRICT
+                adultFilter = when (sharedPrefs.getString("pref_key_general_adultcontent", "1")) {
+                    "0" -> AdultFilter.NO_FILTER
+                    "1" -> AdultFilter.MODERATE
+                    "2" -> AdultFilter.STRICT
                     else -> AdultFilter.MODERATE
                 }
 

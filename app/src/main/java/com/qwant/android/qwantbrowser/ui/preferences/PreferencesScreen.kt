@@ -211,13 +211,13 @@ fun PreferencesScreen(
                         Image(painter = painterResource(R.drawable.icons_flags_china), contentDescription = "flag")
                     }),
                     RadioButtonOption("zh_HK", R.string.available_region_hong_kong, icon = {
-                        // Image(painter = painterResource(R.drawable.icons_flags_hong_kong), contentDescription = "flag")
+                        Image(painter = painterResource(R.drawable.icons_flags_hong_kong), contentDescription = "flag")
                     }),
                     RadioButtonOption("en_NZ", R.string.available_region_new_zealand, icon = {
                         Image(painter = painterResource(R.drawable.icons_flags_new_zealand), contentDescription = "flag")
                     }),
                     RadioButtonOption("th_TH", R.string.available_region_thailand, icon = {
-                        // Image(painter = painterResource(R.drawable.icons_flags_thailand), contentDescription = "flag")
+                        Image(painter = painterResource(R.drawable.icons_flags_thailand), contentDescription = "flag")
                     }),
                     RadioButtonOption("ko_KR", R.string.available_region_south_korea, icon = {
                         Image(painter = painterResource(R.drawable.icons_flags_south_korea), contentDescription = "flag")
@@ -238,7 +238,7 @@ fun PreferencesScreen(
                         Image(painter = painterResource(R.drawable.icons_flags_estonia), contentDescription = "flag")
                     }),
                     RadioButtonOption("es_MX", R.string.available_region_mexico, icon = {
-                        // Image(painter = painterResource(R.drawable.icons_flags_mexico), contentDescription = "flag")
+                        Image(painter = painterResource(R.drawable.icons_flags_mexico), contentDescription = "flag")
                     }),
                     RadioButtonOption("es_CL", R.string.available_region_chile, icon = {
                         Image(painter = painterResource(R.drawable.icons_flags_chile), contentDescription = "flag")
@@ -342,7 +342,9 @@ fun PreferencesScreen(
                 onClicked = { context.openAppStorePage() }
             )
 
-            if (BuildConfig.DEBUG) {
+            // TODO adjust test files by buildtype
+            //   using dedicated src path etc ...
+            // if (BuildConfig.DEBUG) {
                 PreferenceGroupLabel(label = R.string.settings_tests_label)
 
                 // Tests prompts feature
@@ -357,7 +359,7 @@ fun PreferencesScreen(
                         onClose()
                     }
                 )
-            }
+            // }
         }
     }
 }

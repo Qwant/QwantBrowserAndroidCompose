@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="toolbar_position_label">Barra de herramientas</string>
+    <string name="available_toolbar_position_top">Volver arriba</string>
+    <string name="available_toolbar_position_bottom">En el fondo</string>
+    <string name="hide_toolbar_on_scroll_label">Ocultar la barra de herramientas al desplazarse.</string>
+    <string name="appearance_label">Aspecto</string>
+    <string name="available_appearance_system">Automática</string>
+    <string name="cleardata_storage">Almacenamiento</string>
     <string name="settings">Ajustes</string>
 
     <string name="settings_group_general">General</string>
@@ -38,6 +45,7 @@
 
     <string name="show_news_label">Noticias en la página de inicio</string>
 
+    <string name="show_sponsor_label">Accesos directos patrocinados en la página de inicio</string>
     <string name="adult_filter_label">Filtro de contenido para adultos</string>
     <string name="available_adult_filter_none">Ninguno</string>
     <string name="available_adult_filter_moderate">Moderado</string>

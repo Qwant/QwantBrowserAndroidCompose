@@ -3,4 +3,6 @@
     <string name="bookmarks">Marcadores</string>
     <string name="bookmarks_folder">carpeta</string> <!-- bookmark_edit_folder without maj -->
     <string name="bookmarks_bookmark">marcador</string>
+    <string name="bookmarks_folder_title_placeholder">Nombre de la carpeta</string>
+    <string name="bookmarks_move_x_to">Mover %1$s a</string>
 </resources>

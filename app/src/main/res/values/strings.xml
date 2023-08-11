@@ -18,7 +18,7 @@
     <string name="take_me_there">Take me there</string>
 
     <!-- TODO move to datastore -->
-    <string name="pref_key_zap_highlight">pref_key_zap_highlight</string>
+    <string name="pref_key_zap_highlight" translatable="false">pref_key_zap_highlight</string>
 
     <!-- TODO move to gradle -->
     <string name="app_name" translatable="false">Qwant 5.0</string>

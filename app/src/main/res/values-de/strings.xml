@@ -9,5 +9,9 @@
     <string name="all_fields_required">Alle Felder sind erforderlich</string>
 
     <!-- confirm texts ? -->
+    <string name="create">Erstellen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="try_again">Versuch es erneut</string>
+    <string name="permission_permanently_refused">Sie haben die Berechtigung dauerhaft abgelehnt. Sie können sie nun in den Android-Einstellungen aktivieren.</string>
     <string name="take_me_there">Bring mich dorthin</string>
 </resources>
