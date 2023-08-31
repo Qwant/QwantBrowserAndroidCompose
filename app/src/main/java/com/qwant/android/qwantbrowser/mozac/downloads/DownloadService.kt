@@ -4,12 +4,21 @@
 
 package com.qwant.android.qwantbrowser.mozac.downloads
 
-import com.qwant.android.qwantbrowser.ext.core
+import dagger.hilt.android.AndroidEntryPoint
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
+import mozilla.components.support.base.android.NotificationsDelegate
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DownloadService : AbstractFetchDownloadService() {
-    override val httpClient by lazy { core.client }
-    override val notificationsDelegate by lazy { core.notificationsDelegate }
-    override val store: BrowserStore by lazy { core.store }
+    @Inject lateinit var c: dagger.Lazy<Client>
+    override val httpClient: Client by lazy { c.get() }
+
+    @Inject lateinit var s: dagger.Lazy<BrowserStore>
+    override val store: BrowserStore by lazy { s.get() }
+
+    @Inject lateinit var nd: dagger.Lazy<NotificationsDelegate>
+    override val notificationsDelegate: NotificationsDelegate by lazy { nd.get() }
 }

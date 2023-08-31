@@ -1,11 +1,14 @@
 package com.qwant.android.qwantbrowser
 
 import android.app.Application
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
+import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.action.SystemAction
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.fetch.Client
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.content.isMainProcess
@@ -17,14 +20,17 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class QwantApplication : Application() {
-    @Inject lateinit var mozac: Core
-    @Inject lateinit var useCases: UseCases
+    @Inject lateinit var engine: dagger.Lazy<Engine>
+    @Inject lateinit var client: dagger.Lazy<Client>
+    @Inject lateinit var store: dagger.Lazy<BrowserStore>
+    @Inject lateinit var sessionStorage: dagger.Lazy<SessionStorage>
+    @Inject lateinit var tabsUseCases: dagger.Lazy<TabsUseCases>
 
     override fun onCreate() {
         super.onCreate()
 
-        RustHttpConfig.setClient(lazy { mozac.client })
         setupLogging()
+        RustHttpConfig.setClient(lazy { client.get() })
 
         if (!isMainProcess()) {
             // If this is not the main process then do not continue with the initialization here. Everything that
@@ -34,21 +40,23 @@ class QwantApplication : Application() {
             return
         }
 
-        mozac.engine.warmUp()
-        mozac.engine.speculativeConnect("https://www.qwant.com/")
-        useCases.qwantUseCases.warmUp()
+        engine.get().apply {
+            warmUp()
+            speculativeConnect("https://www.qwant.com/")
+        }
 
         restoreBrowserState()
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated
         //  meanwhile move this elsewhere
+        val tuc = tabsUseCases.get()
         WebExtensionSupport.initialize(
-            runtime = mozac.engine,
-            store = mozac.store,
+            runtime = engine.get(),
+            store = store.get(),
             openPopupInTab = false,
             onNewTabOverride = { _, engineSession, url ->
-                val tabId = useCases.tabsUseCases.addTab(
+                val tabId = tuc.addTab(
                     url = url,
                     selectTab = true,
                     engineSession = engineSession
@@ -56,10 +64,10 @@ class QwantApplication : Application() {
                 tabId
             },
             onCloseTabOverride = { _, sessionId ->
-                useCases.tabsUseCases.removeTab(sessionId)
+                tuc.removeTab(sessionId)
             },
             onSelectTabOverride = { _, sessionId ->
-                useCases.tabsUseCases.selectTab(sessionId)
+                tuc.selectTab(sessionId)
             },
             onExtensionsLoaded = {}
         )
@@ -67,18 +75,20 @@ class QwantApplication : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
-        useCases.tabsUseCases.restore(mozac.sessionStorage)
-        // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
-        mozac.sessionStorage.autoSave(mozac.store)
-            .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
-            .whenGoingToBackground()
-            .whenSessionsChange()
+        sessionStorage.get().let {
+            tabsUseCases.get().restore(it)
+            // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
+            it.autoSave(store.get())
+                .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
+                .whenGoingToBackground()
+                .whenSessionsChange()
+        }
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         runOnlyInMainProcess {
-            mozac.store.dispatch(SystemAction.LowMemoryAction(level))
+            store.get().dispatch(SystemAction.LowMemoryAction(level))
         }
     }
 }

@@ -6,12 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import org.mozilla.reference.browser.storage.BookmarkItemV2
 import java.security.InvalidParameterException
@@ -20,11 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookmarksScreenViewModel @Inject constructor(
-    private val core: Core,
-    private val useCases: UseCases
+    private val tabsUseCases: TabsUseCases,
+    val browserIcons: BrowserIcons, // TODO set private
+    private val storage: BookmarksStorage
 ): ViewModel() {
-    val storage = core.bookmarkStorage
-
     var currentFolder: BookmarkItemV2? by mutableStateOf(null)
         private set
     var currentBookmarks by mutableStateOf(storage.root().toTypedArray())
@@ -45,20 +45,20 @@ class BookmarksScreenViewModel @Inject constructor(
     }
 
     fun addFolder(name: String, parent: BookmarkItemV2? = null) {
-        core.bookmarkStorage.addBookmark(
+        storage.addBookmark(
             BookmarkItemV2(BookmarkItemV2.BookmarkType.FOLDER, name, parent = parent)
         )
     }
 
     fun deleteBookmark(item: BookmarkItemV2) {
-        core.bookmarkStorage.deleteBookmark(item)
+        storage.deleteBookmark(item)
     }
 
     fun editBookmark(item: BookmarkItemV2, title: String, url: String? = null) {
         item.title = title
         item.url = url
 
-        core.bookmarkStorage.persist()
+        storage.persist()
     }
 
     fun moveBookmark(item: BookmarkItemV2, to: BookmarkItemV2?) {
@@ -72,14 +72,12 @@ class BookmarksScreenViewModel @Inject constructor(
                 item.parent = to
 
                 setBookmarksFromFolder()
-                core.bookmarkStorage.persist()
+                storage.persist()
             }
         } else {
             throw InvalidParameterException("Can't move bookmark to non-folder location `to` = $to")
         }
     }
-
-    val browserIcons = core.browserIcons
 
     private fun setBookmarksFromFolder() {
         currentBookmarks = (currentFolder?.children ?: storage.root())
@@ -90,7 +88,7 @@ class BookmarksScreenViewModel @Inject constructor(
 
     fun openBookmarkTab(item: BookmarkItemV2, private: Boolean = false) {
         item.url?.let {
-            useCases.tabsUseCases.addTab(it.toNormalizedUrl(), private = private)
+            tabsUseCases.addTab(it.toNormalizedUrl(), private = private)
         }
     }
 }

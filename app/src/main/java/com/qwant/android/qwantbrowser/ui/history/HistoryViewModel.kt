@@ -7,19 +7,21 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.qwant.android.qwantbrowser.storage.history.HistoryPagingSource
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.HistoryStorage
+import mozilla.components.feature.tabs.TabsUseCases
 import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val core: Core,
-    useCases: UseCases
+    private val historyStorage: HistoryStorage,
+    val browserIcons: BrowserIcons,
+    tabsUseCases: TabsUseCases
 ) : ViewModel() {
 
-    private val source = InvalidatingPagingSourceFactory { HistoryPagingSource(core.historyStorage) }
+    private val source = InvalidatingPagingSourceFactory { HistoryPagingSource(historyStorage) }
     private val pager = Pager(
         config = PagingConfig(
             pageSize = 50,
@@ -30,19 +32,19 @@ class HistoryViewModel @Inject constructor(
 
     val historyItems = pager.flow.cachedIn(viewModelScope)
 
-    val openNewTab = useCases.tabsUseCases.addTab
-    val browserIcons = core.browserIcons
+    val openNewTab = tabsUseCases.addTab
+    // val browserIcons = core.browserIcons
 
     fun deleteUrlFromHistory(url: String) {
         viewModelScope.launch {
-            core.historyStorage.deleteVisitsFor(url)
+            historyStorage.deleteVisitsFor(url)
             source.invalidate()
         }
     }
 
     fun deleteAllHistory() {
         viewModelScope.launch {
-            core.historyStorage.deleteEverything()
+            historyStorage.deleteEverything()
             source.invalidate()
         }
     }

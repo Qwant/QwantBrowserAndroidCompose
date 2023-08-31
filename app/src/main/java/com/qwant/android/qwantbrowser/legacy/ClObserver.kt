@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.ext.core
+import com.qwant.android.qwantbrowser.ext.application
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.ComposeFeatureWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import mozilla.components.browser.state.selector.selectedTab
-import mozilla.components.feature.session.SessionFeature
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
@@ -27,7 +26,7 @@ class ClObserver(
     context: Context,
 ): LifecycleAwareFeature {
     private var scope: CoroutineScope? = null
-    private val store = context.core.store
+    private val store = context.application.store
 
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val prefKeyCl = "pref_key_utm_campaign"
@@ -35,7 +34,7 @@ class ClObserver(
 
     override fun start() {
         if (prefs.getString(prefKeyCl, null) == null) {
-            scope = store.flowScoped { flow -> flow
+            scope = store.get().flowScoped { flow -> flow
                 .mapNotNull { state -> state.selectedTab?.content?.url }
                 .ifChanged()
                 .filter { it.isQwantUrl() && it.contains("cl=") }

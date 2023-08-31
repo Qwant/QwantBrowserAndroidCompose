@@ -5,10 +5,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.mozac.Core
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import dagger.Lazy
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -19,17 +20,18 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.urlEncode
+import javax.inject.Inject
+import javax.inject.Singleton
 
-// TODO Hilt for QwantUseCases
 // TODO separate QwantUseCases into multiple use cases ?
-class QwantUseCases(
-    val context: Context,
-    core: Core,
-    appPreferencesRepository: AppPreferencesRepository,
-    frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    sessionUseCases: SessionUseCases,
-    tabsUseCases: TabsUseCases,
+@Singleton
+class QwantUseCases @Inject constructor(
+    @ApplicationContext val context: Context,
+    frontEndPreferencesRepository: FrontEndPreferencesRepository
 ) {
+    @Inject lateinit var sessionUseCases: Lazy<SessionUseCases>
+    @Inject lateinit var tabsUseCases: Lazy<TabsUseCases>
+
     private val coroutineScope = MainScope()
 
     var baseUrl = ""
@@ -39,9 +41,6 @@ class QwantUseCases(
                 .collect { baseUrl = it }
         }
     }
-
-    // Needed to get a lazy instance running before usage
-    fun warmUp() {}
 
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
@@ -121,76 +120,19 @@ class QwantUseCases(
         }
     }
 
-    class ClearDataUseCase internal constructor(
-        private val prefs: AppPreferencesRepository,
-        private val engine: Engine,
-        private val historyStorage: HistoryStorage,
-        private val tabsUseCases: TabsUseCases
-    ) {
-        operator fun invoke(clearDataPreferences: ClearDataPreferences, then: (Boolean) -> Unit = {}) {
-            val clearHistoryJob: Job? = if (clearDataPreferences.history) {
-                MainScope().launch {
-                    historyStorage.deleteEverything()
-                }
-            } else null
-
-            if (clearDataPreferences.tabs) {
-                tabsUseCases.removeAllTabs()
-            } else {
-                // Always remove private tabs, no matter clearDataPreferences
-                tabsUseCases.removePrivateTabs()
-            }
-
-            val onBrowsingDataComplete: (Boolean) -> Unit = { browsingDataSuccess ->
-                if (clearHistoryJob?.isActive == true) {
-                    clearHistoryJob.invokeOnCompletion { clearHistoryException ->
-                        if (clearHistoryException != null) {
-                            Log.e("QWANT_BROWSER", "Failed to clear history storage: ${clearHistoryException.message}")
-                            then(false)
-                        } else {
-                            then(browsingDataSuccess)
-                        }
-                    }
-                } else {
-                    then(browsingDataSuccess)
-                }
-            }
-
-            if (clearDataPreferences.browsingData.types != 0) {
-                engine.clearData(
-                    clearDataPreferences.browsingData,
-                    onSuccess = { onBrowsingDataComplete(true) },
-                    onError = { onBrowsingDataComplete(false) }
-                )
-            } else {
-                onBrowsingDataComplete(true)
-            }
-        }
-
-        operator fun invoke(coroutineScope: CoroutineScope = MainScope(), then: (Boolean) -> Unit = {}) {
-            coroutineScope.launch {
-                val clearDataPrefs = prefs.clearDataPreferencesFlow.first()
-                invoke(clearDataPrefs, then)
-            }
-        }
-    }
-
     val openQwantPage: OpenQwantPageUseCase by lazy {
-        OpenQwantPageUseCase(tabsUseCases)
+        OpenQwantPageUseCase(tabsUseCases.get())
     }
     val getQwantUrl: GetQwantUrlUseCase by lazy {
         GetQwantUrlUseCase()
     }
     val loadSERPPage: LoadSERPPageUseCase by lazy {
-        LoadSERPPageUseCase(sessionUseCases)
+        LoadSERPPageUseCase(sessionUseCases.get())
     }
     val openPrivatePage: OpenPrivatePageUseCase by lazy {
-        OpenPrivatePageUseCase(tabsUseCases)
+        OpenPrivatePageUseCase(tabsUseCases.get())
     }
     val openTestPageUseCase: OpenTestPageUseCase by lazy {
-        OpenTestPageUseCase(context, tabsUseCases, sessionUseCases)
-    }
-    val clearDataUseCase: ClearDataUseCase by lazy {
-        ClearDataUseCase(appPreferencesRepository, core.engine, core.historyStorage, tabsUseCases)
+        OpenTestPageUseCase(context, tabsUseCases.get(), sessionUseCases.get())
     }
 }

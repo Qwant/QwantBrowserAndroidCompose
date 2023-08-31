@@ -7,17 +7,27 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.contextmenu.ContextMenuUseCases
+import mozilla.components.feature.downloads.DownloadsUseCases
+import mozilla.components.feature.downloads.manager.DownloadManager
+import mozilla.components.feature.pwa.WebAppUseCases
+import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
@@ -26,15 +36,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
-    private val mozac: Core,
-    private val useCases: UseCases
+    val sessionUseCases: SessionUseCases,
+    val tabsUseCases: TabsUseCases,
+    val webAppUseCases: WebAppUseCases,
+    val contextMenuUseCases: ContextMenuUseCases,
+    val downloadUseCases: DownloadsUseCases,
+    val permissionStorage: GeckoSitePermissionsStorage,
+    val browserIcons: BrowserIcons,
+    private val bookmarkStorage: BookmarksStorage,
+    val downloadManager: DownloadManager,
+    val store: BrowserStore,
+    val engine: Engine,
+    val qwantUseCases: QwantUseCases
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
     val toolbarState: ToolbarState by lazy {
         toolbarStateFactory.create(viewModelScope)
     }
 
-    val tabCount = mozac.store.flow()
+    val tabCount = store.flow()
         .map { state -> state.tabs.count() }
         .stateIn(
             scope = viewModelScope,
@@ -42,7 +62,7 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = 0
         )
 
-    private val urlFlow = mozac.store.flow()
+    private val urlFlow = store.flow()
         .map { state -> state.selectedTab?.content?.url }
 
     val currentUrl = urlFlow
@@ -59,25 +79,25 @@ class BrowserScreenViewModel @Inject constructor(
         urlFlow
             .distinctUntilChanged()
             .mapNotNull { it }
-            .onEach { isUrlBookmarked = mozac.bookmarkStorage.contains(it) }
+            .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
             .launchIn(viewModelScope)
 
-        mozac.bookmarkStorage.onChange {
-            mozac.store.state.selectedTab?.let {
-                isUrlBookmarked = mozac.bookmarkStorage.contains(it.content.url)
+        bookmarkStorage.onChange {
+            store.state.selectedTab?.let {
+                isUrlBookmarked = bookmarkStorage.contains(it.content.url)
             }
         }
     }
 
     fun addBookmark() {
-        mozac.bookmarkStorage.addBookmark(mozac.store.state.selectedTab)
+        bookmarkStorage.addBookmark(store.state.selectedTab)
     }
 
     fun removeBookmark() {
-        mozac.bookmarkStorage.deleteBookmark(mozac.store.state.selectedTab)
+        bookmarkStorage.deleteBookmark(store.state.selectedTab)
     }
 
-    val canGoBack = mozac.store.flow()
+    val canGoBack = store.flow()
         .map { state -> state.selectedTab?.content?.canGoBack ?: false }
         .stateIn(
             scope = viewModelScope,
@@ -85,7 +105,7 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
-    val canGoForward = mozac.store.flow()
+    val canGoForward = store.flow()
         .map { state -> state.selectedTab?.content?.canGoForward ?: false }
         .stateIn(
             scope = viewModelScope,
@@ -93,7 +113,7 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
-    val desktopMode = mozac.store.flow()
+    val desktopMode = store.flow()
         .map { state -> state.selectedTab?.content?.desktopMode ?: false }
         .stateIn(
             scope = viewModelScope,
@@ -104,45 +124,34 @@ class BrowserScreenViewModel @Inject constructor(
     var showFindInPage by mutableStateOf(false)
         private set
 
-    val isShortcutSupported = useCases.webAppUseCases.isPinningSupported()
+    val isShortcutSupported = webAppUseCases.isPinningSupported()
 
     fun addShortcutToHomeScreen() {
         viewModelScope.launch {
-            useCases.webAppUseCases.addToHomescreen()
+            webAppUseCases.addToHomescreen()
         }
     }
 
-    val reloadUrl = useCases.sessionUseCases.reload
-    val stopLoading = useCases.sessionUseCases.stopLoading
-    val goBack = useCases.sessionUseCases.goBack
-    val goForward = useCases.sessionUseCases.goForward
-    val requestDesktopSite = useCases.sessionUseCases.requestDesktopSite
-
-    val engine = mozac.engine
-    val store = mozac.store
-    val browserIcons = mozac.browserIcons
-    val downloadManager = mozac.downloadManager
-    val permissionStorage = mozac.geckoSitePermissionsStorage
-    val sessionUseCases = useCases.sessionUseCases
-    val tabsUseCases = useCases.tabsUseCases
-    val contextMenuUseCases = useCases.contextMenuUseCases
-    val downloadUseCases = useCases.downloadUseCases
-    val qwantUseCases = useCases.qwantUseCases
+    val reloadUrl = sessionUseCases.reload
+    val stopLoading = sessionUseCases.stopLoading
+    val goBack = sessionUseCases.goBack
+    val goForward = sessionUseCases.goForward
+    val requestDesktopSite = sessionUseCases.requestDesktopSite
 
     fun commitSearch(searchText: String) {
         if (searchText.isUrl()) {
             // useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
-            useCases.sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
+            sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
-            useCases.qwantUseCases.loadSERPPage(searchText)
+            qwantUseCases.loadSERPPage(searchText)
         }
     }
 
     fun openNewQwantTab(private: Boolean = false) {
         if (private) {
-            useCases.qwantUseCases.openPrivatePage()
+            qwantUseCases.openPrivatePage()
         } else {
-            useCases.qwantUseCases.openQwantPage(private = false)
+            qwantUseCases.openQwantPage(private = false)
         }
         // TODO use invokeOnCompletion from store.dispatch instead of delay,
         //  but this needs QwantUseCases to be recoded using dispatch directly
@@ -163,13 +172,13 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun closeCurrentTab() {
-        mozac.store.state.selectedTabId?.let {
-            useCases.tabsUseCases.removeTab(it, selectParentIfExists = true)
+        store.state.selectedTabId?.let {
+            tabsUseCases.removeTab(it, selectParentIfExists = true)
         }
     }
 
     // TODO Move to dedicated VIPExtensionState with browser action and icon
-    val vipExtensionState = mozac.store.flow()
+    val vipExtensionState = store.flow()
         .mapNotNull { state -> state.extensions[QwantVIPFeature.ID] }
         .stateIn(
             scope = viewModelScope,
@@ -177,7 +186,7 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = null
         )
 
-    private val vipBrowserActionFlow = mozac.store.flow()
+    private val vipBrowserActionFlow = store.flow()
         .mapNotNull { state ->
             state.selectedTab?.extensionState?.get(QwantVIPFeature.ID)?.browserAction
                 ?: state.extensions[QwantVIPFeature.ID]?.browserAction

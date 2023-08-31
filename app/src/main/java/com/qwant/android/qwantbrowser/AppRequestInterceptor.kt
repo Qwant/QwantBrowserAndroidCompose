@@ -6,8 +6,9 @@ import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.isQwantUrlValid
-import com.qwant.android.qwantbrowser.ext.useCases
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
+import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
@@ -26,7 +27,8 @@ import javax.inject.Singleton
 @Singleton
 class AppRequestInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val appPreferencesRepository: AppPreferencesRepository
+    private val appPreferencesRepository: AppPreferencesRepository,
+    private val qwantUseCases: QwantUseCases
 ) : RequestInterceptor {
     private val uaGlobal = context.UA
     private val uaQwant = context.UAQwant
@@ -65,7 +67,7 @@ class AppRequestInterceptor @Inject constructor(
             engineSession.settings.userAgentString = uaQwant
             if (!uri.isQwantUrlValid()) {
                 return RequestInterceptor.InterceptionResponse.Url(
-                    context.useCases.qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch())
+                    qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch())
                 )
             }
         } else {

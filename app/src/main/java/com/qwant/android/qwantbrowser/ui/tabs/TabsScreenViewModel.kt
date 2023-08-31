@@ -2,23 +2,27 @@ package com.qwant.android.qwantbrowser.ui.tabs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.TabsViewOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.flow
 import javax.inject.Inject
 
 @HiltViewModel
 class TabsScreenViewModel @Inject constructor(
-    mozac: Core,
-    private val useCases: UseCases,
+    store: BrowserStore,
+    private val tabsUseCases: TabsUseCases,
     private val appPreferencesRepository: AppPreferencesRepository,
+    val thumbnailStorage: ThumbnailStorage,
+    val browserIcons: BrowserIcons
 ): ViewModel() {
-    val tabs = mozac.store.flow()
+    val tabs = store.flow()
         .map { state -> state.tabs }
         .stateIn(
             scope = viewModelScope,
@@ -26,7 +30,7 @@ class TabsScreenViewModel @Inject constructor(
             initialValue = listOf()
         )
 
-    val selectedTabId = mozac.store.flow()
+    val selectedTabId = store.flow()
         .map { state -> state.selectedTabId }
         .stateIn(
             scope = viewModelScope,
@@ -48,15 +52,15 @@ class TabsScreenViewModel @Inject constructor(
 
     fun removeTabs(private: Boolean = false) {
         if (private) {
-            useCases.tabsUseCases.removePrivateTabs.invoke()
+            tabsUseCases.removePrivateTabs.invoke()
         } else {
-            useCases.tabsUseCases.removeNormalTabs.invoke()
+            tabsUseCases.removeNormalTabs.invoke()
         }
     }
 
-    val thumbnailStorage = mozac.thumbnailStorage
-    val browserIcons = mozac.browserIcons
+    // val thumbnailStorage = mozac.thumbnailStorage
+    // val browserIcons = mozac.browserIcons
 
-    val selectTab = useCases.tabsUseCases.selectTab
-    val removeTab = useCases.tabsUseCases.removeTab
+    val selectTab = tabsUseCases.selectTab
+    val removeTab = tabsUseCases.removeTab
 }

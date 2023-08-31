@@ -24,8 +24,6 @@ import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.support.ktx.kotlin.isSameOriginAs
 import mozilla.components.feature.downloads.R as mozacR
 
-// TODO Dialog translations
-
 @Composable
 fun DownloadFeature(
     store: BrowserStore,

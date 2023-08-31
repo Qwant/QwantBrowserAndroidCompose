@@ -2,21 +2,23 @@ package com.qwant.android.qwantbrowser.ui.preferences
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.mozac.UseCases
 import com.qwant.android.qwantbrowser.preferences.app.*
 import com.qwant.android.qwantbrowser.preferences.frontend.*
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.tabs.TabsUseCases
 import javax.inject.Inject
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository,
     private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    useCases: UseCases
+    tabsUseCases: TabsUseCases,
+    qwantUseCases: QwantUseCases
 ) : ViewModel() {
     val appPreferences = appPreferencesRepository.flow.stateIn(
         scope = viewModelScope,
@@ -100,6 +102,6 @@ class PreferencesViewModel @Inject constructor(
         viewModelScope.launch { appPreferencesRepository.updateClearDataPreferences(preferences) }
     }
 
-    val addTabsUseCase = useCases.tabsUseCases.addTab
-    val openTestTabUseCase = useCases.qwantUseCases.openTestPageUseCase
+    val addTabsUseCase = tabsUseCases.addTab
+    val openTestTabUseCase = qwantUseCases.openTestPageUseCase
 }
