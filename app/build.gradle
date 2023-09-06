@@ -95,7 +95,7 @@ dependencies {
     // Legacy assistant
     implementation 'com.google.android.material:material:1.9.0'
     // Old preferences for migration. Remove after migration is complete
-    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Android
     implementation 'androidx.core:core-ktx:1.10.1'
