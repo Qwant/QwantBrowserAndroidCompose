@@ -12,6 +12,8 @@ import java.util.*
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 data class Visit(val timestamp: Long, val type: VisitType): Serializable
 data class PageObservation(val title: String?) : Serializable
