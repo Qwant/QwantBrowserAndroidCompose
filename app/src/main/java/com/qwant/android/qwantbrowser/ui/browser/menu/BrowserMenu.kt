@@ -30,13 +30,13 @@ fun BrowserMenu(
 
     Dropdown(
         expanded = expanded,
-        onDismissRequest= onDismissRequest
+        onDismissRequest = onDismissRequest
     ) {
         BrowserNavigation(viewModel)
         Divider()
-        NewTabs(viewModel)
+        NewTabs(viewModel, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        AppNavigation(navigateTo)
+        AppNavigation(navigateTo, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
         PageActions(viewModel, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -44,7 +44,10 @@ fun BrowserMenu(
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.settings)) },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_settings), contentDescription = "settings") },
-            onClick = { navigateTo(NavDestination.Preferences) }
+            onClick = {
+                onDismissRequest()
+                navigateTo(NavDestination.Preferences)
+            }
         )
         if (showQuitApp) {
             val activity = (LocalContext.current.activity)
@@ -104,34 +107,49 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
 }
 
 @Composable
-fun NewTabs(viewModel: BrowserScreenViewModel) {
+fun NewTabs(viewModel: BrowserScreenViewModel, onDismissRequest: () -> Unit) {
     Column {
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.browser_new_tab)) },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "new tab") },
-            onClick = { viewModel.openNewQwantTab(private = false) }
+            onClick = {
+                onDismissRequest()
+                viewModel.openNewQwantTab(private = false)
+            }
         )
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.browser_new_tab_private)) },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "new private tab") },
-            onClick = { viewModel.openNewQwantTab(private = true)  }
+            onClick = {
+                onDismissRequest()
+                viewModel.openNewQwantTab(private = true)
+            }
         )
     }
 }
 
 @Composable
-fun AppNavigation(navigateTo: (NavDestination) -> Unit) {
+fun AppNavigation(
+    navigateTo: (NavDestination) -> Unit,
+    onDismissRequest: () -> Unit
+) {
     val context = LocalContext.current
     Column {
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.history)) },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_history), contentDescription = "History") },
-            onClick = { navigateTo(NavDestination.History) }
+            onClick = {
+                onDismissRequest()
+                navigateTo(NavDestination.History)
+            }
         )
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.bookmarks)) },
             leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_bookmark), contentDescription = "Bookmarks") },
-            onClick = { navigateTo(NavDestination.Bookmarks) }
+            onClick = {
+                onDismissRequest()
+                navigateTo(NavDestination.Bookmarks)
+            }
         )
         DropdownMenuItem(
             text = { Text(text = stringResource(id = R.string.browser_downloads)) },

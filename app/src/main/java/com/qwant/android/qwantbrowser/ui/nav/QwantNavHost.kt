@@ -1,6 +1,10 @@
 package com.qwant.android.qwantbrowser.ui.nav
 
 import android.os.Build
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,15 +28,52 @@ fun QwantNavHost(
     appViewModel: QwantApplicationViewModel = hiltViewModel(),
 ) {
     val onBrowse = { navController.navigateSingleTopTo(NavDestination.Browser.route()) }
+    val transitionTimeMs = 500
 
     NavHost(
         navController = navController,
         startDestination = NavDestination.Browser.match,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = transitionTimeMs)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = transitionTimeMs)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = transitionTimeMs)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = transitionTimeMs)
+            )
+        }
     ) {
         composable(
-            NavDestination.Browser.match,
-            arguments = NavDestination.Browser.arguments
+            route = NavDestination.Browser.match,
+            arguments = NavDestination.Browser.arguments,
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(durationMillis = transitionTimeMs)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(durationMillis = transitionTimeMs)
+                )
+            }
         ) { backStackEntry ->
             val openNewTab = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 backStackEntry.arguments?.getSerializable("openNewTab", TabOpening::class.java) ?: TabOpening.NONE
@@ -50,14 +91,22 @@ fun QwantNavHost(
                 openNewTab = openNewTab
             )
         }
-        composable(NavDestination.Tabs.match) { TabsScreen(
-            appViewModel = appViewModel,
-            onClose = { openNewTab ->
-                navController.navigateSingleTopTo(NavDestination.Browser.route(openNewTab) )
-            }
-        ) }
-        composable(NavDestination.History.match) { HistoryScreen(onClose = onBrowse) }
-        composable(NavDestination.Bookmarks.match) { BookmarksScreen(onBrowse, appViewModel) }
-        composable(NavDestination.Preferences.match) { PreferencesScreen(onClose = onBrowse, applicationViewModel = appViewModel) }
+        composable(NavDestination.Tabs.match) {
+            TabsScreen(
+                appViewModel = appViewModel,
+                onClose = { openNewTab ->
+                    navController.navigateSingleTopTo(NavDestination.Browser.route(openNewTab) )
+                }
+            )
+        }
+        composable(NavDestination.History.match) {
+            HistoryScreen(onClose = onBrowse)
+        }
+        composable(NavDestination.Bookmarks.match) {
+            BookmarksScreen(onBrowse, appViewModel)
+        }
+        composable(NavDestination.Preferences.match) {
+            PreferencesScreen(onClose = onBrowse, applicationViewModel = appViewModel)
+        }
     }
 }
