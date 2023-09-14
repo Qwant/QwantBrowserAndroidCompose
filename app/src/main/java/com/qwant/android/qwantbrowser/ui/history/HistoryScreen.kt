@@ -12,6 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
@@ -24,24 +26,36 @@ fun HistoryScreen(
     val lazyListState = rememberLazyListState()
     var showDeleteAllConfirmation by remember { mutableStateOf(false) }
 
+    val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
+    val visitsEmpty = (visits.itemCount == 0 && visits.loadState.append != LoadState.Loading)
+
     Column {
         ScreenHeader(
             title = stringResource(id = R.string.history),
             scrollableState = lazyListState,
             actions = {
-                IconButton(onClick = { showDeleteAllConfirmation = true }) {
-                    Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Delete history")
+                if (!visitsEmpty) {
+                    IconButton(onClick = { showDeleteAllConfirmation = true }) {
+                        Icon(painter = painterResource(id = R.drawable.icons_trash), contentDescription = "Delete history")
+                    }
                 }
             }
         )
-        HistoryList(
-            historyViewModel = historyViewModel,
-            lazyListState = lazyListState,
-            onItemSelected = { visit, private ->
-                historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
-                onClose()
-            }
-        )
+
+
+        if (!visitsEmpty) {
+            HistoryList(
+                visits = visits,
+                historyViewModel = historyViewModel,
+                lazyListState = lazyListState,
+                onItemSelected = { visit, private ->
+                    historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
+                    onClose()
+                }
+            )
+        } else {
+            HistoryEmpty()
+        }
     }
 
     if (showDeleteAllConfirmation) {

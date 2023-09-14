@@ -37,7 +37,11 @@ fun BookmarksScreen(
             scrollableState = lazyListState,
             actions = { NewFolderAction(viewModel) }
         )
-        BookmarksList(viewModel = viewModel, lazyListState = lazyListState, onBrowse = onBrowse)
+        if (viewModel.currentBookmarks.isNotEmpty()) {
+            BookmarksList(viewModel = viewModel, lazyListState = lazyListState, onBrowse = onBrowse)
+        } else {
+            BookmarksEmpty(viewModel.currentFolder?.title)
+        }
     }
 }
 

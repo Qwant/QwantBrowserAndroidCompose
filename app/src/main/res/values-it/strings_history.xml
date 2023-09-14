@@ -8,4 +8,7 @@
     <string name="history_clear_all_confirm_title">Elimina cronologia</string>
     <string name="history_clear_all_confirm_message">Vuoi davvero eliminare tutta la cronologia ?</string>
     <string name="history_clear_all_confirm_ok">Cancella tutto</string>
+
+    <string name="history_empty_title">La cronologia è vuota</string>
+    <string name="history_empty_message">Le pagine visitate verranno visualizzate qui</string>
 </resources>
