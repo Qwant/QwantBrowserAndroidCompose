@@ -29,6 +29,8 @@ private val lightColorScheme = lightColorScheme(
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
     outline = Grey900Alpha12,
+    surfaceVariant = Grey100,
+    onSurfaceVariant = Grey900
 )
 
 private val darkColorScheme = darkColorScheme(
@@ -42,6 +44,8 @@ private val darkColorScheme = darkColorScheme(
     tertiaryContainer = Grey700,
     onTertiaryContainer = Color.White,
     outline = Grey000Alpha16,
+    surfaceVariant = Grey600,
+    onSurfaceVariant = Color.White
 )
 
 private val privateColorScheme = darkColorScheme.copy(
@@ -55,6 +59,8 @@ private val privateColorScheme = darkColorScheme.copy(
     tertiaryContainer = PurpleTertiary,
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,
+    surfaceVariant = Grey000Alpha16,
+    onSurfaceVariant = Color.White
 )
 
 @Composable
@@ -79,6 +85,8 @@ fun ColorScheme.animatedColors() = copy(
     outline = animateColor(outline),
     surface = animateColor(primaryContainer),
     onSurface = animateColor(onPrimaryContainer),
+    surfaceVariant = animateColor(surfaceVariant),
+    onSurfaceVariant = animateColor(onSurfaceVariant),
     background = animateColor(primaryContainer),
     onBackground = animateColor(onPrimaryContainer)
 )
