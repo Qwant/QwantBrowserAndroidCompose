@@ -391,7 +391,7 @@ fun AnimatedZapButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TabsButton(
     navigateTo: (NavDestination) -> Unit,
@@ -400,39 +400,49 @@ fun TabsButton(
     val tabCount by viewModel.tabCount.collectAsState()
     var showTabsDropdown by remember { mutableStateOf(false) }
 
-    Box {
-        ToolbarAction(
-            onClick = { navigateTo(NavDestination.Tabs) },
-            onLongClick = { showTabsDropdown = true }
-        ) {
-            BadgedBox(
-                badge = {
-                    if (LocalQwantTheme.current.private) {
-                        Badge(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier
-                                .offset(x = (-4).dp, y = 2.dp)
-                                .border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.primaryContainer,
-                                    CircleShape
-                                )
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.icons_privacy_mask_small),
-                                contentDescription = "private navigation indicator"
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .padding(6.dp)
+            .combinedClickable(
+                onClick = { navigateTo(NavDestination.Tabs) },
+                onLongClick = { showTabsDropdown = true },
+                enabled = true,
+                role = Role.Button,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(
+                    bounded = false,
+                    radius = 20.dp
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        BadgedBox(
+            badge = {
+                if (LocalQwantTheme.current.private) {
+                    Badge(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier
+                            .offset(x = (-4).dp, y = 2.dp)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.primaryContainer,
+                                CircleShape
                             )
-                        }
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.icons_privacy_mask_small),
+                            contentDescription = "private navigation indicator"
+                        )
                     }
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(3.dp)
-            ) {
-                TabCounter(tabCount)
-            }
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TabCounter(tabCount)
         }
+
         Dropdown(
             expanded = showTabsDropdown,
             onDismissRequest = { showTabsDropdown = false },

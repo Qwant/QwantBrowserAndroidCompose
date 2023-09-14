@@ -61,7 +61,7 @@ fun TabsScreen(
                 TabIconButton(
                     onClick = { appViewModel.setPrivacyMode(PrivacyMode.NORMAL) },
                     icon = {
-                        Box(modifier = Modifier.size(24.dp)) {
+                        Box(modifier = Modifier.size(30.dp)) {
                             TabCounter(tabCount = normalTabsCount)
                         }
                     },
@@ -82,7 +82,7 @@ fun TabsScreen(
             ) {
                 ZapButton(appViewModel)
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
-                    Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Tabs")
+                    Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Add tab")
                 }
                 TabsMenuMore(
                     tabsViewOption = tabsViewOption,
