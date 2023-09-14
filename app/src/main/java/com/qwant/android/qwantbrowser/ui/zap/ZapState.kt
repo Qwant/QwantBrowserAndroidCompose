@@ -40,15 +40,19 @@ class ZapState(
         if (doIt) {
             state = State.Zapping
             animationState = AnimationState.In
-            clearDataUseCase(coroutineScope) { success ->
-                // TODO handle zap fails globally ?
-                coroutineScope.launch {
-                    while (animationState != AnimationState.Wait) {
-                        delay(50)
+
+            coroutineScope.launch {
+                delay(300)
+                clearDataUseCase { success ->
+                    // TODO handle zap fails globally ?
+                    coroutineScope.launch {
+                        while (animationState != AnimationState.Wait) {
+                            delay(50)
+                        }
+                        state = if (success) State.Waiting else State.Error
+                        animationState = AnimationState.Out
+                        endCallback?.invoke(success)
                     }
-                    state = if (success) State.Waiting else State.Error
-                    animationState = AnimationState.Out
-                    endCallback?.invoke(success)
                 }
             }
         } else {

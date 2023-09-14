@@ -121,6 +121,7 @@ class QwantUseCases(
         }
     }
 
+    // TODO make the whole clear data use case "suspend"
     class ClearDataUseCase internal constructor(
         private val prefs: AppPreferencesRepository,
         private val engine: Engine,
@@ -137,7 +138,7 @@ class QwantUseCases(
             if (clearDataPreferences.tabs) {
                 tabsUseCases.removeAllTabs()
             } else {
-                // Always remove private tabs, no matter clearDataPreferences
+                // Always remove private tabs anyway
                 tabsUseCases.removePrivateTabs()
             }
 
@@ -172,6 +173,11 @@ class QwantUseCases(
                 val clearDataPrefs = prefs.clearDataPreferencesFlow.first()
                 invoke(clearDataPrefs, then)
             }
+        }
+
+        suspend operator fun invoke(then: (Boolean) -> Unit = {}) {
+            val clearDataPrefs = prefs.clearDataPreferencesFlow.first()
+            invoke(clearDataPrefs, then)
         }
     }
 
