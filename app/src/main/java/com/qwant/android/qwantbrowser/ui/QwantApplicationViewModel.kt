@@ -10,17 +10,21 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
+import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.ui.zap.ZapState
+import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.storage.HistoryStorage
+import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.state.ext.flow
 import javax.inject.Inject
 
@@ -30,21 +34,25 @@ enum class PrivacyMode {
 
 @HiltViewModel
 class QwantApplicationViewModel @Inject constructor(
-    core: Core,
-    useCases: UseCases,
+    store: BrowserStore,
+    historyStorage: HistoryStorage,
+    sessionUseCases: SessionUseCases,
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    appPreferencesRepository: AppPreferencesRepository
+    appPreferencesRepository: AppPreferencesRepository,
+    qwantUseCases: QwantUseCases,
+    clearDataUseCase: ClearDataUseCase
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
+    private val history = historyStorage as History
 
-    private val selectedTabPrivacy = core.store.flow()
+    private val selectedTabPrivacy = store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
 
-    var hasHistory by mutableStateOf(core.historyStorage.size != 0)
+    var hasHistory by mutableStateOf(history.size != 0)
         private set
 
     init {
-        core.historyStorage.onSizeChanged = {
+        history.onSizeChanged = {
             hasHistory = (it != 0)
         }
     }
@@ -101,7 +109,7 @@ class QwantApplicationViewModel @Inject constructor(
             initialValue = null
         )
 
-    val qwantTabs = core.store.flow()
+    val qwantTabs = store.flow()
         .map { state ->
             state.tabs.filter { it.content.url.isQwantUrl() }
         }
@@ -111,8 +119,8 @@ class QwantApplicationViewModel @Inject constructor(
             initialValue = listOf()
         )
 
-    val loadUrlUseCase = useCases.sessionUseCases.loadUrl
-    val getQwantUrlUseCase = useCases.qwantUseCases.getQwantUrl
+    val loadUrlUseCase = sessionUseCases.loadUrl
+    val getQwantUrlUseCase = qwantUseCases.getQwantUrl
 
     fun setPrivacyMode(mode: PrivacyMode) {
         privacyMode.update { mode }
@@ -126,7 +134,7 @@ class QwantApplicationViewModel @Inject constructor(
             initialValue = false
         )
 
-    val zapState: ZapState = ZapState(useCases.qwantUseCases.clearDataUseCase, viewModelScope)
+    val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
     fun zap(then: (Boolean) -> Unit = {}) {
         zapState.zap {
             then(it)

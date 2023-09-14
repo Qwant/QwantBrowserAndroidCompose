@@ -70,7 +70,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '11'
-        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs += ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
     }
     kotlin {
         jvmToolchain(11)

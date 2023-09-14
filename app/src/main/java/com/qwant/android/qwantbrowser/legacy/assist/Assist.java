@@ -31,8 +31,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ComponentActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -45,7 +47,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Assist extends Activity {
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class Assist extends AppCompatActivity {
+    @Inject QwantUseCases qwantUseCases;
+
     public static final int MAX_SUGGEST_TEXT_LENGTH = 30;
 
     TextInputEditText search_text;
@@ -65,7 +74,8 @@ public class Assist extends Activity {
     final int QWANT_PERMISSIONS_REQUEST_FINE_LOCATION = 0;
     private String permission_request_origin;
     private GeolocationPermissions.Callback permission_request_callback;
-    private QwantUseCases qwantUseCases;
+    // private QwantUseCases qwantUseCases;
+
 
     ArrayList<String> suggestItems = new ArrayList<>();
 
@@ -77,8 +87,8 @@ public class Assist extends Activity {
 
         // Get reference to qwant use cases early so it starts collecting url before we actually need it
         QwantApplication application = (QwantApplication) getApplication();
-        qwantUseCases = application.useCases.getQwantUseCases();
-        qwantUseCases.warmUp();
+        // qwantUseCases = application.useCases.get().getQwantUseCases();
+        // qwantUseCases.warmUp();
 
         // Intent for opening url in browser. URL is set at just before starting activity.
         new_tab_intent = new Intent(this, IntentReceiverActivity.class);

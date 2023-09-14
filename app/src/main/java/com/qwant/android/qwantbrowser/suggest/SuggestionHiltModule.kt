@@ -1,11 +1,12 @@
 package com.qwant.android.qwantbrowser.suggest
 
-import com.qwant.android.qwantbrowser.mozac.Core
+
 import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import mozilla.components.concept.fetch.Client
 import javax.inject.Singleton
 
 @Module
@@ -13,8 +14,8 @@ import javax.inject.Singleton
 object SuggestionHiltModule {
     @Singleton
     @Provides fun provideQwantOpensearchProvider(
-        core: Core
+        client: Client
     ) : QwantOpensearchProvider {
-        return QwantOpensearchProvider(core.client)
+        return QwantOpensearchProvider(client)
     }
 }

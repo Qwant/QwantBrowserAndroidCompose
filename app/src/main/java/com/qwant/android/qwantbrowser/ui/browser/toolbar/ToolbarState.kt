@@ -11,7 +11,8 @@ import androidx.compose.ui.text.input.getTextBeforeSelection
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.urlDecode
-import com.qwant.android.qwantbrowser.mozac.Core
+import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
@@ -30,6 +31,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.fetch.Client
+import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.lib.state.ext.flow
 import java.net.URI
 
@@ -39,21 +43,22 @@ interface ToolbarStateFactory {
 }
 
 class ToolbarState @AssistedInject constructor(
-    mozac: Core,
+    client: Client,
+    store: BrowserStore,
     appPreferencesRepository: AppPreferencesRepository,
+    bookmarkStorage: BookmarksStorage,
+    historyStorage: HistoryStorage,
     @ApplicationContext context: Context,
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
     private val suggestionProviders: List<SuggestionProvider> = listOf(
         ClipboardProvider(context),
-        QwantOpensearchProvider(mozac.client),
+        QwantOpensearchProvider(client),
         DomainProvider(context),
-        SessionTabsProvider(mozac.store),
-        mozac.historyStorage,
-        mozac.bookmarkStorage
+        SessionTabsProvider(store),
+        historyStorage as History,
+        bookmarkStorage
     )
-
-    private val store = mozac.store
 
     var visible by mutableStateOf(true)
         private set

@@ -13,8 +13,6 @@ import androidx.annotation.RequiresApi
 import com.qwant.android.qwantbrowser.MainActivity
 import com.qwant.android.qwantbrowser.QwantApplication
 import com.qwant.android.qwantbrowser.R
-import com.qwant.android.qwantbrowser.mozac.Core
-import com.qwant.android.qwantbrowser.mozac.UseCases
 import org.mozilla.geckoview.BuildConfig
 import mozilla.components.feature.downloads.R as downloadsR
 
@@ -34,18 +32,6 @@ val Context.activity: MainActivity?
  */
 val Context.application: QwantApplication
     get() = applicationContext as QwantApplication
-
-/**
- * Get the mozac core of this application.
- */
-val Context.core: Core
-    get() = application.mozac
-
-/**
- * Get the use cases of this application.
- */
-val Context.useCases: UseCases
-    get() = application.useCases
 
 
 fun Context.openAppSystemSettings() = startActivity(

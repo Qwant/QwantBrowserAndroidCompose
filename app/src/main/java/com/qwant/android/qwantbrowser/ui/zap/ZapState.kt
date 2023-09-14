@@ -6,14 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.qwant.android.qwantbrowser.usecases.QwantUseCases
+import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ZapState(
-    private val clearDataUseCase: QwantUseCases.ClearDataUseCase,
+    private val clearDataUseCase: ClearDataUseCase,
     private val coroutineScope: CoroutineScope = MainScope()
 ) {
     enum class State { Zapping, Confirm, Waiting, Error }
@@ -69,7 +69,7 @@ class ZapState(
 
 @Composable
 fun rememberZapState(
-    clearDataUseCase: QwantUseCases.ClearDataUseCase,
+    clearDataUseCase: ClearDataUseCase,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): ZapState {
     return remember { ZapState(clearDataUseCase, coroutineScope) }

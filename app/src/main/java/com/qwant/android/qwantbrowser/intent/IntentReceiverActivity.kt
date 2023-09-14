@@ -1,18 +1,25 @@
 package com.qwant.android.qwantbrowser.intent
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.qwant.android.qwantbrowser.MainActivity
-import com.qwant.android.qwantbrowser.ext.useCases
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
+import dagger.hilt.android.AndroidEntryPoint
+import mozilla.components.feature.tabs.TabsUseCases
+import javax.inject.Inject
 
-class IntentReceiverActivity: Activity() {
+@AndroidEntryPoint
+class IntentReceiverActivity: AppCompatActivity() {
+    @Inject lateinit var tabsUseCases: TabsUseCases
+    @Inject lateinit var qwantUseCases: QwantUseCases
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val intent = intent?.let { Intent(it) } ?: Intent()
 
-        val processor = QwantIntentProcessor(useCases.tabsUseCases, useCases.qwantUseCases)
+        val processor = QwantIntentProcessor(tabsUseCases, qwantUseCases)
         processor.process(intent)
 
         intent.setClassName(applicationContext, MainActivity::class.java.name)
