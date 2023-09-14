@@ -1,0 +1,31 @@
+package com.qwant.android.qwantbrowser.ui.widgets
+
+import androidx.annotation.DrawableRes
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+
+@Composable
+fun DropdownItem(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    @DrawableRes icon: Int? = null,
+    trailing: @Composable (() -> Unit)? = null,
+    enabled: Boolean = true
+) {
+    DropdownMenuItem(
+        text = { Text(text = text) },
+        leadingIcon = { icon?.let { Icon(painter = painterResource(id = it), contentDescription = text) } },
+        trailingIcon = trailing,
+        colors = MenuDefaults.itemColors(leadingIconColor = LocalContentColor.current.copy(0.6f)),
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled
+    )
+}

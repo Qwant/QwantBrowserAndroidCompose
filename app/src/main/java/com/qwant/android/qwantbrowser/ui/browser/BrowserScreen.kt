@@ -41,6 +41,7 @@ import com.qwant.android.qwantbrowser.ui.browser.toolbar.*
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
 import kotlinx.coroutines.delay
@@ -448,26 +449,26 @@ fun TabsButton(
             expanded = showTabsDropdown,
             onDismissRequest = { showTabsDropdown = false },
         ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.browser_close_tab)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close tab")},
+            DropdownItem(
+                text = stringResource(id = R.string.browser_close_tab),
+                icon = R.drawable.icons_close,
                 onClick = {
                     viewModel.closeCurrentTab()
                     showTabsDropdown = false
                 }
             )
             Divider(modifier = Modifier.padding(horizontal = 16.dp))
-            DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.browser_new_tab)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "new tab")},
+            DropdownItem(
+                text = stringResource(id = R.string.browser_new_tab),
+                icon = R.drawable.icons_add_tab,
                 onClick = {
                     viewModel.openNewQwantTab(false)
                     showTabsDropdown = false
                 }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.browser_new_tab_private)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "new private tab")},
+            DropdownItem(
+                text = stringResource(id = R.string.browser_new_tab_private),
+                icon = R.drawable.icons_privacy_mask,
                 onClick = {
                     viewModel.openNewQwantTab(true)
                     showTabsDropdown = false

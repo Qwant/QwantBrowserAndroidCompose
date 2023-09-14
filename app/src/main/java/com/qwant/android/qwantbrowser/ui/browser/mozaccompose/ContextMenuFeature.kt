@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -82,7 +83,7 @@ fun ContextMenuFeature(
                     onDismissRequest = { contextMenuUseCases.consumeHitResult(session.id) },
                 ) {
                     validCandidates.forEach { candidate ->
-                        DropdownMenuItem(text = { Text(candidate.label) }, onClick = {
+                        DropdownItem(text = candidate.label, onClick = {
                             candidate.action.invoke(session, hit)
                             contextMenuUseCases.consumeHitResult(session.id)
                         })

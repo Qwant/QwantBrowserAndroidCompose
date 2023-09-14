@@ -23,6 +23,7 @@ import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
 import com.qwant.android.qwantbrowser.ui.browser.ZapButton
 import com.qwant.android.qwantbrowser.ui.preferences.TabsViewPreferenceSelector
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import mozilla.components.browser.state.state.SessionState
@@ -127,17 +128,17 @@ fun TabsMenuMore(
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close all tabs") },
+            DropdownItem(
+                text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs),
+                icon = R.drawable.icons_close,
                 onClick = {
                     showMenu = false
                     onRemoveTabs()
                 }
             )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.tabs_view_label)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_grid), contentDescription = "tabs settings") },
+            DropdownItem(
+                text = stringResource(id = R.string.tabs_view_label),
+                icon = R.drawable.icons_grid,
                 onClick = {
                     showMenu = false
                     showViewOptionPopup = true

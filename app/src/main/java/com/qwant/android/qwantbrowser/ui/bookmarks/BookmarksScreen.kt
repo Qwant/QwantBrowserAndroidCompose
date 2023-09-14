@@ -50,7 +50,7 @@ fun NewFolderAction(viewModel: BookmarksScreenViewModel) {
     var showCreateFolderDialog by remember { mutableStateOf(false) }
 
     IconButton(onClick = { showCreateFolderDialog = true }) {
-        Icon(painter = painterResource(id = R.drawable.icons_add_bookmark), contentDescription = "Add folder") // TODO change icon
+        Icon(painter = painterResource(id = R.drawable.icons_folder_add), contentDescription = "Add folder") // TODO change icon
     }
     if (showCreateFolderDialog) {
         BookmarkEditDialog(

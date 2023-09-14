@@ -16,6 +16,7 @@ import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import mozilla.components.support.ktx.android.content.share
 
 @Composable
@@ -41,9 +42,9 @@ fun BrowserMenu(
         PageActions(viewModel, onDismissRequest)
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
 
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.settings)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_settings), contentDescription = "settings") },
+        DropdownItem(
+            text = stringResource(id = R.string.settings),
+            icon = R.drawable.icons_settings,
             onClick = {
                 onDismissRequest()
                 navigateTo(NavDestination.Preferences)
@@ -52,9 +53,9 @@ fun BrowserMenu(
         if (showQuitApp) {
             val activity = (LocalContext.current.activity)
             Divider(modifier = Modifier.padding(horizontal = 16.dp))
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.menu_quit_app)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "quit") },
+            DropdownItem(
+                text = stringResource(id = R.string.menu_quit_app),
+                icon = R.drawable.icons_close,
                 onClick = {
                     applicationViewModel.zap { success ->
                         if (success) {
@@ -85,7 +86,7 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
 
         if (viewModel.isUrlBookmarked) {
             IconButton(onClick = { viewModel.removeBookmark() }) {
-                Icon(painter = painterResource(id = R.drawable.icons_check), contentDescription = "delete bookmark")
+                Icon(painter = painterResource(id = R.drawable.icons_delete_bookmark), contentDescription = "delete bookmark")
             }
         } else {
             IconButton(onClick = { viewModel.addBookmark() }) {
@@ -109,17 +110,17 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
 @Composable
 fun NewTabs(viewModel: BrowserScreenViewModel, onDismissRequest: () -> Unit) {
     Column {
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.browser_new_tab)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "new tab") },
+        DropdownItem(
+            text = stringResource(id = R.string.browser_new_tab),
+            icon = R.drawable.icons_add_tab,
             onClick = {
                 onDismissRequest()
                 viewModel.openNewQwantTab(private = false)
             }
         )
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.browser_new_tab_private)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_privacy_mask), contentDescription = "new private tab") },
+        DropdownItem(
+            text = stringResource(id = R.string.browser_new_tab_private),
+            icon = R.drawable.icons_privacy_mask,
             onClick = {
                 onDismissRequest()
                 viewModel.openNewQwantTab(private = true)
@@ -135,25 +136,25 @@ fun AppNavigation(
 ) {
     val context = LocalContext.current
     Column {
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.history)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_history), contentDescription = "History") },
+        DropdownItem(
+            text = stringResource(id = R.string.history),
+            icon = R.drawable.icons_history,
             onClick = {
                 onDismissRequest()
                 navigateTo(NavDestination.History)
             }
         )
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.bookmarks)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_bookmark), contentDescription = "Bookmarks") },
+        DropdownItem(
+            text = stringResource(id = R.string.bookmarks),
+            icon = R.drawable.icons_bookmark,
             onClick = {
                 onDismissRequest()
                 navigateTo(NavDestination.Bookmarks)
             }
         )
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.browser_downloads)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_download), contentDescription = "Downloads") },
+        DropdownItem(
+            text = stringResource(id = R.string.browser_downloads),
+            icon = R.drawable.icons_download,
             onClick = { context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)) }
         )
     }
@@ -175,28 +176,28 @@ fun PageActions(
 
     Column {
         currentUrl?.let { url ->
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.share)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_share), contentDescription = "share") },
+            DropdownItem(
+                text = stringResource(id = R.string.share),
+                icon = R.drawable.icons_share,
                 onClick = { context.share(url) }
             )
         }
         if (viewModel.isShortcutSupported) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.menu_add_to_homescreen)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_add_screen), contentDescription = "add to homescreen") },
+            DropdownItem(
+                text = stringResource(id = R.string.menu_add_to_homescreen),
+                icon = R.drawable.icons_add_screen,
                 onClick = { viewModel.addShortcutToHomeScreen() }
             )
         }
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.menu_request_desktop_site)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_laptop), contentDescription = "request desktop site") },
-            trailingIcon = { Switch(checked = desktopSite, onCheckedChange = onDesktopSiteClicked) },
+        DropdownItem(
+            text = stringResource(id = R.string.menu_request_desktop_site),
+            icon = R.drawable.icons_laptop,
+            trailing = { Switch(checked = desktopSite, onCheckedChange = onDesktopSiteClicked) },
             onClick = { onDesktopSiteClicked(!desktopSite) }
         )
-        DropdownMenuItem(
-            text = { Text(text = stringResource(id = R.string.menu_find_in_page)) },
-            leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_search), contentDescription = "find in page") },
+        DropdownItem(
+            text = stringResource(id = R.string.menu_find_in_page),
+            icon = R.drawable.icons_search,
             onClick = {
                 viewModel.updateShowFindInPage(true)
                 onDismissRequest()
