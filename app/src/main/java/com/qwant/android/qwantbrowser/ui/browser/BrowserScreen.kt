@@ -424,7 +424,8 @@ fun TabsButton(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier
-                            .offset(x = (-4).dp, y = 2.dp)
+                            .size(20.dp)
+                            .offset(x = (-8).dp)
                             .border(
                                 1.dp,
                                 MaterialTheme.colorScheme.primaryContainer,
