@@ -51,7 +51,9 @@ fun TabsScreen(
         }
     }
 
-    Column  {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background))  {
         Box(modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)) {

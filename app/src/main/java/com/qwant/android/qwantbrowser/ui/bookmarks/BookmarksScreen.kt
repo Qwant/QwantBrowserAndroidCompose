@@ -1,11 +1,13 @@
 package com.qwant.android.qwantbrowser.ui.bookmarks
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +33,7 @@ fun BookmarksScreen(
         viewModel.visitFolder(viewModel.currentFolder?.parent)
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         ScreenHeader(
             title = viewModel.currentFolder?.title ?: stringResource(id = R.string.bookmarks),
             scrollableState = lazyListState,

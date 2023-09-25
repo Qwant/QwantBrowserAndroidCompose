@@ -3,9 +3,6 @@ package com.qwant.android.qwantbrowser.ui.nav
 import android.os.Build
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +25,8 @@ fun QwantNavHost(
     appViewModel: QwantApplicationViewModel = hiltViewModel(),
 ) {
     val onBrowse = { navController.navigateSingleTopTo(NavDestination.Browser.route()) }
-    val transitionTimeMs = 500
+    val transitionTimeMs = 400
+    val offsetForBrowserScreen = { fullSize: Int -> fullSize / 5 }
 
     NavHost(
         navController = navController,
@@ -62,16 +60,32 @@ fun QwantNavHost(
         composable(
             route = NavDestination.Browser.match,
             arguments = NavDestination.Browser.arguments,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(durationMillis = transitionTimeMs),
+                    initialOffset = offsetForBrowserScreen
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(durationMillis = transitionTimeMs),
+                    initialOffset = offsetForBrowserScreen
+                )
+            },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(durationMillis = transitionTimeMs)
+                    animationSpec = tween(durationMillis = transitionTimeMs),
+                    targetOffset = offsetForBrowserScreen
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(durationMillis = transitionTimeMs)
+                    animationSpec = tween(durationMillis = transitionTimeMs),
+                    targetOffset = offsetForBrowserScreen
                 )
             }
         ) { backStackEntry ->
