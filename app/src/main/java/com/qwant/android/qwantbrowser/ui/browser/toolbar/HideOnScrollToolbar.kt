@@ -8,7 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import kotlin.math.roundToInt
+import kotlin.math.sign
 
 enum class HideOnScrollPosition {
     Top, Bottom
@@ -67,11 +70,20 @@ fun HideOnScrollToolbar(
         }
     }
 
-    val nestedScrollConnection = rememberThresholdNestedScrollConnection(
+    /* val nestedScrollConnection = rememberThresholdNestedScrollConnection(
         onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
         scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
         consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
-    )
+    ) */
+
+    val nestedScrollConnection = remember {
+        object: NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                toolbarState.updateVisibility(available.y.sign == 1f)
+                return Offset.Zero
+            }
+        }
+    }
 
     LaunchedEffect(shouldHideOnScroll, trueHeight) {
         toolbarState.updateTrueHeightPx(trueHeight)
