@@ -95,6 +95,8 @@ fun BrowserScreen(
         }
     }
 
+    KeyboardObserver(toolbarState = viewModel.toolbarState)
+
     HideOnScrollToolbar(
         toolbarState = viewModel.toolbarState,
         toolbar = { modifier ->
