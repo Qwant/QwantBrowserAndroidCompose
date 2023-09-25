@@ -117,6 +117,7 @@
     <string name="cleardata_tabs_private">Pestañas privadas abiertas</string>
     <string name="cleardata_use_now">Eliminar datos</string>
     <string name="cleardata_confirm_text">Este botón cierra todas tus pestañas y borra todos tus datos de navegación.</string>
+    <string name="cleardata_done">Datos eliminados</string>
 
     <string name="clear_data_on_quit_label">Borrar datos al salir</string>
     <string name="clear_data_on_quit_description">Utilice el botón Salir de la aplicación para asegurarse de que se aplique</string>

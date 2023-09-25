@@ -57,7 +57,7 @@ fun BrowserMenu(
                 text = stringResource(id = R.string.menu_quit_app),
                 icon = R.drawable.icons_close,
                 onClick = {
-                    applicationViewModel.zap { success ->
+                    applicationViewModel.zap { success, _ ->
                         if (success) {
                             activity?.quit()
                         } else {

@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui
 
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -135,9 +134,9 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
-    fun zap(then: (Boolean) -> Unit = {}) {
-        zapState.zap {
-            then(it)
+    fun zap(then: (Boolean, Boolean) -> Unit = { _, _ -> }) {
+        zapState.zap { success, tabsCleared ->
+            then(success, tabsCleared)
         }
     }
 }

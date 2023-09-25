@@ -81,16 +81,20 @@ fun TabsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
-                ZapButton(appViewModel)
+                ZapButton(appViewModel, afterZap = { _, tabsCleared ->
+                    if (tabsCleared || private) onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL)
+                })
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
                     Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Add tab")
                 }
+                val tabsClosedString = stringResource(id = R.string.browser_tabs_closed)
                 TabsMenuMore(
                     tabsViewOption = tabsViewOption,
                     private = private,
                     onTabsViewOptionChange = { tabsViewModel.updateTabsViewOption(it) },
                     onRemoveTabs = {
                         tabsViewModel.removeTabs(private)
+                        appViewModel.showSnackbar(tabsClosedString)
                         if (private) {
                             appViewModel.setPrivacyMode(PrivacyMode.NORMAL)
                         } else {
@@ -103,7 +107,14 @@ fun TabsScreen(
 
         Divider()
 
-        AnimatedTabList(tabs = tabs, private = private, onClose = onClose, tabsViewModel = tabsViewModel, tabsViewOption)
+        AnimatedTabList(
+            tabs = tabs,
+            private = private,
+            onClose = onClose,
+            appViewModel = appViewModel,
+            tabsViewModel = tabsViewModel,
+            tabsViewOption = tabsViewOption
+        )
     }
 }
 
@@ -169,6 +180,7 @@ fun AnimatedTabList(
     tabs: List<TabSessionState>,
     private: Boolean,
     onClose: (openNewTab: TabOpening) -> Unit,
+    appViewModel: QwantApplicationViewModel,
     tabsViewModel: TabsScreenViewModel,
     tabsViewOption: TabsViewOption
 ) {
@@ -182,7 +194,11 @@ fun AnimatedTabList(
             tabsViewModel.selectTab(tab.id)
             onClose(TabOpening.NONE)
         }
-        val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
+        val tabClosedString = stringResource(id = R.string.browser_tab_closed)
+        val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState ->
+            tabsViewModel.removeTab(tab.id)
+            appViewModel.showSnackbar(tabClosedString)
+        }
 
         AnimatedVisibility(
             visible = private,

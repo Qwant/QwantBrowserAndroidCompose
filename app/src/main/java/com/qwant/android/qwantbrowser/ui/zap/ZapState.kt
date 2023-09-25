@@ -12,6 +12,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// TODO zap state could old clear data config (and clean use case)
 class ZapState(
     private val clearDataUseCase: ClearDataUseCase,
     private val coroutineScope: CoroutineScope = MainScope()
@@ -25,13 +26,13 @@ class ZapState(
     var animationState by mutableStateOf(AnimationState.Idle)
         private set
 
-    private var endCallback: ((Boolean) -> Unit)? = null
+    private var endCallback: ((Boolean, Boolean) -> Unit)? = null
 
-    fun updateAnimationState(s: AnimationState) {
+    internal fun updateAnimationState(s: AnimationState) {
         animationState = s
     }
 
-    fun zap(then: (Boolean) -> Unit = {}) {
+    fun zap(then: (Boolean, Boolean) -> Unit = { _, _ -> }) {
         endCallback = then
         if (state == State.Waiting) { state = State.Confirm }
     }
@@ -43,7 +44,7 @@ class ZapState(
 
             coroutineScope.launch {
                 delay(300)
-                clearDataUseCase { success ->
+                clearDataUseCase { success, tabsCleared ->
                     // TODO handle zap fails globally ?
                     coroutineScope.launch {
                         while (animationState != AnimationState.Wait) {
@@ -51,13 +52,13 @@ class ZapState(
                         }
                         state = if (success) State.Waiting else State.Error
                         animationState = AnimationState.Out
-                        endCallback?.invoke(success)
+                        endCallback?.invoke(success, tabsCleared)
                     }
                 }
             }
         } else {
             state = State.Waiting
-            endCallback?.invoke(false)
+            endCallback?.invoke(false, false)
         }
     }
 

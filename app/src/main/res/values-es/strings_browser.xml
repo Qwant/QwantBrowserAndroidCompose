@@ -8,6 +8,8 @@
     <string name="browser_close_private_tabs">Cerrar pestañas privadas</string>
     <string name="browser_close_tab">Cerrar esta pestaña</string>
     <string name="browser_go_to_tab">Ir a la pestaña</string>
+    <string name="browser_tab_closed">Pestaña cerrada</string>
+    <string name="browser_tabs_closed">Pestañas eliminadas</string>
 
     <string name="browser_toolbar_hint">Busca o ingresa una dirección</string>
 </resources>

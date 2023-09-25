@@ -115,6 +115,7 @@
     <string name="cleardata_tabs_private">Private Tabs geöffnet</string>
     <string name="cleardata_use_now">Daten löschen</string>
     <string name="cleardata_confirm_text">Hiermit schließen Sie alle Tabs und löschen sämtliche Browserdaten.</string>
+    <string name="cleardata_done">Daten gelöscht</string>
 
     <string name="clear_data_on_quit_label">Beim Verlassen Daten löschen</string>
     <string name="clear_data_on_quit_description">Bitte nutzen Sie die Schaltfläche Verlassen der App, um sicherzustellen, dass sie ausgeführt wird</string>

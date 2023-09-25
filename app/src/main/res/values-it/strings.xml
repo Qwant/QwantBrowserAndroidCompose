@@ -4,6 +4,7 @@
 
     <string name="save">Salva</string>
     <string name="delete">Elimina</string>
+    <string name="erase">Cancella</string>
     <string name="share">Condividi</string>
 
     <string name="all_fields_required">Tutti i campi sono obbligatori</string>

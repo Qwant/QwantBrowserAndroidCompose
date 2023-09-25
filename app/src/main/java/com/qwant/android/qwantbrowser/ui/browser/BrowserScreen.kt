@@ -276,7 +276,11 @@ fun AfterActions(
     appViewModel: QwantApplicationViewModel
 ) {
     Row {
-        ZapButton(appViewModel)
+        ZapButton(appViewModel, afterZap = { success, tabsCleared ->
+            if (tabsCleared || (appViewModel.isPrivate.value && success)) {
+                viewModel.openNewQwantTab(appViewModel.isPrivate.value)
+            }
+        })
         TabsButton(navigateTo, viewModel)
         BrowserMenuButton(navigateTo, viewModel, appViewModel)
     }
@@ -284,7 +288,8 @@ fun AfterActions(
 
 @Composable
 fun ZapButton(
-    appViewModel: QwantApplicationViewModel
+    appViewModel: QwantApplicationViewModel,
+    afterZap: ((success: Boolean, tabsCleared: Boolean) -> Unit)? = null
 ) {
     // TODO move from sharedprefs to internal datastore
     val context = LocalContext.current
@@ -303,16 +308,22 @@ fun ZapButton(
             prefs.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }
+
+    val zapDoneString = stringResource(id = R.string.cleardata_done)
+    val onZapDone: (Boolean, Boolean) -> Unit = { success, tabsCleared ->
+        if (success) appViewModel.showSnackbar(zapDoneString)
+        afterZap?.invoke(success, tabsCleared)
+    }
     if (shouldHighlightZapPref && appViewModel.hasHistory) {
         AnimatedZapButton(zap = {
             with (prefs.edit()) {
                 putBoolean(prefkey, false)
                 apply()
             }
-            appViewModel.zap()
+            appViewModel.zap(then = onZapDone)
         })
     } else {
-        StaticZapButton(zap = { appViewModel.zap() })
+        StaticZapButton(zap = { appViewModel.zap(then = onZapDone) })
     }
 }
 

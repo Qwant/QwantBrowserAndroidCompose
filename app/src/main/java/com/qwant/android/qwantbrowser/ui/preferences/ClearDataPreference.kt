@@ -105,13 +105,15 @@ fun ClearDataPreference(
                 )
 
                 var zapEnabled by remember { mutableStateOf(true) }
+                val clearDataDoneString = stringResource(id = R.string.cleardata_done)
                 BigButton(
                     text = R.string.cleardata_use_now,
                     icon = R.drawable.icons_zap, // TODO change zap icon if night or private theme
                     enabled = zapEnabled,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { applicationViewModel.zap { success ->
+                    onClick = { applicationViewModel.zap { success, _ ->
                         if (success) {
+                            applicationViewModel.showSnackbar(clearDataDoneString)
                             zapEnabled = false
                         } else {
                             // TODO handle zap failed

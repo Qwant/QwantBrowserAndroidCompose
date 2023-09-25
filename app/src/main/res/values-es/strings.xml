@@ -5,6 +5,7 @@
     <string name="save">Guardar</string>
     <string name="delete">Eliminar</string>
     <string name="share">Compartir</string>
+    <string name="erase">Borrar</string>
 
     <string name="all_fields_required">Todos los campos son obligatorios</string>
 

@@ -208,7 +208,7 @@ internal fun ZapConfirmDialog(state: ZapState) {
         onYes = { state.confirmZap(true) },
         onNo = { state.confirmZap(false) },
         description = stringResource(id = R.string.cleardata_confirm_text),
-        yesText = stringResource(id = R.string.delete)
+        yesText = stringResource(id = R.string.erase)
     )
 }
 

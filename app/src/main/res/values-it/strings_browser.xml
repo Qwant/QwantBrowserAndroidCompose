@@ -8,6 +8,8 @@
     <string name="browser_close_private_tabs">Chiudi le schede private</string>
     <string name="browser_close_tab">Chiudi questa scheda</string>
     <string name="browser_go_to_tab">Vai alla scheda</string>
+    <string name="browser_tab_closed">Scheda chiusa</string>
+    <string name="browser_tabs_closed">Schede eliminate</string>
 
     <string name="browser_toolbar_hint">Cerca o inserisci un indirizzo</string>
 </resources>

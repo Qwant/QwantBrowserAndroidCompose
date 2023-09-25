@@ -118,6 +118,7 @@
     <string name="cleardata_failed">Erreur en supprimant les données</string>
     <string name="cleardata_use_now">Supprimer les données</string>
     <string name="cleardata_confirm_text">Ce bouton ferme tous vos onglets et efface toutes vos données de navigation.</string>
+    <string name="cleardata_done">Données effacés</string>
 
     <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
     <string name="clear_data_on_quit_description">Merci d\'utiliser le bouton \"Quitter l\'application\" pour être certain de l\'effacement de vos données</string>

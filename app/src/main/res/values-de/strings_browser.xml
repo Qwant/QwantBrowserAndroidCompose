@@ -8,6 +8,8 @@
     <string name="browser_close_private_tabs">Private Tabs schließen</string>
     <string name="browser_close_tab">Diesen Tab schließen</string>
     <string name="browser_go_to_tab">Zum Tab gehen</string>
+    <string name="browser_tab_closed">Tab geschlossen</string>
+    <string name="browser_tabs_closed">Tabs gelöscht</string>
 
     <string name="browser_toolbar_hint">Adresse suchen oder eingeben</string>
 </resources>

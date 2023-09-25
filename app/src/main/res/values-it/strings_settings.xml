@@ -116,6 +116,7 @@
     <string name="cleardata_failed">Errore durante la cancellazione dei dati</string>
     <string name="cleardata_use_now">Elimina i dati</string>
     <string name="cleardata_confirm_text">Questo pulsante chiude tutte le schede e cancella tutti i dati di navigazione.</string>
+    <string name="cleardata_done">Dati cancellati</string>
 
     <string name="clear_data_on_quit_label">Cancella dati all\'uscita</string>
     <string name="clear_data_on_quit_description">Si prega di utilizzare il pulsante Esci dall\'app per essere sicuri che sia applicato</string>

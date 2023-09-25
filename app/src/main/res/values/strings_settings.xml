@@ -124,6 +124,7 @@
     <string name="cleardata_tabs_private">Opened private tabs</string>
     <string name="cleardata_use_now">Delete data</string>
     <string name="cleardata_confirm_text">This button closes all your tabs and deletes all your browsing data.</string>
+    <string name="cleardata_done">Data deleted</string>
 
     <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
     <string name="clear_data_on_quit_description">Please use the Quit app button to be sure it is applied</string>

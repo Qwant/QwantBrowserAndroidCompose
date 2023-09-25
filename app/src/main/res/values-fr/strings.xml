@@ -4,6 +4,7 @@
 
     <string name="save">Sauvegarder</string>
     <string name="delete">Supprimer</string>
+    <string name="erase">Effacer</string>
     <string name="share">Partager</string>
     <string name="create">Créer</string>
     <string name="edit">Modifier</string>

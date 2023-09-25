@@ -13,6 +13,7 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.tabs.TabsUseCases
 import javax.inject.Inject
 
+// TODO reforge clear data
 class ClearDataUseCase @Inject constructor(
     private val prefs: AppPreferencesRepository,
     private val tabsUseCases: TabsUseCases,
@@ -59,15 +60,15 @@ class ClearDataUseCase @Inject constructor(
         }
     }
 
-    operator fun invoke(coroutineScope: CoroutineScope = MainScope(), then: (Boolean) -> Unit = {}) {
+    operator fun invoke(coroutineScope: CoroutineScope = MainScope(), then: (Boolean, Boolean) -> Unit = { _, _ -> }) {
         coroutineScope.launch {
             val clearDataPrefs = prefs.clearDataPreferencesFlow.first()
-            invoke(clearDataPrefs, then)
+            invoke(clearDataPrefs) { success -> then(success, clearDataPrefs.tabs) }
         }
     }
 
-    suspend operator fun invoke(then: (Boolean) -> Unit = {}) {
+    suspend operator fun invoke(then: (Boolean, Boolean) -> Unit = { _, _ -> }) {
         val clearDataPrefs = prefs.clearDataPreferencesFlow.first()
-        invoke(clearDataPrefs, then)
+        invoke(clearDataPrefs) { success -> then(success, clearDataPrefs.tabs) }
     }
 }
