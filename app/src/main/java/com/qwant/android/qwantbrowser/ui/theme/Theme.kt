@@ -1,7 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.theme
 
 import android.app.Activity
-import android.os.Build
+import android.view.WindowManager
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -107,8 +107,10 @@ fun QwantBrowserTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = colorScheme.primary.toArgb()
+            window.navigationBarColor = colorScheme.primary.toArgb()
             /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 window.navigationBarDividerColor = colorScheme.outline.toArgb()
             } */

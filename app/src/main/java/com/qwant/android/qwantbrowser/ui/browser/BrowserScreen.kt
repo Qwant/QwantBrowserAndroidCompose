@@ -62,7 +62,6 @@ fun BrowserScreen(
     val tabCount by viewModel.tabCount.collectAsState()
     val private by appViewModel.isPrivate.collectAsState()
 
-
     /* TODO Pull To Refresh
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
@@ -131,7 +130,7 @@ fun BrowserScreen(
                 // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
                 //}
             }
-        } else {
+        }/* else {
             Icon(
                 painter = painterResource(id = R.drawable.qwant_logo),
                 contentDescription = "logo qwant",
@@ -140,7 +139,7 @@ fun BrowserScreen(
                     .fillMaxSize()
                     .padding(64.dp)
             )
-        }
+        } */
     }
 }
 

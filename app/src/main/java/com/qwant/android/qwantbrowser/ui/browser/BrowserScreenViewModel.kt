@@ -55,7 +55,8 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     val tabCount = store.flow()
-        .map { state -> state.tabs.count() }
+        .ifChanged { it.tabs.size }
+        .map { state -> state.tabs.count { it.content.private == state.selectedTab?.content?.private } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

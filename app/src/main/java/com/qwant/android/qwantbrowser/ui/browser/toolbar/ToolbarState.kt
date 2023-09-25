@@ -1,13 +1,17 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
+import android.app.Activity
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.ViewCompat
+import com.qwant.android.qwantbrowser.ext.activity
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.urlDecode
@@ -15,11 +19,11 @@ import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
-import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
 import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
+import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -128,7 +132,7 @@ class ToolbarState @AssistedInject constructor(
             initialValue = null
         )
 
-    private val currentUrl = store.flow()
+    val currentUrl = store.flow()
         .map { state -> state.selectedTab?.content?.url }
         .distinctUntilChanged()
         .onEach {
