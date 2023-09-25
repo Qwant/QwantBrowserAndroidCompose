@@ -82,7 +82,7 @@ fun YesNoDialog(
                 }
 
                 if (scrollState.canScrollBackward) {
-                    Divider()
+                    HorizontalDivider()
                 }
             }
 
@@ -111,7 +111,7 @@ fun YesNoDialog(
                 }
             ) {
                 if (scrollState.canScrollForward) {
-                    Divider()
+                    HorizontalDivider()
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

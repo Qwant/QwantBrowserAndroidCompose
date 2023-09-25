@@ -7,7 +7,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -66,7 +66,7 @@ fun Toolbar(
                 browserIcons = browserIcons,
                 modifier = Modifier.weight(2f)
             )
-            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             ToolbarProgressBar(toolbarState = toolbarState)
         }
 
@@ -110,7 +110,7 @@ fun Toolbar(
 
         if (toolbarPosition == ToolbarPosition.TOP) {
             ToolbarProgressBar(toolbarState = toolbarState)
-            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             ToolbarSuggest(
                 toolbarState = toolbarState,
                 commitSuggestion = commitSuggestion,

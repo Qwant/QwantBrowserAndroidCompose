@@ -3,7 +3,7 @@ package com.qwant.android.qwantbrowser.ui.browser.toolbar
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -78,13 +78,13 @@ fun HideOnScrollToolbar(
     }
 
     Box(modifier = modifier) {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outline,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(100f)
-                .align(if (position == HideOnScrollPosition.Top) Alignment.BottomCenter else Alignment.TopCenter)
+                .align(if (position == HideOnScrollPosition.Top) Alignment.BottomCenter else Alignment.TopCenter),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outline
         )
 
         toolbar(

@@ -107,7 +107,7 @@ fun TabsScreen(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         AnimatedTabList(
             tabs = tabs,
@@ -258,7 +258,7 @@ fun TabIconButton(
 
         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
             AnimatedVisibility(visible = selected) {
-                Divider(thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
+                HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
             }
         }
     }

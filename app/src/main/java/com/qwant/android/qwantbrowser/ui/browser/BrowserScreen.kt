@@ -468,7 +468,7 @@ fun TabsButton(
                     showTabsDropdown = false
                 }
             )
-            Divider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             DropdownItem(
                 text = stringResource(id = R.string.browser_new_tab),
                 icon = R.drawable.icons_add_tab,

@@ -17,6 +17,7 @@ import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.support.ktx.android.content.share
 
 @Composable
@@ -34,13 +35,13 @@ fun BrowserMenu(
         onDismissRequest = onDismissRequest
     ) {
         BrowserNavigation(viewModel)
-        Divider()
+        HorizontalDivider()
         NewTabs(viewModel, onDismissRequest)
-        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         AppNavigation(navigateTo, onDismissRequest)
-        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         PageActions(viewModel, onDismissRequest)
-        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         DropdownItem(
             text = stringResource(id = R.string.settings),
@@ -52,7 +53,7 @@ fun BrowserMenu(
         )
         if (showQuitApp) {
             val activity = (LocalContext.current.activity)
-            Divider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             DropdownItem(
                 text = stringResource(id = R.string.menu_quit_app),
                 icon = R.drawable.icons_close,

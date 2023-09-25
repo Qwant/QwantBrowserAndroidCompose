@@ -3,7 +3,7 @@ package com.qwant.android.qwantbrowser.ui.preferences.widgets
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +17,7 @@ fun PreferenceGroupLabel(
     @StringRes label: Int
 ) {
     Column {
-        Divider()
+        HorizontalDivider()
         Text(
             text = stringResource(label),
             color = MaterialTheme.colorScheme.primary,
