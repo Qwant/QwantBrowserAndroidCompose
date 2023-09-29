@@ -72,10 +72,10 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
-            <intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
+            </intent-filter> -->
 
             <intent-filter>
                 <action android:name="android.intent.action.WEB_SEARCH"/>
@@ -103,7 +103,12 @@
             android:windowSoftInputMode="stateAlwaysVisible"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:launchMode="singleTask"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.qwant.android.intent.action.WIDGET" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <receiver
             android:name=".legacy.assist.WidgetProvider"
             android:exported="true">
