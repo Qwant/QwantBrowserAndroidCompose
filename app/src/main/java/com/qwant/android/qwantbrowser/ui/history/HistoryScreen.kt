@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 
@@ -33,7 +34,9 @@ fun HistoryScreen(
     val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
     val visitsEmpty = (visits.itemCount == 0 && visits.loadState.append != LoadState.Loading)
 
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         ScreenHeader(
             title = stringResource(id = R.string.history),
             scrollableState = lazyListState,
@@ -58,7 +61,11 @@ fun HistoryScreen(
                 }
             )
         } else {
-            HistoryEmpty()
+            EmptyPagePlaceholder(
+                icon = R.drawable.icons_history,
+                title = stringResource(id = R.string.history_empty_title),
+                subtitle = stringResource(id = R.string.history_empty_message)
+            )
         }
     }
 

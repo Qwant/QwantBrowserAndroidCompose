@@ -1,5 +1,6 @@
-package com.qwant.android.qwantbrowser.ui.bookmarks
+package com.qwant.android.qwantbrowser.ui.widgets
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,46 +17,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.qwant.android.qwantbrowser.R
 
 @Composable
-fun BookmarksEmpty(folderTitle: String?) {
+fun EmptyPagePlaceholder(
+    @DrawableRes icon: Int,
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
             .offset(y = (-56).dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.icons_bookmark),
-                contentDescription = "bookmarks empty",
+                painter = painterResource(id = icon),
+                contentDescription = title,
                 modifier = Modifier
                     .size(80.dp)
                     .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
                     .padding(16.dp)
             )
-
             Text(
-                text = stringResource(id = R.string.bookmarks_empty_title,
-                    folderTitle ?: stringResource(R.string.bookmarks_empty_default_folder_name)
-                ),
+                text = title,
                 fontSize = 20.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 16.dp)
             )
             Text(
-                text = stringResource(id = R.string.bookmarks_empty_message),
+                text = subtitle,
                 fontSize = 14.sp,
-                lineHeight = 18.sp
+                lineHeight = 18.sp,
+                textAlign = TextAlign.Center
             )
         }
     }

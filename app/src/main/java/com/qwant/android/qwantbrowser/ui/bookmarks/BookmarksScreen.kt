@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 
 @Composable
@@ -33,7 +34,9 @@ fun BookmarksScreen(
         viewModel.visitFolder(viewModel.currentFolder?.parent)
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         ScreenHeader(
             title = viewModel.currentFolder?.title ?: stringResource(id = R.string.bookmarks),
             scrollableState = lazyListState,
@@ -42,7 +45,13 @@ fun BookmarksScreen(
         if (viewModel.currentBookmarks.isNotEmpty()) {
             BookmarksList(viewModel = viewModel, lazyListState = lazyListState, onBrowse = onBrowse)
         } else {
-            BookmarksEmpty(viewModel.currentFolder?.title)
+            EmptyPagePlaceholder(
+                icon = R.drawable.icons_bookmark,
+                title = stringResource(id = R.string.bookmarks_empty_title,
+                    viewModel.currentFolder?.title ?: stringResource(R.string.bookmarks_empty_default_folder_name)
+                ),
+                subtitle = stringResource(id = R.string.bookmarks_empty_message)
+            )
         }
     }
 }

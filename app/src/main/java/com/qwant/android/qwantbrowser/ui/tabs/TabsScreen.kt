@@ -190,7 +190,6 @@ fun AnimatedTabList(
     val normalTabs by remember(tabs) { derivedStateOf { tabs.filter { !it.content.private }.reversed() } }
     val privateTabs by remember(tabs) { derivedStateOf { tabs.filter { it.content.private }.reversed() } }
 
-
     Box(Modifier.fillMaxSize()) {
         val onTabSelected = { tab: SessionState ->
             tabsViewModel.selectTab(tab.id)
@@ -209,6 +208,7 @@ fun AnimatedTabList(
         ) {
             TabView(
                 tabs = privateTabs,
+                private = private,
                 selectedTabId = selectedTabId,
                 thumbnailStorage = tabsViewModel.thumbnailStorage,
                 browserIcons = tabsViewModel.browserIcons,
@@ -226,6 +226,7 @@ fun AnimatedTabList(
         ) {
             TabView(
                 tabs = normalTabs,
+                private = private,
                 selectedTabId = selectedTabId,
                 thumbnailStorage = tabsViewModel.thumbnailStorage,
                 browserIcons = tabsViewModel.browserIcons,
