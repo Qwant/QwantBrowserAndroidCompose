@@ -6,6 +6,8 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.ui.browser.suggest.Suggest
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import mozilla.components.browser.icons.BrowserIcons
 
 @Composable
@@ -58,6 +61,10 @@ fun Toolbar(
         }
     }
 
+    // TODO Move toolbar divider color to some material theme color
+    val qwantTheme = LocalQwantTheme.current
+    val dividerColor = if (qwantTheme.dark || qwantTheme.private) Color(0xFF4B5058) else Color(0xFFD9DBDE)
+
     Column(modifier = modifier) {
         if (toolbarPosition == ToolbarPosition.BOTTOM) {
             ToolbarSuggest(
@@ -66,7 +73,7 @@ fun Toolbar(
                 browserIcons = browserIcons,
                 modifier = Modifier.weight(2f)
             )
-            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(thickness = 1.dp, color = dividerColor)
             ToolbarProgressBar(toolbarState = toolbarState)
         }
 
@@ -74,7 +81,11 @@ fun Toolbar(
             .fillMaxWidth()
             .height(56.dp)
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(vertical = 8.dp)
+            // .padding(vertical = 8.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { toolbarState.updateFocus(true) }
         ) {
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer
@@ -94,7 +105,9 @@ fun Toolbar(
                         .weight(2f, true)
                         .padding(
                             start = toolbarTextFieldPaddingStart,
-                            end = toolbarTextFieldPaddingEnd
+                            end = toolbarTextFieldPaddingEnd,
+                            top = 8.dp,
+                            bottom = 8.dp
                         )
                 )
 
@@ -110,7 +123,7 @@ fun Toolbar(
 
         if (toolbarPosition == ToolbarPosition.TOP) {
             ToolbarProgressBar(toolbarState = toolbarState)
-            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(thickness = 1.dp, color = dividerColor)
             ToolbarSuggest(
                 toolbarState = toolbarState,
                 commitSuggestion = commitSuggestion,

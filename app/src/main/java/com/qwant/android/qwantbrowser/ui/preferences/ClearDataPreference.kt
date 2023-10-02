@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceSelectionPopup
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import com.qwant.android.qwantbrowser.ui.widgets.BigButton
 import mozilla.components.concept.engine.Engine
 
@@ -108,7 +109,7 @@ fun ClearDataPreference(
                 val clearDataDoneString = stringResource(id = R.string.cleardata_done)
                 BigButton(
                     text = R.string.cleardata_use_now,
-                    icon = R.drawable.icons_zap, // TODO change zap icon if night or private theme
+                    icon = R.drawable.icons_zap_night,
                     enabled = zapEnabled,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = { applicationViewModel.zap { success, _ ->

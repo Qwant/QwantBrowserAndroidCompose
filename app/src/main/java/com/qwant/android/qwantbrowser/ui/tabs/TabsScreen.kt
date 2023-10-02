@@ -160,10 +160,14 @@ fun TabsMenuMore(
         }
     }
     if (showViewOptionPopup) {
+        val originalOption = remember { tabsViewOption }
         YesNoDialog(
             onDismissRequest = { showViewOptionPopup = false },
             onYes = { showViewOptionPopup = false },
-            onNo = { showViewOptionPopup = false },  // TODO revert to settings before opening popup on cancel
+            onNo = {
+                onTabsViewOptionChange(originalOption)
+                showViewOptionPopup = false
+            },
             title = stringResource(id = R.string.tabs_view_label),
             additionalContent = {
                 Box(modifier = Modifier.padding(top = 8.dp)) {

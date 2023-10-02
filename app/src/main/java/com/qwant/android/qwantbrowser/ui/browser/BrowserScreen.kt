@@ -1,12 +1,14 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -16,9 +18,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
+import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pullrefresh.pullRefresh
+import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,6 +39,7 @@ import androidx.preference.PreferenceManager
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
 import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
+import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -45,6 +52,7 @@ import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.EngineView
 
 enum class TabOpening {
@@ -62,7 +70,7 @@ fun BrowserScreen(
     val tabCount by viewModel.tabCount.collectAsState()
     val private by appViewModel.isPrivate.collectAsState()
 
-    /* TODO Pull To Refresh
+    /* // TODO Pull To Refresh
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
     fun refresh() = refreshScope.launch {
@@ -119,29 +127,42 @@ fun BrowserScreen(
             if (currentUrl == "" && private) {
                 HomePrivateBrowsing(modifier)
             } else {
-                // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
                 GlobalFeatures(appViewModel, viewModel)
 
-                EngineView(
-                    engine = viewModel.engine,
-                    modifier = modifier
-                ) { engineView ->
-                    EngineViewFeatures(engineView, viewModel)
-                }
+                // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
+                    EngineView(
+                        engine = viewModel.engine,
+                        modifier = modifier
+                    ) { engineView ->
+                        EngineViewFeatures(engineView, viewModel)
+                    }
 
-                // PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-                //}
+                //    PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+                // }
             }
-        }/* else {
-            Icon(
+        } else {
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.qwant_logo),
+                    contentDescription = "logo qwant",
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+            }
+            /* Icon(
                 painter = painterResource(id = R.drawable.qwant_logo),
                 contentDescription = "logo qwant",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(64.dp)
-            )
-        } */
+            ) */
+        }
     }
 }
 
@@ -156,7 +177,6 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
         modifier = Modifier
             .width(40.dp)
             .fillMaxHeight()
-            .padding(8.dp)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick,
@@ -167,7 +187,8 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
                     bounded = false,
                     radius = 20.dp
                 )
-            ),
+            )
+            .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         content()
@@ -334,7 +355,7 @@ fun StaticZapButton(
 ) {
     ToolbarAction(onClick = { zap() }) {
         Image(
-            painter = painterResource(id = R.drawable.icons_zap),
+            painter = painterResource(id = LocalQwantTheme.current.icons.zap),
             contentDescription = "zap",
             modifier = Modifier.fillMaxSize()
         )
@@ -352,9 +373,10 @@ fun AnimatedZapButton(
     var atEnd by remember { mutableStateOf(false) }
     var staticOverlayVisible by remember { mutableStateOf(true) }
 
-    val image = AnimatedImageVector.animatedVectorResource(id = R.drawable.animated_zap)
-    val animatedPainter = rememberAnimatedVectorPainter(image, atEnd)
-    val staticPainter = painterResource(id = R.drawable.icons_zap)
+    val qwantTheme = LocalQwantTheme.current
+    val animatedImage = AnimatedImageVector.animatedVectorResource(id = qwantTheme.icons.zapAnimated)
+    val animatedPainter = rememberAnimatedVectorPainter(animatedImage, atEnd)
+    val staticPainter = painterResource(id = qwantTheme.icons.zap)
 
     var runCount = remember { 0 }
 
@@ -369,36 +391,40 @@ fun AnimatedZapButton(
                 if (runCount == 0) {
                     delay(4000)
                 } else {
-                    delay(image.totalDuration.toLong() + 50)
+                    delay(animatedImage.totalDuration.toLong() + 50)
                 }
             } else {
                 staticOverlayVisible = false
                 delay(50)
                 atEnd = true
-                delay(image.totalDuration.toLong() + 50)
+                delay(animatedImage.totalDuration.toLong() + 50)
             }
         }
     }
 
-    LaunchedEffect(image) {
+    LaunchedEffect(animatedImage) {
         runAnimation()
     }
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .width(40.dp)
+            .fillMaxHeight()
             .clickable { zap() }
-            .size(40.dp),
     ) {
         if (staticOverlayVisible) {
             Image(
                 painter = staticPainter,
-                contentDescription = "zap"
+                contentDescription = "zap",
+                modifier = Modifier.fillMaxSize().padding(8.dp)
             )
         } else {
             Image(
                 painter = animatedPainter,
-                contentDescription = "zap"
+                contentDescription = "zap",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -415,8 +441,8 @@ fun TabsButton(
 
     Box(
         modifier = Modifier
-            .size(40.dp)
-            .padding(6.dp)
+            .width(40.dp)
+            .fillMaxHeight()
             .combinedClickable(
                 onClick = { navigateTo(NavDestination.Tabs) },
                 onLongClick = { showTabsDropdown = true },
@@ -427,7 +453,8 @@ fun TabsButton(
                     bounded = false,
                     radius = 20.dp
                 )
-            ),
+            )
+            .padding(horizontal = 6.dp),
         contentAlignment = Alignment.Center
     ) {
         BadgedBox(
@@ -438,7 +465,7 @@ fun TabsButton(
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier
                             .size(20.dp)
-                            .offset(x = (-8).dp)
+                            .offset(x = (-8).dp, y = 6.dp)
                             .border(
                                 1.dp,
                                 MaterialTheme.colorScheme.primaryContainer,
@@ -452,7 +479,7 @@ fun TabsButton(
                     }
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.size(40.dp)
         ) {
             TabCounter(tabCount)
         }

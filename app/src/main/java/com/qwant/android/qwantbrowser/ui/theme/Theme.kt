@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.ui.theme
 
 import android.app.Activity
 import android.view.WindowManager
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,10 +14,25 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.qwant.android.qwantbrowser.R
 
+data class QwantIcons(
+    @DrawableRes val zap: Int,
+    @DrawableRes val zapAnimated: Int
+)
 
-data class QwantTheme(val dark: Boolean, val private: Boolean)
-val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false) }
+private val lightIcons = QwantIcons(
+    zap = R.drawable.icons_zap,
+    zapAnimated = R.drawable.animated_zap
+)
+
+private val darkAndPrivateIcons = QwantIcons(
+    zap = R.drawable.icons_zap_night,
+    zapAnimated = R.drawable.animated_zap_dark
+)
+
+data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantIcons)
+val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
 private val lightColorScheme = lightColorScheme(
     primary = ActionBlue400,
@@ -67,7 +83,7 @@ private val privateColorScheme = darkColorScheme.copy(
 private fun animateColor(targetValue: Color) =
     animateColorAsState(
         targetValue = targetValue,
-        animationSpec = tween(durationMillis = 1000),
+        animationSpec = tween(durationMillis = 250),
         label = "theme colors"
     ).value
 
@@ -103,6 +119,8 @@ fun QwantBrowserTheme(
         else -> lightColorScheme
     }.animatedColors()
 
+    val icons = if (privacy || darkTheme) darkAndPrivateIcons else lightIcons
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -120,7 +138,7 @@ fun QwantBrowserTheme(
     }
 
     CompositionLocalProvider(
-        LocalQwantTheme provides QwantTheme(darkTheme, privacy)
+        LocalQwantTheme provides QwantTheme(darkTheme, privacy, icons)
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
