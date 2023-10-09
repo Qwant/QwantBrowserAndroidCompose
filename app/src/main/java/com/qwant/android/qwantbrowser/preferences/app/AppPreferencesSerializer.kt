@@ -10,7 +10,7 @@ import java.io.OutputStream
 
 object AppPreferencesSerializer : Serializer<AppPreferences> {
     override val defaultValue: AppPreferences = AppPreferences.getDefaultInstance().toBuilder()
-        .setToolbarPosition(ToolbarPosition.BOTTOM)
+        .setToolbarPosition(ToolbarPosition.TOP)
         .setHideToolbarOnScroll(true)
         .setTabsView(TabsViewOption.GRID)
         .setOpenLinksInApp(true)

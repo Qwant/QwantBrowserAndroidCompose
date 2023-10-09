@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.preferences.widgets
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalContentColor
@@ -28,7 +29,7 @@ fun PreferenceRow(
             .fillMaxWidth()
             .clickable { onClicked() }
             .minimumInteractiveComponentSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = if (description != null) 12.dp else 2.dp)
     ) {
         Column(Modifier.weight(2f)) {
             Text(
@@ -36,13 +37,15 @@ fun PreferenceRow(
                 fontSize = 16.sp,
                 lineHeight = 20.sp
             )
-            description?.let {
-                Text(
-                    text = description,
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    color = LocalContentColor.current.copy(0.6f)
-                )
+            AnimatedVisibility(visible = (description != null)) {
+                description?.let {
+                    Text(
+                        text = description,
+                        fontSize = 14.sp,
+                        lineHeight = 18.sp,
+                        color = LocalContentColor.current.copy(0.6f)
+                    )
+                }
             }
         }
         trailing()

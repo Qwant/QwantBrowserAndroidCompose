@@ -61,14 +61,15 @@ fun ToolbarDecorator(
 
         Box(modifier = Modifier
             .weight(2f)
-            .padding(horizontal = 4.dp)
+            .padding(start = 12.dp)
         ) {
             // { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() ?: false && !(currentUrl?.isQwantUrl() ?: false) }
             if (state.text.text.isEmpty()) {
                 if (currentUrl?.isNotBlank() == true && currentUrl?.isQwantUrl() == false) {
+                    // Intermediate status when loading pages ("about:blank" example) for which we don't want the hint to show
                     Text(
                         text = currentUrl ?: "",
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = hintColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -76,7 +77,7 @@ fun ToolbarDecorator(
                 } else {
                     Text(
                         text = stringResource(id = R.string.browser_toolbar_hint),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = hintColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis

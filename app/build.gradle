@@ -14,8 +14,8 @@ android {
         applicationId "com.qwant.liberty"
         minSdk 21
         targetSdk 34
-        versionCode 50000090
-        versionName "5.0.0.9"
+        versionCode 50000100
+        versionName "5.0.0.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

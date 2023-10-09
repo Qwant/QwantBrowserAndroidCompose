@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.ui.browser.suggest
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -138,14 +139,12 @@ fun WebsiteRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
     ) {
         leading()
 
-        Column(modifier = Modifier
-            .weight(2f)
-            .padding(start = 12.dp)
-        ) {
+        Column(modifier = Modifier.weight(2f)) {
             Text(
                 text = highlight?.let {
                     title?.toSuggestAnnotatedString(it)
@@ -193,7 +192,7 @@ fun WebsiteRowWithIcon(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(
-                        RoundedCornerShape(4.dp)
+                        RoundedCornerShape(8.dp)
                     )
             )
         }
@@ -211,7 +210,6 @@ fun SuggestIcon(
         modifier = Modifier
             .padding(4.dp)
             .size(24.dp)
-
     )
 }
 
@@ -225,7 +223,7 @@ fun SuggestUrlIcon(
         UrlIcon(
             browserIcons = browserIcons,
             url = url,
-            modifier = Modifier.clip(RoundedCornerShape(4.dp))
+            modifier = Modifier.clip(RoundedCornerShape(8.dp))
         )
         Icon(
             painter = painterResource(id = miniature),

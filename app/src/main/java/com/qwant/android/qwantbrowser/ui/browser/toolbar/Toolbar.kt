@@ -33,16 +33,16 @@ fun Toolbar(
     beforeTextFieldVisible: () -> Boolean = { true },
     afterTextField: @Composable () -> Unit = {},
     afterTextFieldVisible: () -> Boolean = { true },
-    animationDurationMs: Int = 1000,
+    animationDurationMs: Int = 400,
     animationEasing: Easing = FastOutSlowInEasing
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
 
-    val toolbarTextFieldPaddingEnd by animateDpAsState(
+    /* val toolbarTextFieldPaddingEnd by animateDpAsState(
         targetValue = if (toolbarState.hasFocus) 8.dp else 0.dp,
         animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing),
         label = "toolbarTextFieldPaddingEnd"
-    )
+    ) */
 
     val toolbarTextFieldPaddingStart by animateDpAsState(
         targetValue = if (!beforeTextFieldVisible() || toolbarState.hasFocus) 8.dp else 0.dp,
@@ -54,7 +54,7 @@ fun Toolbar(
     val commitSuggestion: (Suggestion) -> Unit = { suggestion ->
         when (suggestion) {
             is Suggestion.SelectTabSuggestion -> onTextCommit(suggestion.url)
-            is Suggestion.SearchSuggestion -> onTextCommit(suggestion.text)
+            is Suggestion.SearchSuggestion -> onTextCommit(suggestion.text) // TODO toolbarState.updateText(suggestion.text), but it looses focus on the toolbar, which causes issues.
             is Suggestion.OpenTabSuggestion -> (suggestion.url ?: suggestion.title)?.let {
                 onTextCommit(it)
             }
@@ -73,8 +73,8 @@ fun Toolbar(
                 browserIcons = browserIcons,
                 modifier = Modifier.weight(2f)
             )
-            HorizontalDivider(thickness = 1.dp, color = dividerColor)
             ToolbarProgressBar(toolbarState = toolbarState)
+            HorizontalDivider(thickness = 1.dp, color = dividerColor)
         }
 
         Row(modifier = Modifier
@@ -105,7 +105,7 @@ fun Toolbar(
                         .weight(2f, true)
                         .padding(
                             start = toolbarTextFieldPaddingStart,
-                            end = toolbarTextFieldPaddingEnd,
+                            end = 8.dp, // toolbarTextFieldPaddingEnd,
                             top = 8.dp,
                             bottom = 8.dp
                         )
@@ -122,8 +122,8 @@ fun Toolbar(
         }
 
         if (toolbarPosition == ToolbarPosition.TOP) {
-            ToolbarProgressBar(toolbarState = toolbarState)
             HorizontalDivider(thickness = 1.dp, color = dividerColor)
+            ToolbarProgressBar(toolbarState = toolbarState)
             ToolbarSuggest(
                 toolbarState = toolbarState,
                 commitSuggestion = commitSuggestion,
