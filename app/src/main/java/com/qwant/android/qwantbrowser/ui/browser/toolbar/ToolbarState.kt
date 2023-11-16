@@ -1,17 +1,11 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-import android.app.Activity
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.util.Log
-import android.view.inputmethod.InputMethodManager
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.ViewCompat
-import com.qwant.android.qwantbrowser.ext.activity
+import com.qwant.android.qwantbrowser.ext.toCleanHost
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.urlDecode
@@ -34,12 +28,12 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.lib.state.ext.flow
-import java.net.URI
 
 @AssistedFactory
 interface ToolbarStateFactory {
@@ -52,6 +46,7 @@ class ToolbarState @AssistedInject constructor(
     appPreferencesRepository: AppPreferencesRepository,
     bookmarkStorage: BookmarksStorage,
     historyStorage: HistoryStorage,
+    val browserIcons: BrowserIcons,
     @ApplicationContext context: Context,
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
@@ -80,6 +75,9 @@ class ToolbarState @AssistedInject constructor(
         private set
 
     var onQwant by mutableStateOf(true)
+        private set
+
+    var showSiteSecurity by mutableStateOf(false)
         private set
 
     init {
@@ -158,6 +156,10 @@ class ToolbarState @AssistedInject constructor(
 
     fun updateVisibility(visible: Boolean) {
         this.visible = visible
+    }
+
+    fun updateShowSiteSecurity(visible: Boolean) {
+        this.showSiteSecurity = visible
     }
 
     internal fun updateFocus(hasFocus: Boolean) {

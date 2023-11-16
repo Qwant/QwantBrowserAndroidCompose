@@ -33,7 +33,6 @@ fun ToolbarDecorator(
     trailingIcons: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val siteSecurity by state.siteSecurity.collectAsState()
     val currentUrl by state.currentUrl.collectAsState()
 
     Row(
@@ -48,9 +47,10 @@ fun ToolbarDecorator(
             QwantIconOnBackground(shape = CircleShape)
         }
         AnimatedVisibility(visible = !shouldShowQwantIcon) {
-            siteSecurity?.let {
+            SiteSecurityIcon(state)
+            /* siteSecurity?.let {
                 SiteSecurityIcon(securityInfo = it)
-            } ?: Box(modifier = Modifier.size(24.dp))
+            } ?: Box(modifier = Modifier.size(24.dp)) */
         }
 
         // TODO hide toolbar cursor cleverly.
