@@ -178,13 +178,7 @@ class ToolbarState @AssistedInject constructor(
                     else TextFieldValue(search.urlDecode())
                 } ?: TextFieldValue("")
             } else if (!hasFocus) {
-                // TextFieldValue(url.removePrefix("https://").removePrefix("www."))
-                TextFieldValue(try {
-                    URI(url).normalize().host.removePrefix("www.")
-                } catch (e: Exception) {
-                    Log.w("QB_TOOLBAR", "Could not normalize url and get the host. Fallback to empty string for security concerns")
-                    ""
-                })
+                TextFieldValue(url.toCleanHost())
             } else {
                 // TODO Constraint url to a maximum size
                 TextFieldValue(url, selection = TextRange(0, url.length))

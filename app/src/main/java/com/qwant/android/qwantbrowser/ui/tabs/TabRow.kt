@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ext.toCleanHost
 
 @Composable
 fun TabRow(
@@ -57,7 +58,7 @@ fun TabRow(
                 lineHeight = 20.sp
             )
             Text(
-                tab.content.url,
+                tab.content.url.toCleanHost(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 14.sp,

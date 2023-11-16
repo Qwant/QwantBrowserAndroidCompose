@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
-import com.qwant.android.qwantbrowser.ext.toCleanUrlAnnotatedString
+import com.qwant.android.qwantbrowser.ext.toCleanUrl
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
@@ -158,7 +158,7 @@ fun WebsiteRow(
 
             subtitle?.let {
                 Text(
-                    text = it.toCleanUrlAnnotatedString(MaterialTheme.colorScheme.primary.copy(0.4f)),
+                    text = it.toCleanUrl(),
                     fontSize = 14.sp,
                     lineHeight = 18.sp,
                     maxLines = 1,
