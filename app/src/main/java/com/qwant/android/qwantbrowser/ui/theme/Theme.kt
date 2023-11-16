@@ -123,20 +123,16 @@ fun QwantBrowserTheme(
 
     val view = LocalView.current
     val window = (view.context as Activity).window
-    // if (!view.isInEditMode) {
-    LaunchedEffect(window, darkTheme, privacy) {
-        // val window = (view.context as Activity).window
-        // window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        // window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.statusBarColor = colorScheme.primary.toArgb()
-        window.navigationBarColor = colorScheme.primary.toArgb()
-        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            window.navigationBarDividerColor = colorScheme.outline.toArgb()
-        } */
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
-        WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
+    if (!view.isInEditMode) {
+        SideEffect {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = colorScheme.surface.toArgb()
+            window.navigationBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
+        }
     }
-    // }
 
     CompositionLocalProvider(
         LocalQwantTheme provides QwantTheme(darkTheme, privacy, icons)

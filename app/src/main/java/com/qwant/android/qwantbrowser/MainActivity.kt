@@ -55,11 +55,11 @@ class MainActivity : AppCompatActivity() {
         rootView = v.rootView
         imm = ContextCompat.getSystemService(this, InputMethodManager::class.java)
 
-        ViewCompat.setOnApplyWindowInsetsListener(v.rootView) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(v.rootView) { view, insets ->
             if (!insets.isVisible(WindowInsetsCompat.Type.ime())) {
                 onKeyboardHiddenCallback?.invoke()
             }
-            insets
+            ViewCompat.onApplyWindowInsets(view, insets)
         }
     }
 
