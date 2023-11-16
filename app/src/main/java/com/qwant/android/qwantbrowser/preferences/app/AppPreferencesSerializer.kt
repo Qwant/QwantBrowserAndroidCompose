@@ -18,6 +18,7 @@ object AppPreferencesSerializer : Serializer<AppPreferences> {
         .setClearDataHistory(true)
         .setClearDataTabs(true)
         .setClearDataBrowsingdata(Engine.BrowsingData.ALL)
+        .setPiwikOptout(false)
         .build()
 
     override suspend fun readFrom(input: InputStream): AppPreferences {

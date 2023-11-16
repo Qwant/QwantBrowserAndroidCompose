@@ -17,7 +17,6 @@ import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
-import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.support.ktx.android.content.share
 
 @Composable
@@ -58,7 +57,7 @@ fun BrowserMenu(
                 text = stringResource(id = R.string.menu_quit_app),
                 icon = R.drawable.icons_close,
                 onClick = {
-                    applicationViewModel.zap { success, _ ->
+                    applicationViewModel.zap(skipConfirmation = true) { success ->
                         if (success) {
                             activity?.quit()
                         } else {

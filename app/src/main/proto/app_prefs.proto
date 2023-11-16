@@ -22,4 +22,5 @@ message AppPreferences {
   bool clear_data_history = 6;
   bool clear_data_tabs = 7;
   int32 clear_data_browsingdata = 8;
+  bool piwik_optout = 9;
 }

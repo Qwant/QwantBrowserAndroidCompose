@@ -129,6 +129,9 @@
     <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
     <string name="clear_data_on_quit_description">Please use the Quit app button to be sure it is applied</string>
 
+    <string name="piwik_optout_title">Piwik opt out</string>
+    <string name="piwik_optout_description">Blablabla bla blablab blalblba lba lab labalba lba</string>
+
     <string name="privacy_policy_label">Privacy policy</string>
 
     <string name="rate_us_label">Rate this app</string>

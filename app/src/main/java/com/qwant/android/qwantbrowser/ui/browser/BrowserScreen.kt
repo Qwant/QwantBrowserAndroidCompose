@@ -1,16 +1,9 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,13 +11,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,11 +24,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.preference.PreferenceManager
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
 import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
-import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -50,9 +37,8 @@ import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
+import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.EngineView
 
 enum class TabOpening {
@@ -154,14 +140,6 @@ fun BrowserScreen(
                         .size(64.dp)
                 )
             }
-            /* Icon(
-                painter = painterResource(id = R.drawable.qwant_logo),
-                contentDescription = "logo qwant",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(64.dp)
-            ) */
         }
     }
 }
@@ -298,135 +276,13 @@ fun AfterActions(
     appViewModel: QwantApplicationViewModel
 ) {
     Row {
-        ZapButton(appViewModel, afterZap = { success, tabsCleared ->
-            if (tabsCleared || (appViewModel.isPrivate.value && success)) {
-                viewModel.openNewQwantTab(appViewModel.isPrivate.value)
+        ZapButton(appViewModel, afterZap = { success ->
+            if (success) {
+                viewModel.openNewQwantTab(appViewModel.lastPrivacy.value)
             }
         })
         TabsButton(navigateTo, viewModel)
         BrowserMenuButton(navigateTo, viewModel, appViewModel)
-    }
-}
-
-@Composable
-fun ZapButton(
-    appViewModel: QwantApplicationViewModel,
-    afterZap: ((success: Boolean, tabsCleared: Boolean) -> Unit)? = null
-) {
-    // TODO move from sharedprefs to internal datastore
-    val context = LocalContext.current
-    val prefkey = stringResource(id = R.string.pref_key_zap_highlight)
-    val prefs: SharedPreferences = remember { PreferenceManager.getDefaultSharedPreferences(context) }
-    var shouldHighlightZapPref by remember { mutableStateOf(prefs.getBoolean(prefkey, true)) }
-
-    val listener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
-        key?.takeIf { it == prefkey }?.let {
-            shouldHighlightZapPref = p.getBoolean(it, true)
-        }
-    }
-    DisposableEffect(prefs) {
-        prefs.registerOnSharedPreferenceChangeListener(listener)
-        onDispose {
-            prefs.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
-
-    val zapDoneString = stringResource(id = R.string.cleardata_done)
-    val onZapDone: (Boolean, Boolean) -> Unit = { success, tabsCleared ->
-        if (success) appViewModel.showSnackbar(zapDoneString)
-        afterZap?.invoke(success, tabsCleared)
-    }
-    if (shouldHighlightZapPref && appViewModel.hasHistory) {
-        AnimatedZapButton(zap = {
-            with (prefs.edit()) {
-                putBoolean(prefkey, false)
-                apply()
-            }
-            appViewModel.zap(then = onZapDone)
-        })
-    } else {
-        StaticZapButton(zap = { appViewModel.zap(then = onZapDone) })
-    }
-}
-
-@Composable
-fun StaticZapButton(
-    zap: () -> Unit
-) {
-    ToolbarAction(onClick = { zap() }) {
-        Image(
-            painter = painterResource(id = LocalQwantTheme.current.icons.zap),
-            contentDescription = "zap",
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@OptIn(ExperimentalAnimationGraphicsApi::class)
-@Composable
-fun AnimatedZapButton(
-    zap: () -> Unit
-) {
-    // Hacky way to employ AnimatedDrawable
-    //  maybe there is something better to do
-
-    var atEnd by remember { mutableStateOf(false) }
-    var staticOverlayVisible by remember { mutableStateOf(true) }
-
-    val qwantTheme = LocalQwantTheme.current
-    val animatedImage = AnimatedImageVector.animatedVectorResource(id = qwantTheme.icons.zapAnimated)
-    val animatedPainter = rememberAnimatedVectorPainter(animatedImage, atEnd)
-    val staticPainter = painterResource(id = qwantTheme.icons.zap)
-
-    var runCount = remember { 0 }
-
-    suspend fun runAnimation() {
-        delay(1000)
-        while (true) {
-            if (atEnd) {
-                staticOverlayVisible = true
-                delay(50)
-                atEnd = false
-                runCount = (runCount + 1) % 4
-                if (runCount == 0) {
-                    delay(4000)
-                } else {
-                    delay(animatedImage.totalDuration.toLong() + 50)
-                }
-            } else {
-                staticOverlayVisible = false
-                delay(50)
-                atEnd = true
-                delay(animatedImage.totalDuration.toLong() + 50)
-            }
-        }
-    }
-
-    LaunchedEffect(animatedImage) {
-        runAnimation()
-    }
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .width(40.dp)
-            .fillMaxHeight()
-            .clickable { zap() }
-    ) {
-        if (staticOverlayVisible) {
-            Image(
-                painter = staticPainter,
-                contentDescription = "zap",
-                modifier = Modifier.fillMaxSize().padding(8.dp)
-            )
-        } else {
-            Image(
-                painter = animatedPainter,
-                contentDescription = "zap",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
     }
 }
 

@@ -309,6 +309,13 @@ fun PreferencesScreen(
                 onValueChange = { viewModel.updateClearDataOnQuit(it) }
             )
 
+            PreferenceToggle(
+                label = R.string.piwik_optout_title,
+                description = R.string.piwik_optout_description,
+                value = appPrefs.piwikOptout,
+                onValueChange = { viewModel.updatePiwikOptout(it) }
+            )
+
             PreferenceGroupLabel(label = R.string.settings_group_about)
 
             // App details

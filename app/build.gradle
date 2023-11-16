@@ -168,6 +168,9 @@ dependencies {
     // implementation "org.mozilla.geckoview:geckoview-beta-omni:$mozac_version" // feature-awesomebar deps
     // implementation "org.mozilla.telemetry:glean-native:$mozac_version" // feature-awesomebar deps
 
+    // Piwik
+    implementation 'pro.piwik:sdk-framework-android:1.2.0'
+
     // Tests
     testImplementation 'junit:junit:4.13.2'
     testImplementation("androidx.room:room-testing:$room_version")

@@ -78,4 +78,10 @@ class AppPreferencesRepository @Inject constructor(
                 .build()
         }
     }
+
+    suspend fun updatePiwikOptout(optout: Boolean) {
+        datastore.updateData { prefs ->
+            prefs.toBuilder().setPiwikOptout(optout).build()
+        }
+    }
 }

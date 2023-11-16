@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.legacy.history.History
+import com.qwant.android.qwantbrowser.piwik.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
@@ -39,7 +40,8 @@ class QwantApplicationViewModel @Inject constructor(
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
     appPreferencesRepository: AppPreferencesRepository,
     qwantUseCases: QwantUseCases,
-    clearDataUseCase: ClearDataUseCase
+    clearDataUseCase: ClearDataUseCase,
+    private val piwik: Piwik
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
     private val history = historyStorage as History
@@ -134,9 +136,22 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
-    fun zap(then: (Boolean, Boolean) -> Unit = { _, _ -> }) {
-        zapState.zap { success, tabsCleared ->
-            then(success, tabsCleared)
+    fun zap(
+        from: String = "Browser",
+        skipConfirmation: Boolean = false,
+        then: (Boolean) -> Unit = {}
+    ) {
+        if (skipConfirmation) {
+            piwik.event("Zap", "On quit")
+        } else {
+            piwik.event("Zap", "Icon", from)
+        }
+
+        zapState.zap(skipConfirmation) { success ->
+            if (success && !skipConfirmation) {
+                piwik.event("Zap", "CTA", from)
+            }
+            then(success)
         }
     }
 }

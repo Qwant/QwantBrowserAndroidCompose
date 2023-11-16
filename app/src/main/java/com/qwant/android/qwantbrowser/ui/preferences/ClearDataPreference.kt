@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceSelectionPopup
-import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import com.qwant.android.qwantbrowser.ui.widgets.BigButton
 import mozilla.components.concept.engine.Engine
 
@@ -112,7 +111,7 @@ fun ClearDataPreference(
                     icon = R.drawable.icons_zap_night,
                     enabled = zapEnabled,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { applicationViewModel.zap { success, _ ->
+                    onClick = { applicationViewModel.zap(from = "Browser deletion settings") { success ->
                         if (success) {
                             applicationViewModel.showSnackbar(clearDataDoneString)
                             zapEnabled = false

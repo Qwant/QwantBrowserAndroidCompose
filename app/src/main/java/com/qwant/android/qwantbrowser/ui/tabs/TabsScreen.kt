@@ -20,7 +20,7 @@ import com.qwant.android.qwantbrowser.ui.PrivacyMode
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.TabOpening
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
-import com.qwant.android.qwantbrowser.ui.browser.ZapButton
+import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.ui.preferences.TabsViewPreferenceSelector
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
@@ -83,9 +83,11 @@ fun TabsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
-                ZapButton(appViewModel, afterZap = { _, tabsCleared ->
-                    if (tabsCleared || private) onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL)
-                })
+                ZapButton(appViewModel, fromScreen = "Tabs") { success ->
+                    if (success) {
+                        onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL)
+                    }
+                }
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
                     Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Add tab")
                 }

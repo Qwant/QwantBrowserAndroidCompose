@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser
 
 import android.app.Application
+import com.qwant.android.qwantbrowser.piwik.Piwik
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import mozilla.components.browser.session.storage.SessionStorage
@@ -25,6 +26,8 @@ class QwantApplication : Application() {
     @Inject lateinit var store: dagger.Lazy<BrowserStore>
     @Inject lateinit var sessionStorage: dagger.Lazy<SessionStorage>
     @Inject lateinit var tabsUseCases: dagger.Lazy<TabsUseCases>
+    @Inject lateinit var piwik: Piwik
+    // @Inject lateinit var cookieFeature: dagger.Lazy<QwantCookieFeature>
 
     override fun onCreate() {
         super.onCreate()
@@ -45,7 +48,12 @@ class QwantApplication : Application() {
             speculativeConnect("https://www.qwant.com/")
         }
 
+        // cookieFeature.get().run()
+
         restoreBrowserState()
+
+        piwik.trackApplicationDownload()
+        piwik.event("App", "Opening")
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated

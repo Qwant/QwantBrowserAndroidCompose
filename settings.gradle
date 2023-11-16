@@ -18,6 +18,7 @@ dependencyResolutionManagement {
                 excludeGroup "org.mozilla.components"
             } */
         }
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "QwantBrowserCompose"

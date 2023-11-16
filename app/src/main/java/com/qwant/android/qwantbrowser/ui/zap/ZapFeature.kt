@@ -48,9 +48,9 @@ fun ZapFeature(
 ) {
     ZapAnimation(state)
 
-    when (state.state) {
-        ZapState.State.Confirm -> ZapConfirmDialog(state)
-        ZapState.State.Error -> ZapErrorDialog(state)
+    when (state.requestStatus) {
+        ZapState.RequestStatus.Confirm -> ZapConfirmDialog(state)
+        ZapState.RequestStatus.Error -> ZapErrorDialog(state)
         else -> {}
     }
 }
@@ -69,11 +69,11 @@ internal fun ZapAnimation(
     var showBlackOverlay  by remember { mutableStateOf(false) }
     var exitBlackOverlay  by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state.animationState) {
-        if (state.animationState == ZapState.AnimationState.In) {
+    LaunchedEffect(state.animationStatus) {
+        if (state.animationStatus == ZapState.AnimationStatus.In) {
             showBackground = true
         }
-        if (state.animationState == ZapState.AnimationState.Out) {
+        if (state.animationStatus == ZapState.AnimationStatus.Out) {
             showIcon = false
         }
     }
@@ -86,7 +86,7 @@ internal fun ZapAnimation(
             if (showBackground) {
                 showIcon = true
             } else {
-                state.updateAnimationState(ZapState.AnimationState.Idle)
+                state.updateAnimationState(ZapState.AnimationStatus.Idle)
             }
         }
     )
@@ -122,7 +122,7 @@ internal fun ZapAnimation(
             if (exitBlackOverlay) {
                 showBlackOverlay = false
                 exitBlackOverlay = false
-                state.updateAnimationState(ZapState.AnimationState.Wait)
+                state.updateAnimationState(ZapState.AnimationStatus.Wait)
             } else {
                 exitBlackOverlay = true
             }
@@ -145,7 +145,7 @@ internal fun ZapAnimation(
         label = "blackOverlayCornerPercent"
     )
 
-    val infiniteRotation = if (state.animationState == ZapState.AnimationState.Wait) {
+    val infiniteRotation = if (state.animationStatus == ZapState.AnimationStatus.Wait) {
         rememberInfiniteTransition(label = "ZapInfiniteTransition").animateFloat(
             initialValue = 0f,
             targetValue = 360f,
@@ -156,7 +156,7 @@ internal fun ZapAnimation(
         )
     } else remember { mutableFloatStateOf(0f) }
 
-    if (state.animationState != ZapState.AnimationState.Idle) {
+    if (state.animationStatus != ZapState.AnimationStatus.Idle) {
         // TODO ? replace animation dialog with surface, but we need first to modify fullscreen preferences (which are also dialogs ...)
         Dialog(
             properties = DialogProperties(
@@ -204,9 +204,9 @@ internal fun ZapAnimation(
 @Composable
 internal fun ZapConfirmDialog(state: ZapState) {
     YesNoDialog(
-        onDismissRequest = { state.confirmZap(false) },
-        onYes = { state.confirmZap(true) },
-        onNo = { state.confirmZap(false) },
+        onDismissRequest = { state.consumeZapRequest(false) },
+        onYes = { state.consumeZapRequest(true) },
+        onNo = { state.consumeZapRequest(false) },
         description = stringResource(id = R.string.cleardata_confirm_text),
         yesText = stringResource(id = R.string.erase)
     )
@@ -215,9 +215,9 @@ internal fun ZapConfirmDialog(state: ZapState) {
 @Composable
 internal fun ZapErrorDialog(state: ZapState) {
     YesNoDialog(
-        onDismissRequest = { state.clearError() },
-        onYes = { state.confirmZap(true) },
-        onNo = { state.clearError() },
+        onDismissRequest = { state.consumeZapError() },
+        onYes = { state.consumeZapRequest(true) },
+        onNo = { state.consumeZapError() },
         description = stringResource(id = R.string.cleardata_failed),
         yesText = stringResource(id = R.string.try_again)
     )
