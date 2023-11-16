@@ -83,9 +83,10 @@ fun TabsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
+                val privateBeforeClick = private
                 ZapButton(appViewModel, fromScreen = "Tabs") { success ->
                     if (success) {
-                        onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL)
+                        onClose(if (privateBeforeClick) TabOpening.PRIVATE else TabOpening.NORMAL)
                     }
                 }
                 ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {

@@ -10,6 +10,10 @@
     <string name="browser_go_to_tab">Ir a la pestaña</string>
     <string name="browser_tab_closed">Pestaña cerrada</string>
     <string name="browser_tabs_closed">Pestañas eliminadas</string>
+    <string name="browser_tabs_empty_title">Aquí se mostrarán sus pestañas</string>
+    <string name="browser_tabs_empty_subtitle">Utilice las pestañas para consultar varias páginas al mismo tiempo.</string>
+    <string name="browser_tabs_empty_title_private">Aquí se mostrarán las pestañas de navegación privada</string>
+    <string name="browser_tabs_empty_subtitle_private">Para navegar por la web en modo privado, añada una pestaña.</string>
 
     <string name="browser_toolbar_hint">Busca o ingresa una dirección</string>
 </resources>

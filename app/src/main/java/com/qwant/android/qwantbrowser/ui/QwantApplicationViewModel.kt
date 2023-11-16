@@ -49,6 +49,15 @@ class QwantApplicationViewModel @Inject constructor(
     private val selectedTabPrivacy = store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
 
+    val lastPrivacy = store.flow()
+        .mapNotNull { state -> state.selectedTab }
+        .map { it.content.private }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
+
     var hasHistory by mutableStateOf(history.size != 0)
         private set
 

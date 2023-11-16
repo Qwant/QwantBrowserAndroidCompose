@@ -10,6 +10,10 @@
     <string name="browser_go_to_tab">Vai alla scheda</string>
     <string name="browser_tab_closed">Scheda chiusa</string>
     <string name="browser_tabs_closed">Schede eliminate</string>
+    <string name="browser_tabs_empty_title">Le schede appariranno qui</string>
+    <string name="browser_tabs_empty_subtitle">Utilizzare le schede per consultare più pagine contemporaneamente.</string>
+    <string name="browser_tabs_empty_title_private">Qui vengono visualizzate le schede di navigazione privata</string>
+    <string name="browser_tabs_empty_subtitle_private">Per navigare in modalità privata, aggiungere una scheda.</string>
 
     <string name="browser_toolbar_hint">Cerca o inserisci un indirizzo</string>
 </resources>

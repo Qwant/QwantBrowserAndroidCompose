@@ -74,7 +74,7 @@ fun BrowserScreen(
             else -> {}
         }
     }
-    LaunchedEffect(tabCount) {
+    LaunchedEffect(true) {
         if (tabCount == 0) {
             viewModel.openSafetyTabIfNeeded()
         }
@@ -129,8 +129,8 @@ fun BrowserScreen(
         } else {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.qwant_logo),
@@ -275,10 +275,12 @@ fun AfterActions(
     viewModel: BrowserScreenViewModel,
     appViewModel: QwantApplicationViewModel
 ) {
+    val private = appViewModel.isPrivate.collectAsState()
+    val privateBeforeClick = private.value
     Row {
         ZapButton(appViewModel, afterZap = { success ->
             if (success) {
-                viewModel.openNewQwantTab(appViewModel.lastPrivacy.value)
+                viewModel.openNewQwantTab(privateBeforeClick)
             }
         })
         TabsButton(navigateTo, viewModel)

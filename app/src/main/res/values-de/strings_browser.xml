@@ -10,6 +10,10 @@
     <string name="browser_go_to_tab">Zum Tab gehen</string>
     <string name="browser_tab_closed">Tab geschlossen</string>
     <string name="browser_tabs_closed">Tabs gelöscht</string>
+    <string name="browser_tabs_empty_title">Ihre Tabs werden hier angezeigt</string>
+    <string name="browser_tabs_empty_subtitle">Verwenden Sie Tabs, um mehrere Seiten gleichzeitig zu besuchen.</string>
+    <string name="browser_tabs_empty_title_private">Private Tabs werden hier angezeigt</string>
+    <string name="browser_tabs_empty_subtitle_private">Um im privaten Modus im Internet zu surfen, fügen Sie einen Tab hinzu.</string>
 
     <string name="browser_toolbar_hint">Adresse suchen oder eingeben</string>
 </resources>

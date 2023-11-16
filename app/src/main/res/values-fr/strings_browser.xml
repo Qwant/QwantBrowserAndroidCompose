@@ -10,10 +10,10 @@
     <string name="browser_go_to_tab">Aller à l\’onglet</string>
     <string name="browser_tab_closed">Onglet fermé</string>
     <string name="browser_tabs_closed">Onglets effacés</string>
-
-    <string name="browser_tabs_empty_title">"Vos onglets s'afficheront ici "</string>
+    <string name="browser_tabs_empty_title">Vos onglets s\'afficheront ici</string>
     <string name="browser_tabs_empty_subtitle">Utilisez les onglets pour consulter plusieurs pages en même temps.</string>
-    <string name="browser_toolbar_hint">Rechercher ou saisir une adresse</string>
-    <string name="browser_tabs_empty_title_private">"Les onglets de navigation privée s'afficheront ici "</string>
+    <string name="browser_tabs_empty_title_private">Les onglets de navigation privée s\'afficheront ici</string>
     <string name="browser_tabs_empty_subtitle_private">Pour naviguer sur le Web en mode privé, ajoutez un onglet.</string>
+
+    <string name="browser_toolbar_hint">Rechercher ou saisir une adresse</string>
 </resources>
