@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.action.WebExtensionAction
+import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
@@ -32,7 +33,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,7 +58,7 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     val tabCount = store.flow()
-        .ifChanged { it.tabs.size }
+        .ifAnyChanged { s -> arrayOf(s.tabs.size, s.selectedTab?.content?.private) }
         .map { state -> state.tabs.count { it.content.private == state.selectedTab?.content?.private } }
         .stateIn(
             scope = viewModelScope,
