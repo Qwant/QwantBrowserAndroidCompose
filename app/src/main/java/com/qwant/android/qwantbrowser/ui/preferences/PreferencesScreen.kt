@@ -353,7 +353,7 @@ fun PreferencesScreen(
 
             // TODO adjust test files by buildtype
             //   using dedicated src path etc ...
-            // if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 PreferenceGroupLabel(label = R.string.settings_tests_label)
 
                 // Tests prompts feature
@@ -368,7 +368,7 @@ fun PreferencesScreen(
                         onClose()
                     }
                 )
-            // }
+            }
         }
     }
 }
