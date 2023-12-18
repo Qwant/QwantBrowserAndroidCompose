@@ -1,5 +1,7 @@
 /.gradle/
 /tests.MD
 /app/release/
-/app/sfr/release/
-/piwik.properties
+/app/sfr/
+/piwik.prod.properties
+/piwik.dev.properties
+/app/playstore/
