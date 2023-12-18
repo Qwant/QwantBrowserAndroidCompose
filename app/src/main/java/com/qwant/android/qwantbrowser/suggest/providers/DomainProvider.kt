@@ -19,7 +19,10 @@ class DomainProvider @Inject constructor(
     }
 
     override suspend fun getSuggestions(text: String) = domains
-        .firstOrNull { it.startsWith(text) }
-        ?.let { listOf(Suggestion.SearchSuggestion(this, text, it)) }
-        ?: listOf()
+        .filter { it.startsWith(text) }
+        .take(2) // TODO make this suggestion limit a parameter
+        .map { Suggestion.SearchSuggestion(this, text, it) }
+        // .firstOrNull { it.startsWith(text) }
+        // ?.let { listOf(Suggestion.SearchSuggestion(this, text, it)) }
+        // ?: listOf()
 }

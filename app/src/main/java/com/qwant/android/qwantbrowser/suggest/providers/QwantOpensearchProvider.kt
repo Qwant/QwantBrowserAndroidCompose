@@ -8,30 +8,40 @@ import mozilla.components.concept.fetch.Request
 import mozilla.components.support.ktx.android.org.json.toList
 import org.json.JSONArray
 import org.json.JSONException
+import java.io.IOException
 
 class QwantOpensearchProvider(
     private val client: Client
 ): SuggestionProvider {
     override suspend fun getSuggestions(text: String): List<Suggestion> {
         if (text.isNotEmpty()) {
-            val request = Request(url = OpenSearchBaseUrl + text)
-            client.fetch(request).use { response ->
-                if (response.status == 200) {
-                    response.body.use { body ->
-                        try {
-                            val mainArray = JSONArray(body.string())
-                            val suggestionsArray = mainArray.getJSONArray(1)
-                            return suggestionsArray.toList<String>().map { s ->
-                                Suggestion.SearchSuggestion(this, text, s)
+            try {
+                val request = Request(url = OpenSearchBaseUrl + text)
+                client.fetch(request).use { response ->
+                    if (response.status == 200) {
+                        response.body.use { body ->
+                            try {
+                                val mainArray = JSONArray(body.string())
+                                val suggestionsArray = mainArray.getJSONArray(1)
+                                return suggestionsArray.toList<String>().map { s ->
+                                    Suggestion.SearchSuggestion(this, text, s)
+                                }.take(6) // TODO make this suggestion limit a parameter
+                            } catch (e: JSONException) {
+                                Log.e(LOGTAG, "Error decoding JSON of opensearch results")
+                                return listOf()
                             }
-                        } catch (e: JSONException) {
-                            Log.e(LOGTAG, "Error decoding JSON of opensearch results")
-                            return listOf()
                         }
+                    } else {
+                        Log.e(
+                            LOGTAG,
+                            "Error requesting opensearch results: status not 200 (${response.status})"
+                        )
+                        return listOf()
                     }
-                } else {
-                    Log.e(LOGTAG, "Error requesting opensearch results: status not 200 (${response.status})")
                 }
+            } catch (e: IOException) {
+                Log.e(LOGTAG, "Error decoding JSON of opensearch results: No internet ($e)")
+                return listOf()
             }
         }
         return listOf()

@@ -157,7 +157,7 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
             .filter {
                 it.contains(text, ignoreCase = true) || pageMeta[it]?.title?.contains(text, ignoreCase = true) == true
             }
-            .take(3) // TODO make history suggestions provider result maximum dynamic
+            .take(2) // TODO make history suggestions provider result maximum dynamic
             .map {
                 Suggestion.OpenTabSuggestion(this, text, pageMeta[it]?.title, it)
             }
@@ -206,9 +206,9 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
         }
     }
 
-    override suspend fun prune() {
+    /* override suspend fun prune() {
         // Not applicable.
-    }
+    } */
 
     override suspend fun runMaintenance(dbSizeLimit: UInt) {
         // Not applicable.

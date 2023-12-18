@@ -24,6 +24,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -40,6 +41,7 @@ interface ToolbarStateFactory {
     fun create(coroutineScope: CoroutineScope = MainScope()) : ToolbarState
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ToolbarState @AssistedInject constructor(
     client: Client,
     store: BrowserStore,
@@ -71,31 +73,26 @@ class ToolbarState @AssistedInject constructor(
     var trueHeightPx by mutableIntStateOf(0)
         private set
 
-    var suggestions = suggestionProviders.map { it to emptyList<Suggestion>() }.toMutableStateMap()
-        private set
+    private val emptySuggestions = suggestionProviders.associateWith { emptyList<Suggestion>() }
+    val suggestions = snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
+        .distinctUntilChanged()
+        .mapLatest { search ->
+            delay(100)
+            if (hasFocus && search.isNotBlank()) {
+                suggestionProviders.associateWith { provider -> provider.getSuggestions(search) }
+            } else emptySuggestions
+        }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = emptySuggestions
+        )
 
     var onQwant by mutableStateOf(true)
         private set
 
     var showSiteSecurity by mutableStateOf(false)
         private set
-
-    init {
-        coroutineScope.launch {
-            snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
-                .distinctUntilChanged()
-                .onEach { search ->
-                    if (hasFocus && search.isNotBlank()) {
-                        suggestionProviders.forEach { provider ->
-                            suggestions[provider] = provider.getSuggestions(search)
-                        }
-                    } else {
-                        suggestions.keys.forEach { suggestions[it] = listOf() }
-                    }
-                }
-                .collect()
-        }
-    }
 
     val toolbarPosition = appPreferencesRepository.flow
         .map { it.toolbarPosition }

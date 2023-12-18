@@ -16,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -156,13 +158,19 @@ private fun ToolbarSuggest(
     modifier: Modifier = Modifier
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
+    val suggestions by toolbarState.suggestions.collectAsState()
 
-    if (toolbarState.hasFocus && toolbarState.suggestions.any { it.value.isNotEmpty() }) {
+    if (toolbarState.hasFocus && suggestions.any { it.value.isNotEmpty() }) {
         Suggest(
-            suggestions = toolbarState.suggestions,
+            suggestions = suggestions,
             onSuggestionClicked = { suggestion ->
                 commitSuggestion(suggestion)
                 toolbarState.updateFocus(false)
+            },
+            onSetTextClicked = {
+                toolbarState.updateText(
+                    TextFieldValue(it, selection = TextRange(it.length))
+                )
             },
             toolbarPosition = toolbarPosition,
             browserIcons = browserIcons,

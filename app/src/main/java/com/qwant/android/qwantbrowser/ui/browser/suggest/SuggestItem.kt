@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.ui.browser.suggest
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,6 +68,7 @@ fun SuggestItem(
     suggestion: Suggestion,
     toolbarPosition: ToolbarPosition,
     browserIcons: BrowserIcons,
+    onSetTextClicked: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     WebsiteRow(
@@ -103,25 +105,32 @@ fun SuggestItem(
                         url = (suggestion as Suggestion.SelectTabSuggestion).url,
                         miniature = R.drawable.icons_checkbox_unchecked
                     )
-                // "Clipboard" -> Icon(Icons.Outlined.Person, contentDescription = "Logo clipboard")
-                // "Domains" -> ...
                 // "Search history" -> ...
                 else -> SuggestIcon(R.drawable.icons_search)
             }
         },
         trailing = {
-            Icon(
-                painter = painterResource(id = when (suggestion) {
-                    is Suggestion.SearchSuggestion, is Suggestion.OpenTabSuggestion -> when (toolbarPosition) {
-                        ToolbarPosition.TOP -> R.drawable.icons_arrow_backward_up
-                        else -> R.drawable.icons_arrow_backward_down
-                    }
-                    is Suggestion.SelectTabSuggestion -> R.drawable.icons_arrow_tab
-                }),
-                contentDescription = "Go",
-                tint = LocalContentColor.current.copy(0.6f),
-                modifier = Modifier.size(24.dp)
-            )
+            if (suggestion is Suggestion.OpenTabSuggestion) {
+                Box(modifier = Modifier.size(24.dp))
+            } else {
+                Icon(
+                    painter = painterResource(
+                        id = if (suggestion is Suggestion.SearchSuggestion) {
+                            when (toolbarPosition) {
+                                ToolbarPosition.TOP -> R.drawable.icons_arrow_backward_up
+                                else -> R.drawable.icons_arrow_backward_down
+                            }
+                        } else R.drawable.icons_arrow_tab
+                    ),
+                    contentDescription = "Go",
+                    tint = LocalContentColor.current.copy(0.6f),
+                    modifier = Modifier.size(24.dp).then(
+                        if (suggestion is Suggestion.SearchSuggestion) {
+                            Modifier.clickable { onSetTextClicked(suggestion.text) }
+                        } else Modifier
+                    )
+                )
+            }
         },
         highlight = suggestion.search,
         modifier = modifier
