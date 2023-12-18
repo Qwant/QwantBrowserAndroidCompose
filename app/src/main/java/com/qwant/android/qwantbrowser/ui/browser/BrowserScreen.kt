@@ -39,6 +39,7 @@ import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
+import kotlinx.coroutines.delay
 import mozilla.components.concept.engine.EngineView
 
 enum class TabOpening {
@@ -191,18 +192,26 @@ fun QwantVIPAction(
     val iconPainter by viewModel.vipIcon.collectAsState()
     val counter by viewModel.vipCounter.collectAsState()
 
+    var badgeVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel.toolbarState.visible) {
+        badgeVisible = if (viewModel.toolbarState.visible) {
+            delay(200)
+            true
+        } else false
+    }
+
     Box {
         ToolbarAction(onClick = { state?.browserAction?.onClick?.invoke() }) {
             BadgedBox(
                 badge = {
-                    if (counter?.isNotEmpty() == true) {
+                    if (counter?.isNotEmpty() == true && badgeVisible) {
                         Badge(
                             containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentColor = MaterialTheme.colorScheme.primaryContainer,
                             modifier = Modifier
                                 .border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.primaryContainer,
+                                    2.dp,
+                                    MaterialTheme.colorScheme.outline,
                                     RoundedCornerShape(50)
                                 )
                         ) {
@@ -288,7 +297,7 @@ fun AfterActions(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TabsButton(
     navigateTo: (NavDestination) -> Unit,
@@ -296,6 +305,18 @@ fun TabsButton(
 ) {
     val tabCount by viewModel.tabCount.collectAsState()
     var showTabsDropdown by remember { mutableStateOf(false) }
+
+    val private = LocalQwantTheme.current.private
+
+    var badgeVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(private, viewModel.toolbarState.visible) {
+        badgeVisible = if (private && viewModel.toolbarState.visible) {
+            delay(200)
+            true
+        } else {
+            false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -317,7 +338,7 @@ fun TabsButton(
     ) {
         BadgedBox(
             badge = {
-                if (LocalQwantTheme.current.private) {
+                if (badgeVisible) {
                     Badge(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
