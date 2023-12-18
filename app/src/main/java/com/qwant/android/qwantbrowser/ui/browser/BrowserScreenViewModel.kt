@@ -195,7 +195,7 @@ class BrowserScreenViewModel @Inject constructor(
 
     val vipIcon = vipBrowserActionFlow
         .mapNotNull { it.loadIcon }
-        .ifChanged()
+        .distinctUntilChanged()
         .mapNotNull { it(92)?.asImageBitmap() }
         .map { BitmapPainter(it) }
         .stateIn(
@@ -206,7 +206,7 @@ class BrowserScreenViewModel @Inject constructor(
 
     val vipCounter = vipBrowserActionFlow
         .mapNotNull { it.badgeText }
-        .ifChanged()
+        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

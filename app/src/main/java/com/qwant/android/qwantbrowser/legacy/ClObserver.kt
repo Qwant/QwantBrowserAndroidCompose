@@ -12,13 +12,13 @@ import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.ComposeFeatureWrap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 
 // TODO move cl to internal datastore
@@ -36,7 +36,7 @@ class ClObserver(
         if (prefs.getString(prefKeyCl, null) == null) {
             scope = store.get().flowScoped { flow -> flow
                 .mapNotNull { state -> state.selectedTab?.content?.url }
-                .ifChanged()
+                .distinctUntilChanged()
                 .filter { it.isQwantUrl() && it.contains("cl=") }
                 .onEach { url ->
                     url.findCl()?.let {

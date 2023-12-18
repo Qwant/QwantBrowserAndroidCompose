@@ -16,7 +16,7 @@ class HistoryPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VisitInfo> {
         val page = params.key ?: 0
         val offset: Long = page * RESULT_PER_PAGE
-        val data = historyStorage.getVisitsPaginated(offset, RESULT_PER_PAGE, listOf(VisitType.NOT_A_VISIT))
+        val data = historyStorage.getVisitsPaginated(offset, RESULT_PER_PAGE)
         return LoadResult.Page(
             data = data,
             prevKey = if (page == 0) null else (page - 1),

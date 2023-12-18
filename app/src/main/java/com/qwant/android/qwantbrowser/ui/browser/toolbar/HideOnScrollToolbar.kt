@@ -117,8 +117,7 @@ fun HideOnScrollToolbar(
             )
             .then(
                 if (position == HideOnScrollPosition.Top) {
-                    Modifier
-                        .offset { IntOffset(x = 0, y = trueHeight) }
+                    Modifier.offset { IntOffset(x = 0, y = trueHeight) }
                 } else Modifier
             )
         )
