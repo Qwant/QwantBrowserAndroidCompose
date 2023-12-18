@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.mozac.hilt
 
 import android.content.Context
+import com.qwant.android.qwantbrowser.vip.QwantCookieFeature
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.Module
 import dagger.Provides
@@ -44,6 +45,7 @@ object GeckoHiltModule {
     ): Engine {
         return GeckoEngine(context, settings, runtime).also {
             QwantVIPFeature.install(it)
+            QwantCookieFeature.install(it)
             WebCompatFeature.install(it)
         }
     }
