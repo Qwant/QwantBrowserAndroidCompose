@@ -6,6 +6,11 @@ plugins {
     id 'kotlin-kapt'
 }
 
+// TODO make piwik optional for build
+def piwikSettingsFile = rootProject.file("piwik.properties")
+def piwikSettings = new Properties()
+piwikSettings.load(new FileInputStream(piwikSettingsFile))
+
 android {
     namespace 'com.qwant.android.qwantbrowser'
     compileSdk 34
@@ -29,7 +34,11 @@ android {
         }
 
         resourceConfigurations += ["en", "fr", "de", "es", "it"]
+
+        buildConfigField("String", "PIWIK_URL", piwikSettings['PIWIK_URL'])
+        buildConfigField("String", "PIWIK_SITE_ID", piwikSettings['PIWIK_SITE_ID'])
     }
+
     bundle {
         density {
             enableSplit true
