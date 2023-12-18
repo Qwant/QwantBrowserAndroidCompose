@@ -49,15 +49,6 @@ class QwantApplicationViewModel @Inject constructor(
     private val selectedTabPrivacy = store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
 
-    val lastPrivacy = store.flow()
-        .mapNotNull { state -> state.selectedTab }
-        .map { it.content.private }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = false
-        )
-
     var hasHistory by mutableStateOf(history.size != 0)
         private set
 
@@ -146,19 +137,19 @@ class QwantApplicationViewModel @Inject constructor(
 
     val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
     fun zap(
-        from: String = "Browser",
+        from: String = "Toolbar",
         skipConfirmation: Boolean = false,
         then: (Boolean) -> Unit = {}
     ) {
         if (skipConfirmation) {
-            piwik.event("Zap", "On quit")
+            piwik.event("Zap", "Auto", name = "App quit")
         } else {
-            piwik.event("Zap", "Icon", from)
+            piwik.event("Zap", "Intention", from)
         }
 
         zapState.zap(skipConfirmation) { success ->
             if (success && !skipConfirmation) {
-                piwik.event("Zap", "CTA", from)
+                piwik.event("Zap", "Confirmation", from)
             }
             then(success)
         }

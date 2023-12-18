@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun ZapButton(
     appViewModel: QwantApplicationViewModel,
-    fromScreen: String = "Browser",
+    fromScreen: String = "Toolbar",
     afterZap: ((success: Boolean) -> Unit)? = null
 ) {
     // TODO move from sharedprefs to internal datastore

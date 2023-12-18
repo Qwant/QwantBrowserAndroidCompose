@@ -120,6 +120,8 @@
     <string name="clear_data_on_quit_label">Beim Verlassen Daten löschen</string>
     <string name="clear_data_on_quit_description">Bitte nutzen Sie die Schaltfläche Verlassen der App, um sicherzustellen, dass sie ausgeführt wird</string>
 
+    <string name="piwik_optout_title">Statistische Erfassung von Besucherdaten</string>
+    <string name="piwik_optout_description">"Die Dienste zur statistischen Erfassung von Besucherdaten sind für die Funktion der Anwendung erforderlich, um eine ordnungsgemäße Verwaltung zu ermöglichen. Sie haben dennoch die Möglichkeit, der Verwendung Ihrer Daten zu widersprechen, indem Sie auf die Schaltfläche \"Toggle\" klicken. "</string>
     <string name="privacy_policy_label">Datenschutzerklärung</string>
 
     <string name="rate_us_label">Bewerten Sie diese App</string>

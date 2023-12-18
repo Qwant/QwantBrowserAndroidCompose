@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.ui.preferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -312,8 +310,8 @@ fun PreferencesScreen(
             PreferenceToggle(
                 label = R.string.piwik_optout_title,
                 description = R.string.piwik_optout_description,
-                value = appPrefs.piwikOptout,
-                onValueChange = { viewModel.updatePiwikOptout(it) }
+                value = !appPrefs.piwikOptout,
+                onValueChange = { viewModel.updatePiwikOptout(!it) }
             )
 
             PreferenceGroupLabel(label = R.string.settings_group_about)

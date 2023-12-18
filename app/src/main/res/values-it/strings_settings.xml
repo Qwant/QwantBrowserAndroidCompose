@@ -121,6 +121,8 @@
     <string name="clear_data_on_quit_label">Cancella dati all\'uscita</string>
     <string name="clear_data_on_quit_description">Si prega di utilizzare il pulsante Esci dall\'app per essere sicuri che sia applicato</string>
 
+    <string name="piwik_optout_title">Rilevatore di dati sulle visite al sito</string>
+    <string name="piwik_optout_description">I servizi di misurazione statistica dell\'audience sono necessari per il funzionamento dell\'applicazione permettendone la sua corretta gestione. Tuttavia, l\'utente può opporsi al loro utilizzo facendo clic sul pulsante \"Toggle\".</string>
     <string name="privacy_policy_label">Informativa sulla privacy</string>
 
     <string name="rate_us_label">Valuta questa app</string>

@@ -48,12 +48,10 @@ class QwantApplication : Application() {
             speculativeConnect("https://www.qwant.com/")
         }
 
-        // cookieFeature.get().run()
-
         restoreBrowserState()
 
         piwik.trackApplicationDownload()
-        piwik.event("App", "Opening")
+        piwik.event("App", "Opening", name = "App opening")
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated
