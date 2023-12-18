@@ -1,7 +1,9 @@
 package com.qwant.android.qwantbrowser
 
 import android.app.Application
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.piwik.Piwik
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import mozilla.components.browser.session.storage.SessionStorage
@@ -9,6 +11,7 @@ import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
+import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.AndroidLogSink
@@ -26,8 +29,9 @@ class QwantApplication : Application() {
     @Inject lateinit var store: dagger.Lazy<BrowserStore>
     @Inject lateinit var sessionStorage: dagger.Lazy<SessionStorage>
     @Inject lateinit var tabsUseCases: dagger.Lazy<TabsUseCases>
+    @Inject lateinit var sessionUseCases: dagger.Lazy<SessionUseCases>
+    @Inject lateinit var qwantUseCases: dagger.Lazy<QwantUseCases>
     @Inject lateinit var piwik: Piwik
-    // @Inject lateinit var cookieFeature: dagger.Lazy<QwantCookieFeature>
 
     override fun onCreate() {
         super.onCreate()
@@ -82,7 +86,21 @@ class QwantApplication : Application() {
     @OptIn(DelicateCoroutinesApi::class)
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
         sessionStorage.get().let {
-            tabsUseCases.get().restore(it)
+            tabsUseCases.get().restore(it).invokeOnCompletion { exception ->
+                if (exception != null) {
+                    // Update qwant urls adding "omnibar=1" param to existing tabs from version 4.x
+                    store.get().state.tabs.forEach { tab ->
+                        if (tab.content.url.isQwantUrl() && !tab.content.url.contains("omnibar=1")) {
+                            sessionUseCases.get().loadUrl.invoke(
+                                url = tab.content.url.plus("&omnibar=1"),
+                                sessionId = tab.id
+                            )
+                        }
+                    }
+                } else {
+                    android.util.Log.e("QB", "Could not restore tabs from previous session: $exception")
+                }
+            }
             // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
             it.autoSave(store.get())
                 .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
