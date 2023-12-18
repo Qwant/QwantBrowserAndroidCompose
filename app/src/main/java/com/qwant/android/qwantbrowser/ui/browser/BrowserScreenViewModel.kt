@@ -22,6 +22,7 @@ import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.downloads.manager.DownloadManager
@@ -47,6 +48,7 @@ class BrowserScreenViewModel @Inject constructor(
     val downloadManager: DownloadManager,
     val store: BrowserStore,
     val engine: Engine,
+    val client: Client,
     val qwantUseCases: QwantUseCases
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
@@ -121,6 +123,15 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
+
+    val currentEngineSession = store.flow()
+        .map { state -> state.selectedTab?.engineState?.engineSession }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
 
     var showFindInPage by mutableStateOf(false)
         private set

@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -78,6 +80,12 @@ fun GlobalFeatures(
     EngineSettingsFeature(
         appViewModel = appViewModel,
         engine = viewModel.engine
+    )
+
+    val session by viewModel.currentEngineSession.collectAsState()
+    ToolbarAlwaysVisibleWhenScrolledToTopFeature(
+        toolbarState = viewModel.toolbarState,
+        session = session
     )
 }
 
