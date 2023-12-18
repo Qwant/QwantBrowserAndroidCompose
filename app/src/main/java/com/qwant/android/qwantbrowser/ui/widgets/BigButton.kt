@@ -2,11 +2,11 @@ package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,12 +31,12 @@ fun BigButton(
         onClick = { onClick() },
         enabled = enabled
     ) {
-        Image(
+        Icon(
             painter = painterResource(icon),
             contentDescription = title,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = title,
             modifier = Modifier.align(Alignment.CenterVertically)

@@ -322,8 +322,8 @@ fun TabsButton(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier
-                            .size(20.dp)
-                            .offset(x = (-8).dp, y = 6.dp)
+                            .size(18.dp)
+                            .offset(x = (-4).dp, y = 2.dp)
                             .border(
                                 1.dp,
                                 MaterialTheme.colorScheme.primaryContainer,
@@ -345,6 +345,7 @@ fun TabsButton(
         Dropdown(
             expanded = showTabsDropdown,
             onDismissRequest = { showTabsDropdown = false },
+            modifier = Modifier.defaultMinSize(minWidth = 240.dp)
         ) {
             DropdownItem(
                 text = stringResource(id = R.string.browser_close_tab),

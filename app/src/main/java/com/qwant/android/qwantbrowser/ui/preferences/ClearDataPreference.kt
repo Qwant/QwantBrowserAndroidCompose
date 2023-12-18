@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceSelectionPopup
@@ -110,8 +111,8 @@ fun ClearDataPreference(
                     text = R.string.cleardata_use_now,
                     icon = R.drawable.icons_zap_night,
                     enabled = zapEnabled,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { applicationViewModel.zap(from = "Browser deletion settings") { success ->
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 32.dp),
+                    onClick = { applicationViewModel.zap(from = "Settings") { success ->
                         if (success) {
                             applicationViewModel.showSnackbar(clearDataDoneString)
                             zapEnabled = false
@@ -135,7 +136,7 @@ fun CheckBoxRow(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
-        Text(text = stringResource(id = label))
+        Text(text = stringResource(id = label), fontSize = 16.sp)
     }
 }
 

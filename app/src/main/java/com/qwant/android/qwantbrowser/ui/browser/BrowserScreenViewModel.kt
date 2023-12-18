@@ -173,8 +173,12 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun closeCurrentTab() {
+        val lastTab = store.state.normalTabs.count() == 1 && store.state.selectedTab?.content?.private == false
         store.state.selectedTabId?.let {
             tabsUseCases.removeTab(it, selectParentIfExists = true)
+            if (lastTab) {
+                qwantUseCases.openQwantPage()
+            }
         }
     }
 

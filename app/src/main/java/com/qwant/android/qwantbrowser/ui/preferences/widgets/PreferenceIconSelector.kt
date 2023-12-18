@@ -54,7 +54,7 @@ fun <T> PreferenceIconSelector(
         options.forEach { option ->
             val isSelected = (option.value == selectedValue)
             val borderColor = when {
-                isSelected -> option.backgroundColor ?: MaterialTheme.colorScheme.primary
+                isSelected -> MaterialTheme.colorScheme.primary
                 else -> Color.Transparent
             }
 

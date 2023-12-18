@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -52,12 +53,14 @@ fun CustomPageColorPreference(
             label = R.string.custom_page_color_label,
             description = currentOption.label,
             popupContent = {
-                PreferenceIconSelector(
-                    options = options,
-                    selectedValue = value,
-                    onSelected = onValueChange,
-                    showSelectedIcon = true
-                )
+                Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+                    PreferenceIconSelector(
+                        options = options,
+                        selectedValue = value,
+                        onSelected = onValueChange,
+                        showSelectedIcon = true
+                    )
+                }
             },
             icon = {
                 Box(modifier = Modifier

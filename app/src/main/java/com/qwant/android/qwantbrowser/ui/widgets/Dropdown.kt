@@ -25,7 +25,10 @@ fun Dropdown(
         expanded = expanded,
         onDismissRequest= onDismissRequest,
         offset = DpOffset(8.dp, 0.dp),
-        properties = PopupProperties(usePlatformDefaultWidth = true),
+        properties = PopupProperties(
+            focusable = true,
+            usePlatformDefaultWidth = true
+        ),
         modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .border(

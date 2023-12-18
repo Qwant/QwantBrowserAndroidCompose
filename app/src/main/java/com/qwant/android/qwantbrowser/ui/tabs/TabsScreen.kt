@@ -142,7 +142,8 @@ fun TabsMenuMore(
         }
         Dropdown(
             expanded = showMenu,
-            onDismissRequest = { showMenu = false }
+            onDismissRequest = { showMenu = false },
+            modifier = Modifier.defaultMinSize(minWidth = 112.dp)
         ) {
             DropdownItem(
                 text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs),

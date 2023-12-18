@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun DropdownItem(
@@ -20,7 +22,7 @@ fun DropdownItem(
     enabled: Boolean = true
 ) {
     DropdownMenuItem(
-        text = { Text(text = text) },
+        text = { Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.Normal) },
         leadingIcon = { icon?.let { Icon(painter = painterResource(id = it), contentDescription = text) } },
         trailingIcon = trailing,
         colors = MenuDefaults.itemColors(leadingIconColor = LocalContentColor.current.copy(0.6f)),
