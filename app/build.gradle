@@ -53,9 +53,24 @@ android {
         debug {
             applicationIdSuffix ".debug"
         }
+        internal {
+            initWith(debug)
+            applicationIdSuffix ".internal"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions += "target"
+    productFlavors {
+        playstore {
+            dimension "target"
+        }
+        sfr {
+            dimension "target"
+            versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
         }
     }
 
