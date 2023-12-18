@@ -33,6 +33,7 @@ fun GlobalFeatures(
 
     ContextMenuFeature(
         store = viewModel.store,
+        client = viewModel.client,
         tabsUseCases = viewModel.tabsUseCases,
         contextMenuUseCases = viewModel.contextMenuUseCases,
         showSnackbar = { message, action, dismiss, duration ->
@@ -52,7 +53,7 @@ fun GlobalFeatures(
         store = viewModel.store,
         useCases = viewModel.downloadUseCases,
         downloadManager = viewModel.downloadManager,
-        onDownloadStopped = { state, s, status ->
+        onDownloadStopped = { state, _, status ->
             if (status == DownloadState.Status.COMPLETED) {
                 appViewModel.showSnackbar(
                     completedDownloadText,

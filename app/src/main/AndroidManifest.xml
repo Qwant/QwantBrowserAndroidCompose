@@ -4,6 +4,7 @@
     android:sharedUserId="com.qwant.liberty.sharedID" >
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
     <!-- site permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -23,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QwantBrowserCompose"
         android:localeConfig="@xml/locales_config"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
@@ -121,11 +122,17 @@
         </receiver>
 
         <!-- Downloads -->
-        <service android:name=".mozac.downloads.DownloadService" />
+        <service
+            android:name=".mozac.downloads.DownloadService"
+            android:foregroundServiceType="dataSync"
+        />
         <provider android:name=".mozac.downloads.DownloadsFileProvider"
             android:authorities="${applicationId}.feature.downloads.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/feature_downloads_file_paths" />
         </provider>
 
         <!-- File prompts -->
@@ -133,6 +140,9 @@
             android:authorities="${applicationId}.feature.prompt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/feature_prompts_file_paths" />
         </provider>
 
         <!-- Keeps locales storage compatibility for android 12 and lower -->
