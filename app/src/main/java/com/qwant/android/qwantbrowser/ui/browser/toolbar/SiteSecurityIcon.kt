@@ -2,7 +2,6 @@ package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,8 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -48,9 +46,9 @@ fun SiteSecurityIcon(toolbarState: ToolbarState) {
     siteSecurity?.let { securityInfo ->
         Box {
             Icon(
-                painter = painterResource(id = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_warning),
+                painter = painterResource(id = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_lock_off),
                 contentDescription = "security icon",
-                tint = if (securityInfo.secure) LocalContentColor.current else Color.Red, // TODO change "RED" color ?
+                tint = if (securityInfo.secure) LocalContentColor.current else MaterialTheme.colorScheme.error,
                 modifier = Modifier
                     .clickable { toolbarState.updateShowSiteSecurity(true) }
                     .padding(horizontal = 8.dp)
@@ -118,26 +116,19 @@ fun SiteSecurityIcon(toolbarState: ToolbarState) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                val icon = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_warning
-                                val text = if (securityInfo.secure) "Connexion sécurisée" else "Connexion non sécurisée"
-                                Image(
+                                val icon = if (securityInfo.secure) R.drawable.icons_lock else R.drawable.icons_lock_off
+                                val iconColor = if (securityInfo.secure) LocalContentColor.current else MaterialTheme.colorScheme.error
+                                val text = if (securityInfo.secure) R.string.browser_site_secure else R.string.browser_site_insecure
+                                Icon(
                                     painter = painterResource(id = icon),
+                                    tint = iconColor,
                                     contentDescription = "lock",
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Text(
-                                    text = text,
+                                    text = stringResource(id = text),
                                     fontSize = 16.sp,
                                     lineHeight = 20.sp
-                                )
-                            }
-                            if (!securityInfo.secure) {
-                                Text(
-                                    text = "Epicurus in malis dolor, non ero tibique, si ob rem aperiam eaque gaudere ut labore et aut interrogari ut placet, inquam tum dicere exorsus est laborum et via procedat oratio quaerimus igitur, inquit, sic agam.",
-                                    fontSize = 12.sp,
-                                    lineHeight = 16.sp,
-                                    color = LocalContentColor.current.copy(0.6f),
-                                    modifier = Modifier.padding(start = 24.dp)
                                 )
                             }
                         }

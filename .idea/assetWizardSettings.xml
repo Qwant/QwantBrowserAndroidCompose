@@ -311,8 +311,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="zap_highlight_dark" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/Zap Highlight Dark.svg" />
+                            <entry key="outputName" value="icons_lock_off" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/lock_off_icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

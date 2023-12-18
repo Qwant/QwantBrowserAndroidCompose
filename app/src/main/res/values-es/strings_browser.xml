@@ -15,5 +15,8 @@
     <string name="browser_tabs_empty_title_private">Aquí se mostrarán las pestañas de navegación privada</string>
     <string name="browser_tabs_empty_subtitle_private">Para navegar por la web en modo privado, añada una pestaña.</string>
 
+    <string name="browser_site_secure">Conexión protegida</string>
+    <string name="browser_site_insecure">Conexión sin protección</string>
+
     <string name="browser_toolbar_hint">Busca o ingresa una dirección</string>
 </resources>

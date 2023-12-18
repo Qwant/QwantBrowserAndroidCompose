@@ -15,5 +15,8 @@
     <string name="browser_tabs_empty_title_private">Private browsing tabs will be displayed here</string>
     <string name="browser_tabs_empty_subtitle_private">To browse the web in private mode, add a tab.</string>
 
+    <string name="browser_site_secure">Secure connection</string>
+    <string name="browser_site_insecure">Insecure connection</string>
+
     <string name="browser_toolbar_hint">Search or enter an address</string>
 </resources>

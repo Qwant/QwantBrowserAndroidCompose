@@ -15,5 +15,8 @@
     <string name="browser_tabs_empty_title_private">Qui vengono visualizzate le schede di navigazione privata</string>
     <string name="browser_tabs_empty_subtitle_private">Per navigare in modalità privata, aggiungere una scheda.</string>
 
+    <string name="browser_site_secure">Connessione sicura</string>
+    <string name="browser_site_insecure">Connessione non sicura</string>
+
     <string name="browser_toolbar_hint">Cerca o inserisci un indirizzo</string>
 </resources>

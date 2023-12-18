@@ -28,3 +28,6 @@ val GreySecondary = Color(0xFF2f3237)
 val GreenUrl = Color(0xFF57c78f)
 
 val ZapYellow = Color(0xFFFFF35B)
+
+val Red = Color(0xFFFF1F23)
+val RedLight = Color(0xFFFF5C5F)

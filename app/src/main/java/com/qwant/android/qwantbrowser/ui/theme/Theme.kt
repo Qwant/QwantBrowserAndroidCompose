@@ -46,7 +46,8 @@ private val lightColorScheme = lightColorScheme(
     onTertiaryContainer = Grey900,
     outline = Grey900Alpha12,
     surfaceVariant = Grey100,
-    onSurfaceVariant = Grey900
+    onSurfaceVariant = Grey900,
+    error = Red
 )
 
 private val darkColorScheme = darkColorScheme(
@@ -61,7 +62,8 @@ private val darkColorScheme = darkColorScheme(
     onTertiaryContainer = Color.White,
     outline = Grey000Alpha16,
     surfaceVariant = Grey600,
-    onSurfaceVariant = Color.White
+    onSurfaceVariant = Color.White,
+    error = RedLight
 )
 
 private val privateColorScheme = darkColorScheme.copy(
@@ -76,7 +78,8 @@ private val privateColorScheme = darkColorScheme.copy(
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,
     surfaceVariant = Grey000Alpha16,
-    onSurfaceVariant = Color.White
+    onSurfaceVariant = Color.White,
+    error = RedLight
 )
 
 @Composable
@@ -121,6 +124,7 @@ fun QwantBrowserTheme(
 
     val icons = if (privacy || darkTheme) darkAndPrivateIcons else lightIcons
 
+    // TODO: This prevents previews from rendering with the qwant theme. Maybe this could be extracted in its own component.
     val view = LocalView.current
     val window = (view.context as Activity).window
     if (!view.isInEditMode) {
