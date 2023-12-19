@@ -51,6 +51,7 @@ android {
             enableSplit = false
         }
     }
+
     splits {
         abi {
             enable true
@@ -91,6 +92,7 @@ android {
     buildFeatures {
         viewBinding true
         compose true
+        buildConfig true
     }
 
     compileOptions {
@@ -189,7 +191,7 @@ dependencies {
     implementation "org.mozilla.components:support-webextensions:$mozac_version"
     implementation "org.mozilla.components:ui-widgets:$mozac_version" // SnackbarDelegate
 
-    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependencie after replacing with our icons
+    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependency after replacing with our icons
 
     // implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
     // implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
