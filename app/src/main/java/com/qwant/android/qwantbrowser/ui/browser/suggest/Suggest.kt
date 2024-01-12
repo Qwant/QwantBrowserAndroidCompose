@@ -49,8 +49,8 @@ fun Suggest(
         .background(MaterialTheme.colorScheme.background)
     ) {
         providersOrdered.forEach { provider ->
-            items(items = suggestions.getOrDefault(provider, listOf())) { suggestion ->
-                provider?.let {
+            suggestions[provider]?.let { suggestions ->
+                items(items = suggestions) { suggestion ->
                     SuggestItem( // TODO add key and animateItemPlacement to suggest item
                         suggestion = suggestion,
                         toolbarPosition = toolbarPosition,

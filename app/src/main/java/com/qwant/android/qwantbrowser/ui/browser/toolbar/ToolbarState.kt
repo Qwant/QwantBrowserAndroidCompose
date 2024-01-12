@@ -24,7 +24,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -73,6 +75,7 @@ class ToolbarState @AssistedInject constructor(
     var trueHeightPx by mutableIntStateOf(0)
         private set
 
+    private val backgroundScope = CoroutineScope(Dispatchers.IO + Job())
     private val emptySuggestions = suggestionProviders.associateWith { emptyList<Suggestion>() }
     val suggestions = snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
         .distinctUntilChanged()
@@ -83,7 +86,7 @@ class ToolbarState @AssistedInject constructor(
             } else emptySuggestions
         }
         .stateIn(
-            scope = coroutineScope,
+            scope = backgroundScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = emptySuggestions
         )
