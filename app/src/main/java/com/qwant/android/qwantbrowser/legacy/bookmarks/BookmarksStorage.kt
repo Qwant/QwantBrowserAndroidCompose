@@ -72,7 +72,8 @@ class BookmarksStorage(private var context: Context) : SuggestionProvider {
             if (it.type == BookmarkItemV2.BookmarkType.BOOKMARK) {
                 if (it.url == url) return true
             } else {
-                if (it.children.isNotEmpty()) {
+                // Keep the null check else NullPointerException appears in Android Vitals for old bookmarks collections !
+                if (it.children != null && it.children.isNotEmpty()) {
                     if (hasBookmark(url, it.children)) return true
                 }
             }
@@ -104,7 +105,8 @@ class BookmarksStorage(private var context: Context) : SuggestionProvider {
     private fun getSuggestionsRec(text: String, bookmarks: List<BookmarkItemV2>): List<Suggestion> {
        return bookmarks
            .asSequence()
-           .filter { it.type == BookmarkItemV2.BookmarkType.FOLDER && it.children.isNotEmpty() }
+           // Keep the null check else NullPointerException appears in Android Vitals for old bookmarks collections !
+           .filter { it.type == BookmarkItemV2.BookmarkType.FOLDER && it.children != null && it.children.isNotEmpty() }
            .map { getSuggestionsRec(text, it.children) }
            .flatten()
            .plus(
