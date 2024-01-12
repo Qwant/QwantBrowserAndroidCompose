@@ -120,5 +120,4 @@ class QwantApplication : Application() {
 private fun setupLogging() {
     // We want the log messages of all builds to go to Android logcat
     Log.addSink(AndroidLogSink())
-    // RustLog.enable()
 }

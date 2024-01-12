@@ -14,13 +14,13 @@ class ZapState(
     private val clearDataUseCase: ClearDataUseCase,
     private val coroutineScope: CoroutineScope = MainScope()
 ) {
-    enum class RequestStatus { Zapping, Confirm, Waiting, Error }
-    enum class AnimationStatus { Idle, In, Wait, Out }
+    internal enum class RequestStatus { Zapping, Confirm, Waiting, Error }
+    internal enum class AnimationStatus { Idle, In, Wait, Out }
 
-    var requestStatus: RequestStatus by mutableStateOf(RequestStatus.Waiting)
+    internal var requestStatus: RequestStatus by mutableStateOf(RequestStatus.Waiting)
         private set
 
-    var animationStatus by mutableStateOf(AnimationStatus.Idle)
+    internal var animationStatus by mutableStateOf(AnimationStatus.Idle)
         private set
 
     private var endCallback: ((Boolean) -> Unit)? = null
