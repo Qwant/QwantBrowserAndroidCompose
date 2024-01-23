@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
+import mozilla.components.concept.engine.EngineView
 import kotlin.math.roundToInt
 import kotlin.math.sign
 
@@ -29,6 +30,7 @@ enum class HideOnScrollPosition {
 fun HideOnScrollToolbar(
     toolbarState: ToolbarState,
     toolbar: @Composable (Modifier) -> Unit,
+    engineView: EngineView?,
     height: Dp,
     modifier: Modifier = Modifier,
     lock: () -> Boolean = { false },
@@ -70,20 +72,26 @@ fun HideOnScrollToolbar(
         }
     }
 
-    /* val nestedScrollConnection = rememberThresholdNestedScrollConnection(
-        onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
-        scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
-        consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
-    ) */
-
-    val nestedScrollConnection = remember {
-        object: NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                toolbarState.updateVisibility(available.y.sign == 1f)
-                return Offset.Zero
+    val nestedScrollConnection = rememberThresholdNestedScrollConnection(
+        onScroll = { sign ->
+            if (engineView?.canScrollVerticallyUp() == false) {
+                toolbarState.updateVisibility(true)
+            } else {
+                toolbarState.updateVisibility(sign == 1f)
             }
-        }
-    }
+        },
+        scrollThreshold = if (position == HideOnScrollPosition.Top) 5 else 1,
+        consecutiveThreshold = 1 // if (position == HideOnScrollPosition.Top) 4 else 1
+    )
+
+//    val nestedScrollConnection = remember {
+//        object: NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//                toolbarState.updateVisibility(available.y.sign == 1f)
+//                return Offset.Zero
+//            }
+//        }
+//    }
 
     LaunchedEffect(shouldHideOnScroll, trueHeight) {
         toolbarState.updateTrueHeightPx(trueHeight)

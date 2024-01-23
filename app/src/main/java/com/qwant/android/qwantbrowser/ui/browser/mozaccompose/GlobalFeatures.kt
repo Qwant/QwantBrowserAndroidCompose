@@ -82,10 +82,10 @@ fun GlobalFeatures(
         engine = viewModel.engine
     )
 
-    val session by viewModel.currentEngineSession.collectAsState()
+    /* val session by viewModel.currentEngineSession.collectAsState()
     ToolbarAlwaysVisibleWhenScrolledToTopFeature(
         toolbarState = viewModel.toolbarState,
         session = session
-    )
+    ) */
 }
 

@@ -27,6 +27,9 @@ class History(val context: Context) : HistoryStorage, SuggestionProvider {
     var size = pages.size
     var onSizeChanged: ((Int) -> Unit)? = null
 
+
+    override suspend fun prune() {}
+
     override suspend fun recordVisit(uri: String, visit: PageVisit) {
         if (visit.visitType == VisitType.LINK) {
             recordVisit(uri, visit, System.currentTimeMillis())

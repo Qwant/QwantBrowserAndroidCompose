@@ -29,10 +29,10 @@ fun TabThumbnail(
     val pixelSize = with(LocalDensity.current) { size.roundToPx() }
     var loadedImage: Bitmap? by remember { mutableStateOf(null) }
 
-    val private = LocalQwantTheme.current.private
+    // val private = LocalQwantTheme.current.private
 
     LaunchedEffect(tabId) {
-        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize, private)).await()
+        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize/* , private */)).await()
     }
 
     loadedImage?.let {

@@ -57,6 +57,8 @@ fun BrowserScreen(
     val tabCount by viewModel.tabCount.collectAsState()
     val private by appViewModel.isPrivate.collectAsState()
 
+    var engineViewHolder: EngineView? = null
+
     /* // TODO Pull To Refresh
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
@@ -106,6 +108,7 @@ fun BrowserScreen(
                 afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
             )
         },
+        engineView = engineViewHolder,
         height = 56.dp,
         modifier = Modifier.fillMaxSize(),
         lock = { viewModel.showFindInPage }
@@ -121,6 +124,7 @@ fun BrowserScreen(
                         engine = viewModel.engine,
                         modifier = modifier
                     ) { engineView ->
+                        engineViewHolder = engineView
                         EngineViewFeatures(engineView, viewModel)
                     }
 

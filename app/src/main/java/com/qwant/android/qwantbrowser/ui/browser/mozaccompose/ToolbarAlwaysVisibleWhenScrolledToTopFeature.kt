@@ -1,5 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
-
+/*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -29,4 +29,4 @@ fun ToolbarAlwaysVisibleWhenScrolledToTopFeature(
             session?.unregister(scrollObserver)
         }
     }
-}
+} */

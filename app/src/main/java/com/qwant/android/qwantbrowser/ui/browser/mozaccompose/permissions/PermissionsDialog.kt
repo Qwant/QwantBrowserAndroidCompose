@@ -35,33 +35,33 @@ fun PermissionsDialog(
         if (data.permissionRequest.containsVideoAndAudioSources()) {
             PermissionsDialogDisplayData(
                 R.string.mozac_feature_sitepermissions_camera_and_microphone,
-                iconsR.drawable.mozac_ic_microphone_24
+                iconsR.drawable.mozac_ic_microphone
             )
         } else {
             when (permission) {
                 is Permission.ContentGeoLocation -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_location_title,
-                    iconsR.drawable.mozac_ic_location_24,
+                    iconsR.drawable.mozac_ic_location,
                 )
                 is Permission.ContentNotification -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_notification_title,
-                    iconsR.drawable.mozac_ic_notification_24,
+                    iconsR.drawable.mozac_ic_notification,
                 )
                 is Permission.ContentAudioCapture, is Permission.ContentAudioMicrophone -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_microfone_title,
-                    iconsR.drawable.mozac_ic_microphone_24,
+                    iconsR.drawable.mozac_ic_microphone,
                 )
                 is Permission.ContentVideoCamera, is Permission.ContentVideoCapture -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_camera_title,
-                    iconsR.drawable.mozac_ic_camera_24,
+                    iconsR.drawable.mozac_ic_settings,
                 )
                 is Permission.ContentPersistentStorage -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_persistent_storage_title,
-                    iconsR.drawable.mozac_ic_storage_24,
+                    iconsR.drawable.mozac_ic_storage,
                 )
                 is Permission.ContentMediaKeySystemAccess -> PermissionsDialogDisplayData(
                     R.string.mozac_feature_sitepermissions_media_key_system_access_title,
-                    iconsR.drawable.mozac_ic_link_24,
+                    iconsR.drawable.mozac_ic_link,
                 )
                 is Permission.ContentCrossOriginStorageAccess ->
                     TODO("ContentCrossOriginStorageAccess permission. Not implemented yet. Need more data than others")
