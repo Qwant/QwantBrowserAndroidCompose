@@ -122,6 +122,8 @@ class FrontEndPreferencesRepository @Inject constructor(
             clHolder.getCl()?.let { append("&cl=").append(it) }
 
             append("&qbc=1") // Certifies validity for the url interceptor
+
+            append("&omnibar=1")
         }
     }
 

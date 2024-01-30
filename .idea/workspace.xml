@@ -9,15 +9,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="Version change">
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/QwantBrowserCompose.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/QwantBrowserCompose.app.iml" afterDir="false" />
+    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="Removing search terms url encoding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/usecases/QwantUseCases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/usecases/QwantUseCases.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,7 +205,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705999378388</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Removing search terms url encoding">
+      <option name="closed" value="true" />
+      <created>1706606000083</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1706606000083</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Removing search terms url encoding">
+      <option name="closed" value="true" />
+      <created>1706606019868</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1706606019868</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -235,7 +250,8 @@
     <MESSAGE value="Suggest as background routine" />
     <MESSAGE value="Going back to mozac 115. Fixed scrolling flicking." />
     <MESSAGE value="Version change" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version change" />
+    <MESSAGE value="Removing search terms url encoding" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removing search terms url encoding" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
