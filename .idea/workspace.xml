@@ -10,27 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="Version change">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/appInsightsSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/appInsightsSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/QwantBrowserCompose.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/QwantBrowserCompose.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/AppRequestInterceptor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/AppRequestInterceptor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/legacy/history/History.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/legacy/history/History.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/BrowserScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/BrowserScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/BrowserScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/BrowserScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/EngineView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/EngineView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/FullscreenFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/FullscreenFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/GlobalFeatures.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/GlobalFeatures.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/ToolbarAlwaysVisibleWhenScrolledToTopFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/ToolbarAlwaysVisibleWhenScrolledToTopFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/toolbar/HideOnScrollToolbar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/toolbar/HideOnScrollToolbar.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/toolbar/ThresholdNestedScrollConnection.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/toolbar/ThresholdNestedScrollConnection.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/tabs/TabThumbnail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/tabs/TabThumbnail.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/usecases/QwantUseCases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/usecases/QwantUseCases.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +72,7 @@
   "keyToString": {
     "BundleExportedModule": "QwantBrowserCompose.app",
     "ExportBundle.BundlePathForQwantBrowserCompose.app": "/home/pbertran/qwant/android-browser-compose/app",
+    "PROJECT_TRUSTED_KEY": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -202,7 +190,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705060753567</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Going back to mozac 115. Fixed scrolling flicking.">
+      <option name="closed" value="true" />
+      <created>1705999367412</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1705999367412</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Version change">
+      <option name="closed" value="true" />
+      <created>1705999378388</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1705999378388</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -229,7 +233,34 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix for old bookmarks compatibility" />
     <MESSAGE value="Suggest as background routine" />
+    <MESSAGE value="Going back to mozac 115. Fixed scrolling flicking." />
     <MESSAGE value="Version change" />
     <option name="LAST_COMMIT_MESSAGE" value="Version change" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mozilla.components/feature-session/115.2.1/f8167b25dc446bb26794f329b48069cca6d517b/feature-session-115.2.1-sources.jar!/mozilla/components/feature/session/SessionFeature.kt</url>
+          <line>28</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mozilla.components/feature-session/115.2.1/f8167b25dc446bb26794f329b48069cca6d517b/feature-session-115.2.1-sources.jar!/mozilla/components/feature/session/SessionFeature.kt</url>
+          <line>54</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mozilla.components/feature-session/115.2.1/f8167b25dc446bb26794f329b48069cca6d517b/feature-session-115.2.1-sources.jar!/mozilla/components/feature/session/SessionFeature.kt</url>
+          <line>64</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mozilla.components/feature-session/115.2.1/f8167b25dc446bb26794f329b48069cca6d517b/feature-session-115.2.1-sources.jar!/mozilla/components/feature/session/SessionUseCases.kt</url>
+          <line>78</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
