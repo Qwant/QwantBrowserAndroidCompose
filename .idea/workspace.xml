@@ -9,9 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="version change">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" afterDir="false" />
+    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="updating mozilla components to v117">
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -270,7 +268,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706623514856</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="updating mozilla components to v117">
+      <option name="closed" value="true" />
+      <created>1706712065120</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1706712065120</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -315,7 +321,8 @@
     <MESSAGE value="Fixed issue causing all qwant page to reload at each startup" />
     <MESSAGE value="Changing frontend settings default values" />
     <MESSAGE value="version change" />
-    <option name="LAST_COMMIT_MESSAGE" value="version change" />
+    <MESSAGE value="updating mozilla components to v117" />
+    <option name="LAST_COMMIT_MESSAGE" value="updating mozilla components to v117" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
