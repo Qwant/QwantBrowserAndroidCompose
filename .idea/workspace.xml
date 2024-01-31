@@ -9,14 +9,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="Removing search terms url encoding">
+    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="version change">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/permissions/PermissionsDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,13 +45,32 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
-    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../googlekeys/upload.jks" />
-    <option name="KEY_ALIAS" value="psupload" />
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../googlekeys/dist/release.jks" />
+    <option name="KEY_ALIAS" value="libertyvaults" />
     <option name="REMEMBER_PASSWORDS" value="true" />
+    <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -69,7 +84,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ApkExportedModule": "QwantBrowserCompose.app",
     "BundleExportedModule": "QwantBrowserCompose.app",
+    "ExportApk.ApkPathForQwantBrowserCompose.app": "/home/pbertran/qwant/android-browser-compose/app",
     "ExportBundle.BundlePathForQwantBrowserCompose.app": "/home/pbertran/qwant/android-browser-compose/app",
     "PROJECT_TRUSTED_KEY": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -78,8 +95,8 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/pbertran/qwant/googlekeys/upload.jks"
+    "git-widget-placeholder": "mozac__117",
+    "last_opened_file_path": "/home/pbertran/qwant/googlekeys/dist/release.jks"
   },
   "keyToStringList": {
     "ExportApk.BuildVariants": [
@@ -221,7 +238,39 @@
       <option name="project" value="LOCAL" />
       <updated>1706606019868</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fixed issue causing all qwant page to reload at each startup">
+      <option name="closed" value="true" />
+      <created>1706616547146</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1706616547146</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Changing frontend settings default values">
+      <option name="closed" value="true" />
+      <created>1706616576109</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1706616576109</updated>
+    </task>
+    <task id="LOCAL-00010" summary="version change">
+      <option name="closed" value="true" />
+      <created>1706616590119</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1706616590119</updated>
+    </task>
+    <task id="LOCAL-00011" summary="version change">
+      <option name="closed" value="true" />
+      <created>1706623514856</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1706623514856</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -239,7 +288,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -251,7 +312,10 @@
     <MESSAGE value="Going back to mozac 115. Fixed scrolling flicking." />
     <MESSAGE value="Version change" />
     <MESSAGE value="Removing search terms url encoding" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removing search terms url encoding" />
+    <MESSAGE value="Fixed issue causing all qwant page to reload at each startup" />
+    <MESSAGE value="Changing frontend settings default values" />
+    <MESSAGE value="version change" />
+    <option name="LAST_COMMIT_MESSAGE" value="version change" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
