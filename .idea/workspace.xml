@@ -9,14 +9,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="Removing search terms url encoding">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/QwantApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/FrontEndPreferencesSerializer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/preferences/frontend/QwantUrlEngineSyncFeature.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/qwant/android/qwantbrowser/ui/browser/mozaccompose/SessionFeature.kt" afterDir="false" />
+    <list default="true" id="bc19a068-8402-443c-ba93-70e18c5104db" name="Changes" comment="updating preferences default values">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +50,11 @@
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="default_settings" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -67,26 +66,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "BundleExportedModule": "QwantBrowserCompose.app",
-    "ExportBundle.BundlePathForQwantBrowserCompose.app": "/home/pbertran/qwant/android-browser-compose/app",
-    "PROJECT_TRUSTED_KEY": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/pbertran/qwant/googlekeys/upload.jks"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;BundleExportedModule&quot;: &quot;QwantBrowserCompose.app&quot;,
+    &quot;ExportBundle.BundlePathForQwantBrowserCompose.app&quot;: &quot;/home/pbertran/qwant/android-browser-compose/app&quot;,
+    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pbertran/qwant/googlekeys/upload.jks&quot;
   },
-  "keyToStringList": {
-    "ExportApk.BuildVariants": [
-      "playstoreRelease"
+  &quot;keyToStringList&quot;: {
+    &quot;ExportApk.BuildVariants&quot;: [
+      &quot;playstoreRelease&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="QwantBrowserCompose.app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="app.QwantBrowserCompose.app.main" />
@@ -221,7 +220,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706606019868</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="updating preferences default values">
+      <option name="closed" value="true" />
+      <created>1706714380640</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1706714380640</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -235,6 +242,31 @@
     </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="mozac_117" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="default_settings" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -251,7 +283,8 @@
     <MESSAGE value="Going back to mozac 115. Fixed scrolling flicking." />
     <MESSAGE value="Version change" />
     <MESSAGE value="Removing search terms url encoding" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removing search terms url encoding" />
+    <MESSAGE value="updating preferences default values" />
+    <option name="LAST_COMMIT_MESSAGE" value="updating preferences default values" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
