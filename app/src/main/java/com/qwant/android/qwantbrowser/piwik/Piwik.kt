@@ -2,6 +2,8 @@ package com.qwant.android.qwantbrowser.piwik
 
 import android.content.Context
 import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.ext.isQwantSERPUrl
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
@@ -24,9 +26,10 @@ class Piwik @Inject constructor(
         BuildConfig.PIWIK_URL,
         BuildConfig.PIWIK_SITE_ID,
         "default"
-    )).apply {
+    )).also {
         android.util.Log.d("QWANT_PIWIK", "new piwik tracker")
-        this.dispatchInterval = 0
+        it.dispatchInterval = 0
+        it.setAnonymizationState(false)
     }
 
     init {
@@ -34,6 +37,8 @@ class Piwik @Inject constructor(
             appPreferencesRepository.flow
                 .map { it.piwikOptout }
                 .collect {
+                    android.util.Log.d("QWANT_PIWIK", "opt in/out")
+                    event("Tracking", if (it) "Off" else "On")
                     tracker.isOptOut = it
                 }
         }
@@ -53,5 +58,14 @@ class Piwik @Inject constructor(
         val builder = TrackHelper.track().event(category, action)
         name?.let { builder.name(it) }
         builder.with(tracker)
+    }
+
+    fun screenView(url: String) {
+        val screen = if (url.isQwantUrl()) {
+            if (url.isQwantSERPUrl()) "SERP navigation"
+            else "HP navigation"
+        } else "Web navigation"
+        android.util.Log.d("QWANT_PIWIK", "track screenview $screen")
+        TrackHelper.track().screen(screen)
     }
 }
