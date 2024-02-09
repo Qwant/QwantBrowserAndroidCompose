@@ -19,6 +19,7 @@ fun Dropdown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    focusable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
     DropdownMenu(
@@ -26,7 +27,7 @@ fun Dropdown(
         onDismissRequest= onDismissRequest,
         offset = DpOffset(8.dp, 0.dp),
         properties = PopupProperties(
-            focusable = true,
+            focusable = focusable,
             usePlatformDefaultWidth = true
         ),
         modifier = Modifier

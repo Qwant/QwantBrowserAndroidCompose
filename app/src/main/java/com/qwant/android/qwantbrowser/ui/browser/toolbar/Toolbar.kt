@@ -57,6 +57,10 @@ fun Toolbar(
         when (suggestion) {
             is Suggestion.SelectTabSuggestion -> onTextCommit(suggestion.url)
             is Suggestion.SearchSuggestion -> onTextCommit(suggestion.text) // TODO toolbarState.updateText(suggestion.text), but it looses focus on the toolbar, which causes issues.
+            is Suggestion.BrandSuggestion -> {
+                toolbarState.datahub.brandSuggestClicked(suggestion) // TODO Move this inside viewmodel, with whole commitSuggestion
+                onTextCommit(suggestion.url)
+            }
             is Suggestion.OpenTabSuggestion -> (suggestion.url ?: suggestion.title)?.let {
                 onTextCommit(it)
             }

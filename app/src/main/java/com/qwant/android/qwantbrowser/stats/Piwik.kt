@@ -1,4 +1,4 @@
-package com.qwant.android.qwantbrowser.piwik
+package com.qwant.android.qwantbrowser.stats
 
 import android.content.Context
 import com.qwant.android.qwantbrowser.BuildConfig

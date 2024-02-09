@@ -19,4 +19,7 @@
     <string name="browser_site_insecure">Connessione non sicura</string>
 
     <string name="browser_toolbar_hint">Cerca o inserisci un indirizzo</string>
+
+    <string name="browser_brand_suggest_ad">Ad</string>
+    <string name="browser_brand_suggest_information">Questo suggerimento di ricerca è una pubblicità di %1$s, che ti reindirizzerà verso il sito dell\'inserzionista: %2$s</string>
 </resources>
