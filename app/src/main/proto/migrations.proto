@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.qwant.android.qwantbrowser.migration.datastore";
+option java_multiple_files = true;
+
+message MigrationData {
+    bool migration_503 = 1;
+}
