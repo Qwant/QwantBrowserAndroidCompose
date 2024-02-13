@@ -1,5 +1,7 @@
 buildscript {
     ext {
+        companion_id = 'com.qwant.android.companion'
+
         compose_version = '1.3.3'
         compose_nav_version = '2.7.5'
         compose_tooling_version = '1.4.1'
