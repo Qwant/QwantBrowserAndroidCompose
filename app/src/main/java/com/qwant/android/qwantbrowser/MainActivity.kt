@@ -15,6 +15,7 @@ import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.migration.MigrationUtility
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.ui.QwantBrowserApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var bookmarkStorage: BookmarksStorage
     @Inject lateinit var notificationsDelegate: NotificationsDelegate
     @Inject lateinit var migrationUtility: MigrationUtility
+    @Inject lateinit var clientProvider: QwantClientProvider
 
     // TODO Create keyboard controller class
     private var onKeyboardHiddenCallback: (() -> Unit)? = null
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        clientProvider.bindToActivity(this)
         notificationsDelegate.bindToActivity(this)
 
         val v = ComposeView(this).apply {

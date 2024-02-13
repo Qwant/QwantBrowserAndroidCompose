@@ -32,8 +32,8 @@ class ClHolder @Inject constructor(
 // @InstallIn(ActivityRetainedComponent::class)
 class FrontEndPreferencesRepository @Inject constructor(
     private val datastore: DataStore<FrontEndPreferences>,
-    private val qwantClientProvider: QwantClientProvider,
-    private val clHolder: ClHolder
+    private val clHolder: ClHolder,
+    qwantClientProvider: QwantClientProvider
 ) {
     companion object {
         // TODO Use gradle to set qwant base URL so we can easily use pre-prod
@@ -50,10 +50,10 @@ class FrontEndPreferencesRepository @Inject constructor(
             }
         }
 
-    val homeUrl = flow.map { prefs ->
+    val homeUrl = flow.combine(qwantClientProvider.clientState) { prefs, client ->
         buildString {
             append(QwantBaseUrl)
-            append("?client=").append(qwantClientProvider.client)
+            append("?client=").append(client)
             append("&theme=").append(when(prefs.appearance) {
                 Appearance.LIGHT -> 0
                 Appearance.DARK -> 1

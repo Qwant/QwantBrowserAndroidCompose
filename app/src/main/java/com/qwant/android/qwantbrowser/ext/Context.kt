@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -77,3 +78,10 @@ val Context.UAQwant: String
     get() = "$UA ${getString(R.string.user_agent_qwant_ext, getQwantVersion())}"
 
 fun getQwantVersion(): String = "5.0" // TODO get this from gradle
+
+fun Context.isPackageInstalled(packageToFind: String) = try {
+    this.packageManager.getPackageInfo(packageToFind, 0)
+    true
+} catch (e: PackageManager.NameNotFoundException) {
+    false
+}
