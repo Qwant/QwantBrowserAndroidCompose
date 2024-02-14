@@ -37,8 +37,8 @@ fun Suggest(
     val providersOrdered = remember(suggestions.keys) {
         listOf(
             suggestions.keys.find { it is ClipboardProvider },
-            suggestions.keys.find { it is DomainProvider },
             suggestions.keys.find { it is QwantSuggestProvider },
+            suggestions.keys.find { it is DomainProvider },
             suggestions.keys.find { it is BookmarksStorage },
             suggestions.keys.find { it is History },
             suggestions.keys.find { it is SessionTabsProvider }
