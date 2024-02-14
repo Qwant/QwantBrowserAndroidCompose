@@ -149,12 +149,12 @@ fun SuggestItem(
                             Text(
                                 text = stringResource(R.string.browser_brand_suggest_ad),
                                 fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.outline
-                            ) // TODO put to string resources and translate
+                                color = LocalContentColor.current.copy(0.6f)
+                            )
                             Icon(
                                 painterResource(id = R.drawable.icons_information),
                                 contentDescription = "information",
-                                tint = MaterialTheme.colorScheme.outline,
+                                tint = LocalContentColor.current.copy(0.6f),
                                 modifier = Modifier.size(12.dp)
                             )
                         }
