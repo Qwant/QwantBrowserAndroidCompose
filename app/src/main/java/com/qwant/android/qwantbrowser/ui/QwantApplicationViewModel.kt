@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.legacy.history.History
-import com.qwant.android.qwantbrowser.piwik.Piwik
+import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance

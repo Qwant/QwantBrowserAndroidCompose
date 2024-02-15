@@ -9,6 +9,7 @@ import java.net.URI
 import java.net.URLDecoder
 
 fun String.isQwantUrl(): Boolean {
+    // TODO use regex
     return (this.startsWith("https://www.qwant.com")
             || this.startsWith("http://www.qwant.com"))
             && !this.startsWith("https://www.qwant.com/maps")

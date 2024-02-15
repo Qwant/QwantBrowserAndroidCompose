@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-import android.content.Context
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -9,20 +8,14 @@ import com.qwant.android.qwantbrowser.ext.toCleanHost
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.urlDecode
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
+import com.qwant.android.qwantbrowser.stats.Datahub
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
-import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
-import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
-import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
-import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,8 +27,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.lib.state.ext.flow
 
 @AssistedFactory
@@ -45,24 +36,13 @@ interface ToolbarStateFactory {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ToolbarState @AssistedInject constructor(
-    client: Client,
     store: BrowserStore,
     appPreferencesRepository: AppPreferencesRepository,
-    bookmarkStorage: BookmarksStorage,
-    historyStorage: HistoryStorage,
+    suggestionProviders: @JvmSuppressWildcards List<SuggestionProvider>,
     val browserIcons: BrowserIcons,
-    @ApplicationContext context: Context,
+    val datahub: Datahub,
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
-    private val suggestionProviders: List<SuggestionProvider> = listOf(
-        ClipboardProvider(context),
-        QwantOpensearchProvider(client),
-        DomainProvider(context),
-        SessionTabsProvider(store),
-        historyStorage as History,
-        bookmarkStorage
-    )
-
     var visible by mutableStateOf(true)
         private set
 
