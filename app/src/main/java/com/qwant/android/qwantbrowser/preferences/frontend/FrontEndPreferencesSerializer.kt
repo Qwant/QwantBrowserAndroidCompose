@@ -9,22 +9,29 @@ import java.io.OutputStream
 
 
 object FrontEndPreferencesSerializer : Serializer<FrontEndPreferences> {
+    private val defaultRegionMap = mapOf(
+        "en" to "en_GB",
+        "fr" to "fr_FR",
+        "de" to "de_DE",
+        "it" to "it_IT",
+        "es" to "es_ES"
+    )
+    private val defaultLanguage = AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf(
+        "en", "fr", "de", "it", "es"
+    ))?.language ?: "fr"
+
     override val defaultValue: FrontEndPreferences = FrontEndPreferences.getDefaultInstance()
         .toBuilder()
         .setAppearance(Appearance.SYSTEM_SETTINGS)
         .setCustomPageColor(CustomPageColor.BLUE)
-        .setCustomPageCharacter(CustomPageCharacter.RANDOM_CHARACTER)
-        .setShowNews(true)
+        .setCustomPageCharacter(CustomPageCharacter.NO_CHARACTER)
+        .setShowNews(false)
         .setShowSponsor(true)
         .setShowFavicons(true)
         .setOpenResultsInNewTab(false)
         .setAdultFilter(AdultFilter.MODERATE)
-        .setInterfaceLanguage(AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf(
-            "en", "fr", "de", "it", "es"
-        ))?.language ?: "en")
-        .setSearchResultRegion(AppCompatDelegate.getApplicationLocales().getFirstMatch(
-            availableSearchRegions
-        )?.toLanguageTag() ?: "en_GB")
+        .setInterfaceLanguage(defaultLanguage)
+        .setSearchResultRegion(defaultRegionMap[defaultLanguage])
         .build()
 
     override suspend fun readFrom(input: InputStream): FrontEndPreferences {

@@ -74,6 +74,5 @@ val Context.UA: String
     get() = BuildConfig.USER_AGENT_GECKOVIEW_MOBILE
 
 val Context.UAQwant: String
-    get() = "$UA ${getString(R.string.user_agent_qwant_ext, getQwantVersion())}"
+    get() = "$UA ${getString(R.string.user_agent_qwant_ext, com.qwant.android.qwantbrowser.BuildConfig.VERSION_NAME)}"
 
-fun getQwantVersion(): String = "5.0" // TODO get this from gradle

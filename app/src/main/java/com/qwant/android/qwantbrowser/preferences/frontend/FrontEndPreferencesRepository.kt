@@ -5,40 +5,14 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 private const val LOGTAG: String = "FrontEndPreferencesRepo"
-
-// TODO move saved client to internal datastore instead of shared prefs
-@Singleton
-class ClientHolder @Inject constructor(
-    @ApplicationContext val context: Context
-) {
-    private var instance: String? = null
-
-    private val prefKey = "pref_key_saved_client"
-    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-    fun getClient(): String {
-        return instance
-            ?: prefs.getString(prefKey, null)?.also {
-                instance = it
-            }
-            ?: context.getString(R.string.app_client_string).also {
-                instance = it
-                with(prefs.edit()) {
-                    putString(prefKey, it)
-                    apply()
-                }
-            }
-    }
-}
 
 // TODO move saved cl to internal datastore instead of shared prefs
 @Singleton
@@ -58,10 +32,11 @@ class ClHolder @Inject constructor(
 // @InstallIn(ActivityRetainedComponent::class)
 class FrontEndPreferencesRepository @Inject constructor(
     private val datastore: DataStore<FrontEndPreferences>,
-    private val clientHolder: ClientHolder,
+    private val qwantClientProvider: QwantClientProvider,
     private val clHolder: ClHolder
 ) {
     companion object {
+        // TODO Use gradle to set qwant base URL so we can easily use pre-prod
         private const val QwantBaseUrl = "https://www.qwant.com/"
     }
 
@@ -78,7 +53,7 @@ class FrontEndPreferencesRepository @Inject constructor(
     val homeUrl = flow.map { prefs ->
         buildString {
             append(QwantBaseUrl)
-            append("?client=").append(clientHolder.getClient())
+            append("?client=").append(qwantClientProvider.client)
             append("&theme=").append(when(prefs.appearance) {
                 Appearance.LIGHT -> 0
                 Appearance.DARK -> 1
