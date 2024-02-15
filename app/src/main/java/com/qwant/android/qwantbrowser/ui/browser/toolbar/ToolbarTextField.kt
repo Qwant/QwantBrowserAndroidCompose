@@ -1,11 +1,13 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,12 +15,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ext.activity
 
 @Composable
 fun ToolbarTextField(
@@ -30,15 +35,18 @@ fun ToolbarTextField(
     val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current))
 
     val focusManager = LocalFocusManager.current
+    val activity = LocalContext.current.activity
     val focusRequester = remember { FocusRequester() }
     BackHandler(toolbarState.hasFocus) {
         focusManager.clearFocus()
+        activity?.forceHideKeyboard()
     }
     LaunchedEffect(toolbarState.hasFocus) {
         if (toolbarState.hasFocus) {
             focusRequester.requestFocus()
         } else {
             focusManager.clearFocus()
+            activity?.forceHideKeyboard()
         }
     }
 
@@ -69,7 +77,10 @@ fun ToolbarTextField(
             trailingIcons = {
                 if (toolbarState.hasFocus) {
                     if (toolbarState.text.text.isNotEmpty()) {
-                        IconButton(onClick = { toolbarState.updateText("") }) {
+                        IconButton(
+                            onClick = { toolbarState.updateText("") },
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
                             Icon(
                                 painterResource(id = R.drawable.icons_close_circled),
                                 contentDescription = "clear"
@@ -81,3 +92,22 @@ fun ToolbarTextField(
         )
     }
 }
+
+// TODO move this elsewhere
+@Composable
+fun KeyboardObserver(
+    toolbarState: ToolbarState
+) {
+    val activity = LocalContext.current.activity
+    DisposableEffect(activity) {
+        activity?.registerOnKeyboardHiddenCallback {
+            if (toolbarState.hasFocus) {
+                toolbarState.updateFocus(false)
+            }
+        }
+        onDispose {
+            activity?.unregisterOnKeyboardHiddenCallback()
+        }
+    }
+}
+

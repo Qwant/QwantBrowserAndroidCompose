@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.preferences.frontend
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.datastore.migrations.SharedPreferencesMigration
@@ -75,7 +77,9 @@ object FrontEndPreferencesMigration {
                         "es_ES" -> "es"
                         else -> "en"
                     }
-                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(newLanguage))
+                    Handler(Looper.getMainLooper()).post {
+                        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(newLanguage))
+                    }
                     interfaceLanguage = newLanguage
                 }
 

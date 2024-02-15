@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -28,6 +26,7 @@ import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRow
 import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRowWithIcon
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import org.mozilla.reference.browser.storage.BookmarkItemV2
 import mozilla.components.feature.contextmenu.R as mozacR
 
@@ -57,24 +56,18 @@ fun BookmarksList(
                             BookmarkItemV2.BookmarkType.BOOKMARK -> stringResource(R.string.bookmarks_bookmark)
                             else -> stringResource(R.string.bookmarks_folder)
                         }
-                        val moveTitle = stringResource(R.string.bookmarks_move_x_to, folderOrBookmarkString)
-                        val editTitle = "${stringResource(R.string.edit)} $folderOrBookmarkString"
-                        val deleteTitle = "${stringResource(R.string.delete)} $folderOrBookmarkString"
                         if (bookmark.type == BookmarkItemV2.BookmarkType.BOOKMARK) {
-                            val openTitle = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab)
-                            val openPrivateTitle = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab)
-                            val copyTitle = stringResource(mozacR.string.mozac_feature_contextmenu_copy_link)
-                            DropdownMenuItem(
-                                text = { Text(text = openTitle) },
-                                leadingIcon = { Icon(painterResource(id = R.drawable.icons_add_tab), openTitle) },
+                            DropdownItem(
+                                text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab),
+                                icon = R.drawable.icons_add_tab,
                                 onClick = {
                                     viewModel.openBookmarkTab(bookmark)
                                     onBrowse()
                                 }
                             )
-                            DropdownMenuItem(
-                                text = { Text(text = openPrivateTitle) },
-                                leadingIcon = { Icon(painterResource(id = R.drawable.icons_privacy_mask), openPrivateTitle) },
+                            DropdownItem(
+                                text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab),
+                                icon = R.drawable.icons_privacy_mask,
                                 onClick = {
                                     viewModel.openBookmarkTab(bookmark, private = true)
                                     onBrowse()
@@ -82,9 +75,9 @@ fun BookmarksList(
                             )
                             bookmark.url?.let {
                                 val clipboardManager = LocalClipboardManager.current
-                                DropdownMenuItem(
-                                    text = { Text(text = copyTitle) },
-                                    leadingIcon = { Icon(painterResource(id = R.drawable.assist_icons_document_file_copy_line), copyTitle) },
+                                DropdownItem(
+                                    text = stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
+                                    icon = R.drawable.icons_paste,
                                     onClick = {
                                         clipboardManager.setText(AnnotatedString(it))
                                         showMenu = false
@@ -92,25 +85,25 @@ fun BookmarksList(
                                 )
                             }
                         }
-                        DropdownMenuItem(
-                            text = { Text(text = moveTitle) },
-                            leadingIcon = { Icon(painterResource(id = R.drawable.icons_arrow_forward), moveTitle) },
+                        DropdownItem(
+                            text = stringResource(R.string.bookmarks_move_x_to, folderOrBookmarkString),
+                            icon = R.drawable.icons_arrow_forward,
                             onClick = {
                                 moveItem = bookmark
                                 showMenu = false
                             }
                         )
-                        DropdownMenuItem(
-                            text = { Text(text = editTitle) },
-                            leadingIcon = { Icon(painterResource(id = R.drawable.icons_edit), editTitle) },
+                        DropdownItem(
+                            text = "${stringResource(R.string.edit)} $folderOrBookmarkString",
+                            icon = R.drawable.icons_edit,
                             onClick = {
                                 editItem = bookmark
                                 showMenu = false
                             }
                         )
-                        DropdownMenuItem(
-                            text = { Text(text = deleteTitle) },
-                            leadingIcon = { Icon(painterResource(id = R.drawable.icons_delete_bookmark), deleteTitle) },
+                        DropdownItem(
+                            text = "${stringResource(R.string.delete)} $folderOrBookmarkString",
+                            icon = R.drawable.icons_trash,
                             onClick = {
                                 viewModel.deleteBookmark(bookmark)
                                 showMenu = false

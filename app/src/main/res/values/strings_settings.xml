@@ -124,9 +124,13 @@
     <string name="cleardata_tabs_private">Opened private tabs</string>
     <string name="cleardata_use_now">Delete data</string>
     <string name="cleardata_confirm_text">This button closes all your tabs and deletes all your browsing data.</string>
+    <string name="cleardata_done">Data deleted</string>
 
-    <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
+    <string name="clear_data_on_quit_label">Delete data on quit</string>
     <string name="clear_data_on_quit_description">Please use the Quit app button to be sure it is applied</string>
+
+    <string name="piwik_optout_title">Statistical audience analytics</string>
+    <string name="piwik_optout_description">Statistical audience measurement services are necessary for the operation of the application as they allow for its proper management. However, you can opt out of their use by clicking the \"Toggle\" button.</string>
 
     <string name="privacy_policy_label">Privacy policy</string>
 

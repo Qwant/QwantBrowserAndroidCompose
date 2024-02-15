@@ -33,6 +33,15 @@ fun TabList(
         modifier = modifier.fillMaxWidth()
     ) {
         itemsIndexed(tabs, key = { _, tab -> tab.id }) { _, tab ->
+            TabRow(
+                tab = tab,
+                selected = tab.id == selectedTabId,
+                thumbnailStorage = thumbnailStorage,
+                onSelected = onTabSelected,
+                onDeleted = onTabDeleted
+            )
+
+            /*
             val currentTab by rememberUpdatedState(newValue = tab)
             val dismissState = rememberDismissState(
                 confirmValueChange = { dismissValue ->
@@ -107,6 +116,7 @@ fun TabList(
                 },
                 modifier = Modifier.animateItemPlacement()
             )
+            */
         }
     }
 }

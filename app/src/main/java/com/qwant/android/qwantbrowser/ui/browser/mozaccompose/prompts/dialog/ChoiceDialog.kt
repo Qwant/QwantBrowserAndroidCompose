@@ -11,7 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -95,7 +95,7 @@ private fun ChoicesRec(
     choices.forEach { choice ->
         val newDisabled = disabled || !choice.enable
         when {
-            choice.isASeparator -> Divider()
+            choice.isASeparator -> HorizontalDivider()
             choice.isGroupType -> {
                 Text(
                     text = choice.label,

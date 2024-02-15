@@ -12,6 +12,7 @@ val Purple200 = Color(0xFFac99ff)
 val Purple700 = Color(0xFF1c0e58)
 val PurpleTertiary = Color(0xFF2d2065)
 
+val Grey100 = Color(0xFFe9eaec)
 val Grey600 = Color(0xFF4b5058)
 val Grey650 = Color(0xFF3d4148)
 val Grey700 = Color(0xFF2f3237)
@@ -27,3 +28,6 @@ val GreySecondary = Color(0xFF2f3237)
 val GreenUrl = Color(0xFF57c78f)
 
 val ZapYellow = Color(0xFFFFF35B)
+
+val Red = Color(0xFFFF1F23)
+val RedLight = Color(0xFFFF5C5F)

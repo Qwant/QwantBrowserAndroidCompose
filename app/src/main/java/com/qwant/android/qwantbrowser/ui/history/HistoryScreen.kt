@@ -1,18 +1,25 @@
 package com.qwant.android.qwantbrowser.ui.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 
@@ -24,24 +31,42 @@ fun HistoryScreen(
     val lazyListState = rememberLazyListState()
     var showDeleteAllConfirmation by remember { mutableStateOf(false) }
 
-    Column {
+    val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
+    val visitsEmpty = (visits.itemCount == 0 && visits.loadState.append != LoadState.Loading)
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         ScreenHeader(
             title = stringResource(id = R.string.history),
             scrollableState = lazyListState,
             actions = {
-                IconButton(onClick = { showDeleteAllConfirmation = true }) {
-                    Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "Delete history")
+                if (!visitsEmpty) {
+                    IconButton(onClick = { showDeleteAllConfirmation = true }) {
+                        Icon(painter = painterResource(id = R.drawable.icons_trash), contentDescription = "Delete history")
+                    }
                 }
             }
         )
-        HistoryList(
-            historyViewModel = historyViewModel,
-            lazyListState = lazyListState,
-            onItemSelected = { visit, private ->
-                historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
-                onClose()
-            }
-        )
+
+
+        if (!visitsEmpty) {
+            HistoryList(
+                visits = visits,
+                historyViewModel = historyViewModel,
+                lazyListState = lazyListState,
+                onItemSelected = { visit, private ->
+                    historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
+                    onClose()
+                }
+            )
+        } else {
+            EmptyPagePlaceholder(
+                icon = R.drawable.icons_history,
+                title = stringResource(id = R.string.history_empty_title),
+                subtitle = stringResource(id = R.string.history_empty_message)
+            )
+        }
     }
 
     if (showDeleteAllConfirmation) {

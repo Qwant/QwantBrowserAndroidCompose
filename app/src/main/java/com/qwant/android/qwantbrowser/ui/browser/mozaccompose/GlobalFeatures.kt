@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +35,7 @@ fun GlobalFeatures(
 
     ContextMenuFeature(
         store = viewModel.store,
+        client = viewModel.client,
         tabsUseCases = viewModel.tabsUseCases,
         contextMenuUseCases = viewModel.contextMenuUseCases,
         showSnackbar = { message, action, dismiss, duration ->
@@ -52,7 +55,7 @@ fun GlobalFeatures(
         store = viewModel.store,
         useCases = viewModel.downloadUseCases,
         downloadManager = viewModel.downloadManager,
-        onDownloadStopped = { state, s, status ->
+        onDownloadStopped = { state, _, status ->
             if (status == DownloadState.Status.COMPLETED) {
                 appViewModel.showSnackbar(
                     completedDownloadText,
@@ -73,5 +76,16 @@ fun GlobalFeatures(
     )
 
     ClFeature()
+
+    EngineSettingsFeature(
+        appViewModel = appViewModel,
+        engine = viewModel.engine
+    )
+
+    /* val session by viewModel.currentEngineSession.collectAsState()
+    ToolbarAlwaysVisibleWhenScrolledToTopFeature(
+        toolbarState = viewModel.toolbarState,
+        session = session
+    ) */
 }
 

@@ -2,11 +2,13 @@ package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -118,6 +120,7 @@ fun FindInPageFeature(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .focusRequester(focusRequester)
         )
     }

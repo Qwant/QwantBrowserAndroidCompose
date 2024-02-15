@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import mozilla.components.concept.storage.VisitInfo
@@ -30,11 +31,11 @@ import mozilla.components.feature.contextmenu.R as mozacR
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryList(
+    visits: LazyPagingItems<VisitInfo>,
     historyViewModel: HistoryViewModel,
     onItemSelected: (visit: VisitInfo, private: Boolean) -> Unit,
     lazyListState: LazyListState = rememberLazyListState()
 ) {
-    val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
     val todayString = stringResource(id = R.string.history_today)
     val yesterdayString = stringResource(id = R.string.history_yesterday)
 
@@ -60,13 +61,21 @@ fun HistoryList(
                         calendar.apply { time = Date(item.visitTime) }
                         val visitDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
                         if (lastDayOfYear == null || visitDayOfYear != lastDayOfYear) {
-                            val dateString = when (todayDayOfYear - calendar.get(Calendar.DAY_OF_YEAR)) {
-                                0 -> todayString
-                                1 -> yesterdayString
-                                else -> "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH)}"
-                            }
+                            val dateString =
+                                when (todayDayOfYear - calendar.get(Calendar.DAY_OF_YEAR)) {
+                                    0 -> todayString
+                                    1 -> yesterdayString
+                                    else -> "${calendar.get(Calendar.DAY_OF_MONTH)}/${
+                                        calendar.get(
+                                            Calendar.MONTH
+                                        )
+                                    }"
+                                }
                             item(key = "date-$dateString-${calendar.get(Calendar.YEAR)}") {
-                                Text(text = dateString, modifier = Modifier.padding(start = 8.dp))
+                                Text(
+                                    text = dateString,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
                             }
                             lastDayOfYear = visitDayOfYear
                         }
@@ -82,13 +91,13 @@ fun HistoryList(
                                         stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab),
                                         R.drawable.icons_search
                                     ) {
-                                        onItemSelected(item,false)
+                                        onItemSelected(item, false)
                                     },
                                     MenuItem(
                                         stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab),
                                         R.drawable.icons_privacy_mask
                                     ) {
-                                        onItemSelected(item,true)
+                                        onItemSelected(item, true)
                                     },
                                     MenuItem(
                                         stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
@@ -122,3 +131,4 @@ fun HistoryList(
         }
     }
 }
+

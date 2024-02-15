@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.qwant.android.qwantbrowser.ext.activity
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.selectedTab
@@ -19,7 +20,6 @@ import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 class PermissionsFeature(
     private val context: Context,
@@ -50,7 +50,8 @@ class PermissionsFeature(
     private fun setupLoadingCollector() {
         loadingScope = store.flowScoped { flow -> flow
             .mapNotNull { state -> state.selectedTab }
-            .ifChanged { it.content.loading }.collect { tab ->
+            .distinctUntilChangedBy { it.content.loading }
+            .collect { tab ->
                 if (tab.content.loading) {
                     storage.clearTemporaryPermissions()
                 }

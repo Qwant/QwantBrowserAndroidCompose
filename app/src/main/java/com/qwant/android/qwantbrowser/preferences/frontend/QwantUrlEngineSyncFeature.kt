@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.preferences.frontend
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
@@ -18,12 +19,17 @@ fun QwantUrlEngineSyncFeature(
     LaunchedEffect(qwantUrl) {
         qwantTabs.forEach { tab ->
             if (tab.content.url.isQwantUrl()) {
-                loadUrlUseCases.invoke(
-                    url = getQwantUrlUseCase.invoke(
-                        search = tab.content.url.getQwantSERPSearch()
-                    ),
-                    sessionId = tab.id
+                val newUrl = getQwantUrlUseCase.invoke(
+                    search = tab.content.url.getQwantSERPSearch()
                 )
+                if (newUrl != tab.content.url) {
+                    loadUrlUseCases.invoke(
+                        url = getQwantUrlUseCase.invoke(
+                            search = tab.content.url.getQwantSERPSearch()
+                        ),
+                        sessionId = tab.id
+                    )
+                }
             }
         }
     }

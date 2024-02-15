@@ -5,6 +5,7 @@
     <string name="save">Speichern</string>
     <string name="delete">Löschen</string>
     <string name="share">Teilen</string>
+    <string name="erase">Löschen</string>
 
     <string name="all_fields_required">Alle Felder sind erforderlich</string>
 

@@ -19,9 +19,11 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.action.WebExtensionAction
+import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.downloads.manager.DownloadManager
@@ -31,7 +33,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +49,7 @@ class BrowserScreenViewModel @Inject constructor(
     val downloadManager: DownloadManager,
     val store: BrowserStore,
     val engine: Engine,
+    val client: Client,
     val qwantUseCases: QwantUseCases
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
@@ -55,7 +58,8 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     val tabCount = store.flow()
-        .map { state -> state.tabs.count() }
+        .ifAnyChanged { s -> arrayOf(s.tabs.size, s.selectedTab?.content?.private) }
+        .map { state -> state.tabs.count { it.content.private == state.selectedTab?.content?.private } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -121,6 +125,15 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
+    val currentEngineSession = store.flow()
+        .map { state -> state.selectedTab?.engineState?.engineSession }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
+
     var showFindInPage by mutableStateOf(false)
         private set
 
@@ -172,8 +185,12 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun closeCurrentTab() {
+        val lastTab = store.state.normalTabs.count() == 1 && store.state.selectedTab?.content?.private == false
         store.state.selectedTabId?.let {
             tabsUseCases.removeTab(it, selectParentIfExists = true)
+            if (lastTab) {
+                qwantUseCases.openQwantPage()
+            }
         }
     }
 
@@ -194,7 +211,7 @@ class BrowserScreenViewModel @Inject constructor(
 
     val vipIcon = vipBrowserActionFlow
         .mapNotNull { it.loadIcon }
-        .ifChanged()
+        .distinctUntilChanged()
         .mapNotNull { it(92)?.asImageBitmap() }
         .map { BitmapPainter(it) }
         .stateIn(
@@ -205,7 +222,7 @@ class BrowserScreenViewModel @Inject constructor(
 
     val vipCounter = vipBrowserActionFlow
         .mapNotNull { it.badgeText }
-        .ifChanged()
+        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

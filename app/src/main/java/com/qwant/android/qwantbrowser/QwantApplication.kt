@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser
 
 import android.app.Application
+import com.qwant.android.qwantbrowser.stats.Piwik
+import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import mozilla.components.browser.session.storage.SessionStorage
@@ -8,6 +10,7 @@ import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
+import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.AndroidLogSink
@@ -25,6 +28,9 @@ class QwantApplication : Application() {
     @Inject lateinit var store: dagger.Lazy<BrowserStore>
     @Inject lateinit var sessionStorage: dagger.Lazy<SessionStorage>
     @Inject lateinit var tabsUseCases: dagger.Lazy<TabsUseCases>
+    @Inject lateinit var sessionUseCases: dagger.Lazy<SessionUseCases>
+    @Inject lateinit var qwantUseCases: dagger.Lazy<QwantUseCases>
+    @Inject lateinit var piwik: Piwik
 
     override fun onCreate() {
         super.onCreate()
@@ -46,6 +52,9 @@ class QwantApplication : Application() {
         }
 
         restoreBrowserState()
+
+        piwik.trackApplicationDownload()
+        piwik.event("App", "Opening", name = "App opening")
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated
@@ -96,5 +105,4 @@ class QwantApplication : Application() {
 private fun setupLogging() {
     // We want the log messages of all builds to go to Android logcat
     Log.addSink(AndroidLogSink())
-    // RustLog.enable()
 }

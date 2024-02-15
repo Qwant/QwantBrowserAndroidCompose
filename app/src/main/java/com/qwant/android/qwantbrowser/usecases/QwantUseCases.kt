@@ -3,23 +3,14 @@ package com.qwant.android.qwantbrowser.usecases
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
-import com.qwant.android.qwantbrowser.preferences.app.ClearDataPreferences
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.support.ktx.kotlin.urlEncode
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,7 +40,7 @@ class QwantUseCases @Inject constructor(
 
         @SuppressLint("ApplySharedPref")
         operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
-            var url = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
+            var url = search?.let { "$baseUrl&q=${it}" } ?: baseUrl
 
             // TODO find a different way of handling fs=1 one time parameter
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -73,7 +64,7 @@ class QwantUseCases @Inject constructor(
 
     inner class GetQwantUrlUseCase internal constructor() {
         operator fun invoke(search: String? = null, widget: Boolean = false): String {
-            val withSearch = search?.let { "$baseUrl&q=${it.urlEncode()}" } ?: baseUrl
+            val withSearch = search?.let { "$baseUrl&q=${it}" } ?: baseUrl
             return if (widget) "$withSearch + &widget=1" else withSearch
         }
     }
@@ -82,7 +73,7 @@ class QwantUseCases @Inject constructor(
         private val sessionUseCases: SessionUseCases
     ) {
         operator fun invoke(search: String) {
-            sessionUseCases.loadUrl(url = "$baseUrl&q=${search.urlEncode()}")
+            sessionUseCases.loadUrl(url = "$baseUrl&q=${search}")
         }
     }
 

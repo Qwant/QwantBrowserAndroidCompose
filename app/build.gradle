@@ -6,6 +6,15 @@ plugins {
     id 'kotlin-kapt'
 }
 
+// TODO make piwik optional for build
+def piwikProdSettingsFile = rootProject.file("piwik.prod.properties")
+def piwikProdSettings = new Properties()
+piwikProdSettings.load(new FileInputStream(piwikProdSettingsFile))
+
+def piwikDevSettingsFile = rootProject.file("piwik.dev.properties")
+def piwikDevSettings = new Properties()
+piwikDevSettings.load(new FileInputStream(piwikDevSettingsFile))
+
 android {
     namespace 'com.qwant.android.qwantbrowser'
     compileSdk 34
@@ -14,8 +23,8 @@ android {
         applicationId "com.qwant.liberty"
         minSdk 21
         targetSdk 34
-        versionCode 50000050
-        versionName "5.0.0.5"
+        versionCode 50003050
+        versionName "5.0.3.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -30,6 +39,7 @@ android {
 
         resourceConfigurations += ["en", "fr", "de", "es", "it"]
     }
+
     bundle {
         density {
             enableSplit true
@@ -41,6 +51,7 @@ android {
             enableSplit = false
         }
     }
+
     splits {
         abi {
             enable true
@@ -52,28 +63,48 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
+            buildConfigField("String", "PIWIK_URL", piwikDevSettings['PIWIK_URL'])
+            buildConfigField("String", "PIWIK_SITE_ID", piwikDevSettings['PIWIK_SITE_ID'])
+        }
+        internal {
+            initWith(debug)
+            applicationIdSuffix ".internal"
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "PIWIK_URL", piwikProdSettings['PIWIK_URL'])
+            buildConfigField("String", "PIWIK_SITE_ID", piwikProdSettings['PIWIK_SITE_ID'])
+        }
+    }
+
+    flavorDimensions += "target"
+    productFlavors {
+        playstore {
+            dimension "target"
+        }
+        sfr {
+            dimension "target"
+            versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
         }
     }
 
     buildFeatures {
         viewBinding true
         compose true
+        buildConfig true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
         freeCompilerArgs += ['-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn']
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.0'
@@ -93,16 +124,16 @@ dependencies {
     // Legacy Onboarding
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Legacy assistant
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     // Old preferences for migration. Remove after migration is complete
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Android
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
     implementation 'androidx.datastore:datastore:1.0.0'
-    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     // Protobuf
@@ -110,25 +141,25 @@ dependencies {
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt 'androidx.hilt:hilt-compiler:1.0.0'
+    kapt 'androidx.hilt:hilt-compiler:1.1.0'
 
     // Compose
-    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.activity:activity-compose:1.8.1'
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
+    implementation "androidx.compose.ui:ui-viewbinding:1.6.0-alpha08"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
     implementation "androidx.compose.animation:animation-graphics:$compose_version"
-    implementation "androidx.paging:paging-compose:3.2.0"
+    implementation "androidx.paging:paging-compose:3.2.1"
 
     // Compose debug
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_tooling_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_tooling_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_tooling_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.0-beta01"
 
     // Material
-    implementation "androidx.compose.material3:material3:1.2.0-alpha03"
+    implementation "androidx.compose.material3:material3:1.2.0-alpha08"
 
     // Room
     implementation "androidx.room:room-ktx:$room_version"
@@ -160,13 +191,16 @@ dependencies {
     implementation "org.mozilla.components:support-webextensions:$mozac_version"
     implementation "org.mozilla.components:ui-widgets:$mozac_version" // SnackbarDelegate
 
-    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependencie after replacing with our icons
+    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependency after replacing with our icons
 
     // implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
     // implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
     // implementation "org.mozilla.telemetry:glean-native:52.2.0"
     // implementation "org.mozilla.geckoview:geckoview-beta-omni:$mozac_version" // feature-awesomebar deps
     // implementation "org.mozilla.telemetry:glean-native:$mozac_version" // feature-awesomebar deps
+
+    // Piwik
+    implementation 'pro.piwik:sdk-framework-android:1.2.0'
 
     // Tests
     testImplementation 'junit:junit:4.13.2'

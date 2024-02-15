@@ -72,7 +72,8 @@ class BookmarksStorage(private var context: Context) : SuggestionProvider {
             if (it.type == BookmarkItemV2.BookmarkType.BOOKMARK) {
                 if (it.url == url) return true
             } else {
-                if (it.children.isNotEmpty()) {
+                // Keep the null check else NullPointerException appears in Android Vitals for old bookmarks collections !
+                if (it.children != null && it.children.isNotEmpty()) {
                     if (hasBookmark(url, it.children)) return true
                 }
             }
@@ -103,17 +104,20 @@ class BookmarksStorage(private var context: Context) : SuggestionProvider {
 
     private fun getSuggestionsRec(text: String, bookmarks: List<BookmarkItemV2>): List<Suggestion> {
        return bookmarks
-            .filter { it.type == BookmarkItemV2.BookmarkType.FOLDER && it.children.isNotEmpty() }
-            .map { getSuggestionsRec(text, it.children) }
-            .flatten()
-            .plus(
-                bookmarks
-                    .filter { it.type == BookmarkItemV2.BookmarkType.BOOKMARK &&
-                        (it.title.contains(text, ignoreCase = true) || it.url?.contains(text, ignoreCase = true) == true)
-                    }
-                    .map { Suggestion.OpenTabSuggestion(this, text, it.title, it.url) }
-            )
-           .take(3) // TODO make bookmarks suggestions provider result maximum dynamic
+           .asSequence()
+           // Keep the null check else NullPointerException appears in Android Vitals for old bookmarks collections !
+           .filter { it.type == BookmarkItemV2.BookmarkType.FOLDER && it.children != null && it.children.isNotEmpty() }
+           .map { getSuggestionsRec(text, it.children) }
+           .flatten()
+           .plus(
+               bookmarks
+                   .filter { it.type == BookmarkItemV2.BookmarkType.BOOKMARK &&
+                           (it.title.contains(text, ignoreCase = true) || it.url?.contains(text, ignoreCase = true) == true)
+                   }
+                   .map { Suggestion.OpenTabSuggestion(this, text, it.title, it.url) }
+           )
+           .take(1)  // TODO make bookmarks suggestions provider result maximum dynamic
+           .toList()
     }
 
     /* private fun doRestoreOldOld() {

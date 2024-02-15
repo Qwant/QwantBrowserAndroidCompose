@@ -4,6 +4,7 @@
     android:sharedUserId="com.qwant.liberty.sharedID" >
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
     <!-- site permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -23,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QwantBrowserCompose"
         android:localeConfig="@xml/locales_config"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
@@ -72,10 +73,10 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
-            <intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
+            </intent-filter> -->
 
             <intent-filter>
                 <action android:name="android.intent.action.WEB_SEARCH"/>
@@ -103,7 +104,12 @@
             android:windowSoftInputMode="stateAlwaysVisible"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:launchMode="singleTask"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.qwant.android.intent.action.WIDGET" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <receiver
             android:name=".legacy.assist.WidgetProvider"
             android:exported="true">
@@ -116,11 +122,17 @@
         </receiver>
 
         <!-- Downloads -->
-        <service android:name=".mozac.downloads.DownloadService" />
+        <service
+            android:name=".mozac.downloads.DownloadService"
+            android:foregroundServiceType="dataSync"
+        />
         <provider android:name=".mozac.downloads.DownloadsFileProvider"
             android:authorities="${applicationId}.feature.downloads.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/feature_downloads_file_paths" />
         </provider>
 
         <!-- File prompts -->
@@ -128,6 +140,9 @@
             android:authorities="${applicationId}.feature.prompt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/feature_prompts_file_paths" />
         </provider>
 
         <!-- Keeps locales storage compatibility for android 12 and lower -->

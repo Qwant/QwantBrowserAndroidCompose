@@ -19,13 +19,17 @@ fun Dropdown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    focusable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest= onDismissRequest,
         offset = DpOffset(8.dp, 0.dp),
-        properties = PopupProperties(usePlatformDefaultWidth = true),
+        properties = PopupProperties(
+            focusable = focusable,
+            usePlatformDefaultWidth = true
+        ),
         modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .border(

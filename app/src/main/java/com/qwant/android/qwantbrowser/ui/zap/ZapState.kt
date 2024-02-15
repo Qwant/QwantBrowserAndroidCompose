@@ -1,10 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.zap
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -12,61 +9,66 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// TODO zap state could old clear data config (and clean use case) ?
 class ZapState(
     private val clearDataUseCase: ClearDataUseCase,
     private val coroutineScope: CoroutineScope = MainScope()
 ) {
-    enum class State { Zapping, Confirm, Waiting, Error }
-    enum class AnimationState { Idle, In, Wait, Out }
+    internal enum class RequestStatus { Zapping, Confirm, Waiting, Error }
+    internal enum class AnimationStatus { Idle, In, Wait, Out }
 
-    var state: State by mutableStateOf(State.Waiting)
+    internal var requestStatus: RequestStatus by mutableStateOf(RequestStatus.Waiting)
         private set
 
-    var animationState by mutableStateOf(AnimationState.Idle)
+    internal var animationStatus by mutableStateOf(AnimationStatus.Idle)
         private set
 
     private var endCallback: ((Boolean) -> Unit)? = null
 
-    fun updateAnimationState(s: AnimationState) {
-        animationState = s
+    internal fun updateAnimationState(s: AnimationStatus) {
+        animationStatus = s
     }
 
-    fun zap(then: (Boolean) -> Unit = {}) {
-        endCallback = then
-        if (state == State.Waiting) { state = State.Confirm }
+    fun zap(skipConfirmation: Boolean = false, then: (Boolean) -> Unit = {}) {
+        if (requestStatus == RequestStatus.Waiting) {
+            endCallback = then
+            if (skipConfirmation) {
+                consumeZapRequest(true)
+            } else {
+                requestStatus = RequestStatus.Confirm
+            }
+        }
     }
 
-    internal fun confirmZap(doIt: Boolean) {
+    private fun waitAnimationAndFinish(success: Boolean) =
+        coroutineScope.launch {
+            while (animationStatus != AnimationStatus.Wait) {
+                delay(50)
+            }
+            requestStatus = if (success) RequestStatus.Waiting else RequestStatus.Error
+            animationStatus = AnimationStatus.Out
+            endCallback?.invoke(success)
+        }
+
+    internal fun consumeZapRequest(doIt: Boolean) {
         if (doIt) {
-            state = State.Zapping
-            animationState = AnimationState.In
-            clearDataUseCase(coroutineScope) { success ->
-                // TODO handle zap fails globally ?
-                coroutineScope.launch {
-                    while (animationState != AnimationState.Wait) {
-                        delay(50)
-                    }
-                    state = if (success) State.Waiting else State.Error
-                    animationState = AnimationState.Out
-                    endCallback?.invoke(success)
+            requestStatus = RequestStatus.Zapping
+            animationStatus = AnimationStatus.In
+
+            coroutineScope.launch {
+                delay(300) // Wait for animation to cover the whole screen
+                clearDataUseCase { success ->
+                    waitAnimationAndFinish(success)
                 }
             }
         } else {
-            state = State.Waiting
+            requestStatus = RequestStatus.Waiting
             endCallback?.invoke(false)
         }
     }
 
-    internal fun clearError() {
-        if (state == State.Error)
-            state = State.Waiting
+    internal fun consumeZapError() {
+        if (requestStatus == RequestStatus.Error)
+            requestStatus = RequestStatus.Waiting
     }
-}
-
-@Composable
-fun rememberZapState(
-    clearDataUseCase: ClearDataUseCase,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
-): ZapState {
-    return remember { ZapState(clearDataUseCase, coroutineScope) }
 }

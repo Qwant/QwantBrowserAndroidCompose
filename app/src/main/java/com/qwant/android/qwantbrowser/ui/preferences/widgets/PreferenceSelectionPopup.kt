@@ -5,12 +5,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
@@ -47,7 +49,7 @@ fun PreferenceSelectionPopup(
                         val scrollState = rememberScrollState()
                         Column {
                             ScreenHeader(title = stringResource(id = label), scrollableState = scrollState)
-                            Box(modifier = Modifier.verticalScroll(scrollState)) {
+                            Box(modifier = Modifier.verticalScroll(scrollState).padding(top = 16.dp)) {
                                 popupContent()
                             }
                         }
@@ -56,7 +58,8 @@ fun PreferenceSelectionPopup(
             } else {
                 Dropdown(
                     expanded = true,
-                    onDismissRequest = { showPopup = false }
+                    onDismissRequest = { showPopup = false },
+                    modifier = Modifier.padding(vertical = 12.dp)
                 ) {
                     popupContent()
                 }

@@ -1,1 +1,8 @@
 /.gradle/
+/tests.MD
+/app/release/
+/app/sfr/
+/piwik.prod.properties
+/piwik.dev.properties
+/app/playstore/
+/.idea

@@ -102,6 +102,10 @@ class PreferencesViewModel @Inject constructor(
         viewModelScope.launch { appPreferencesRepository.updateClearDataPreferences(preferences) }
     }
 
+    fun updatePiwikOptout(optout: Boolean) {
+        viewModelScope.launch { appPreferencesRepository.updatePiwikOptout(optout) }
+    }
+
     val addTabsUseCase = tabsUseCases.addTab
     val openTestTabUseCase = qwantUseCases.openTestPageUseCase
 }

@@ -20,9 +20,10 @@ import com.qwant.android.qwantbrowser.ui.PrivacyMode
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.TabOpening
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
-import com.qwant.android.qwantbrowser.ui.browser.ZapButton
+import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.ui.preferences.TabsViewPreferenceSelector
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
 import mozilla.components.browser.state.state.SessionState
@@ -50,7 +51,9 @@ fun TabsScreen(
         }
     }
 
-    Column  {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background))  {
         Box(modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)) {
@@ -61,7 +64,7 @@ fun TabsScreen(
                 TabIconButton(
                     onClick = { appViewModel.setPrivacyMode(PrivacyMode.NORMAL) },
                     icon = {
-                        Box(modifier = Modifier.size(24.dp)) {
+                        Box(modifier = Modifier.size(30.dp)) {
                             TabCounter(tabCount = normalTabsCount)
                         }
                     },
@@ -80,16 +83,23 @@ fun TabsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
-                ZapButton(appViewModel)
-                ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
-                    Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Tabs")
+                val privateBeforeClick = private
+                ZapButton(appViewModel, fromScreen = "Tabs") { success ->
+                    if (success) {
+                        onClose(if (privateBeforeClick) TabOpening.PRIVATE else TabOpening.NORMAL)
+                    }
                 }
+                ToolbarAction(onClick = { onClose(if (private) TabOpening.PRIVATE else TabOpening.NORMAL) }) {
+                    Icon(painter = painterResource(id = R.drawable.icons_add_tab), contentDescription = "Add tab")
+                }
+                val tabsClosedString = stringResource(id = R.string.browser_tabs_closed)
                 TabsMenuMore(
                     tabsViewOption = tabsViewOption,
                     private = private,
                     onTabsViewOptionChange = { tabsViewModel.updateTabsViewOption(it) },
                     onRemoveTabs = {
                         tabsViewModel.removeTabs(private)
+                        appViewModel.showSnackbar(tabsClosedString)
                         if (private) {
                             appViewModel.setPrivacyMode(PrivacyMode.NORMAL)
                         } else {
@@ -100,9 +110,16 @@ fun TabsScreen(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
-        AnimatedTabList(tabs = tabs, private = private, onClose = onClose, tabsViewModel = tabsViewModel, tabsViewOption)
+        AnimatedTabList(
+            tabs = tabs,
+            private = private,
+            onClose = onClose,
+            appViewModel = appViewModel,
+            tabsViewModel = tabsViewModel,
+            tabsViewOption = tabsViewOption
+        )
     }
 }
 
@@ -125,19 +142,20 @@ fun TabsMenuMore(
         }
         Dropdown(
             expanded = showMenu,
-            onDismissRequest = { showMenu = false }
+            onDismissRequest = { showMenu = false },
+            modifier = Modifier.defaultMinSize(minWidth = 112.dp)
         ) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_close), contentDescription = "close all tabs") },
+            DropdownItem(
+                text = stringResource(id = if (private) R.string.browser_close_private_tabs else R.string.browser_close_all_tabs),
+                icon = R.drawable.icons_close,
                 onClick = {
                     showMenu = false
                     onRemoveTabs()
                 }
             )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.tabs_view_label)) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.icons_grid), contentDescription = "tabs settings") },
+            DropdownItem(
+                text = stringResource(id = R.string.tabs_view_label),
+                icon = R.drawable.icons_grid,
                 onClick = {
                     showMenu = false
                     showViewOptionPopup = true
@@ -146,10 +164,14 @@ fun TabsMenuMore(
         }
     }
     if (showViewOptionPopup) {
+        val originalOption = remember { tabsViewOption }
         YesNoDialog(
             onDismissRequest = { showViewOptionPopup = false },
             onYes = { showViewOptionPopup = false },
-            onNo = { showViewOptionPopup = false },  // TODO revert to settings before opening popup on cancel
+            onNo = {
+                onTabsViewOptionChange(originalOption)
+                showViewOptionPopup = false
+            },
             title = stringResource(id = R.string.tabs_view_label),
             additionalContent = {
                 Box(modifier = Modifier.padding(top = 8.dp)) {
@@ -168,6 +190,7 @@ fun AnimatedTabList(
     tabs: List<TabSessionState>,
     private: Boolean,
     onClose: (openNewTab: TabOpening) -> Unit,
+    appViewModel: QwantApplicationViewModel,
     tabsViewModel: TabsScreenViewModel,
     tabsViewOption: TabsViewOption
 ) {
@@ -175,13 +198,16 @@ fun AnimatedTabList(
     val normalTabs by remember(tabs) { derivedStateOf { tabs.filter { !it.content.private }.reversed() } }
     val privateTabs by remember(tabs) { derivedStateOf { tabs.filter { it.content.private }.reversed() } }
 
-
     Box(Modifier.fillMaxSize()) {
         val onTabSelected = { tab: SessionState ->
             tabsViewModel.selectTab(tab.id)
             onClose(TabOpening.NONE)
         }
-        val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState -> tabsViewModel.removeTab(tab.id) }
+        val tabClosedString = stringResource(id = R.string.browser_tab_closed)
+        val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState ->
+            tabsViewModel.removeTab(tab.id)
+            appViewModel.showSnackbar(tabClosedString)
+        }
 
         AnimatedVisibility(
             visible = private,
@@ -190,6 +216,7 @@ fun AnimatedTabList(
         ) {
             TabView(
                 tabs = privateTabs,
+                private = private,
                 selectedTabId = selectedTabId,
                 thumbnailStorage = tabsViewModel.thumbnailStorage,
                 browserIcons = tabsViewModel.browserIcons,
@@ -207,6 +234,7 @@ fun AnimatedTabList(
         ) {
             TabView(
                 tabs = normalTabs,
+                private = private,
                 selectedTabId = selectedTabId,
                 thumbnailStorage = tabsViewModel.thumbnailStorage,
                 browserIcons = tabsViewModel.browserIcons,
@@ -239,7 +267,7 @@ fun TabIconButton(
 
         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
             AnimatedVisibility(visible = selected) {
-                Divider(thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
+                HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -12,6 +13,7 @@ import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.zap.ZapFeature
 
@@ -56,7 +58,14 @@ fun QwantBrowserApp(
             privacy = isPrivate
         ) {
             Scaffold(
-                snackbarHost = { SnackbarHost(applicationViewModel.snackbarHostState) },
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = applicationViewModel.snackbarHostState,
+                        modifier = Modifier.offset(
+                            y = if (toolbarPosition == ToolbarPosition.BOTTOM) (-56).dp else 0.dp
+                        )
+                    )
+                },
             ) { scaffoldPadding ->
                 QwantNavHost(
                     navController = navController,

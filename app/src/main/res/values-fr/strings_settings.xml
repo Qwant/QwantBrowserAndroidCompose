@@ -2,10 +2,10 @@
 <resources>
     <string name="settings">Paramètres</string>
 
-    <string name="settings_group_general">General</string>
+    <string name="settings_group_general">Général</string>
     <string name="settings_group_langue">Langue</string>
     <string name="settings_group_privacy">Vie privée</string>
-    <string name="settings_group_about">A propos</string>
+    <string name="settings_group_about">À propos</string>
 
     <string name="default_browser_label">Définir comme navigateur par défaut</string>
 
@@ -118,10 +118,13 @@
     <string name="cleardata_failed">Erreur en supprimant les données</string>
     <string name="cleardata_use_now">Supprimer les données</string>
     <string name="cleardata_confirm_text">Ce bouton ferme tous vos onglets et efface toutes vos données de navigation.</string>
+    <string name="cleardata_done">Données effacées</string>
 
     <string name="clear_data_on_quit_label">Supprimer les données à la fermeture</string>
     <string name="clear_data_on_quit_description">Merci d\'utiliser le bouton \"Quitter l\'application\" pour être certain de l\'effacement de vos données</string>
 
+    <string name="piwik_optout_title">Mesure d\'audience statistique</string>
+    <string name="piwik_optout_description">Les services de mesure statistique d\'audience sont nécessaires au fonctionnement de l\'application en permettant sa bonne administration. Vous avez cependant la possibilité de vous opposer à leur usage en cliquant sur le bouton « Toggle ». </string>
     <string name="privacy_policy_label">Politique de confidentialité</string>
 
     <string name="rate_us_label">Noter cette application</string>

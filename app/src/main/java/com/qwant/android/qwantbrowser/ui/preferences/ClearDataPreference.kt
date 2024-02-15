@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.PreferenceSelectionPopup
@@ -105,13 +106,15 @@ fun ClearDataPreference(
                 )
 
                 var zapEnabled by remember { mutableStateOf(true) }
+                val clearDataDoneString = stringResource(id = R.string.cleardata_done)
                 BigButton(
                     text = R.string.cleardata_use_now,
-                    icon = R.drawable.icons_zap, // TODO change zap icon if night or private theme
+                    icon = R.drawable.icons_zap_night,
                     enabled = zapEnabled,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { applicationViewModel.zap { success ->
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 32.dp),
+                    onClick = { applicationViewModel.zap(from = "Settings") { success ->
                         if (success) {
+                            applicationViewModel.showSnackbar(clearDataDoneString)
                             zapEnabled = false
                         } else {
                             // TODO handle zap failed
@@ -133,7 +136,7 @@ fun CheckBoxRow(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
-        Text(text = stringResource(id = label))
+        Text(text = stringResource(id = label), fontSize = 16.sp)
     }
 }
 

@@ -55,7 +55,7 @@ fun ScreenHeader(
             }
         }
         if (scrollableState?.canScrollBackward == true) {
-            Divider()
+            HorizontalDivider()
         }
     }
 

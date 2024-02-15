@@ -8,6 +8,18 @@
     <string name="browser_close_private_tabs">Cerrar pestañas privadas</string>
     <string name="browser_close_tab">Cerrar esta pestaña</string>
     <string name="browser_go_to_tab">Ir a la pestaña</string>
+    <string name="browser_tab_closed">Pestaña cerrada</string>
+    <string name="browser_tabs_closed">Pestañas eliminadas</string>
+    <string name="browser_tabs_empty_title">Aquí se mostrarán sus pestañas</string>
+    <string name="browser_tabs_empty_subtitle">Utilice las pestañas para consultar varias páginas al mismo tiempo.</string>
+    <string name="browser_tabs_empty_title_private">Aquí se mostrarán las pestañas de navegación privada</string>
+    <string name="browser_tabs_empty_subtitle_private">Para navegar por la web en modo privado, añada una pestaña.</string>
+
+    <string name="browser_site_secure">Conexión protegida</string>
+    <string name="browser_site_insecure">Conexión sin protección</string>
 
     <string name="browser_toolbar_hint">Busca o ingresa una dirección</string>
+
+    <string name="browser_brand_suggest_ad">Anuncio</string>
+    <string name="browser_brand_suggest_information">Esta sugerencia de búsqueda es un anuncio de %1$s, usted será redirigido al sitio web del anunciante : %2$s</string>
 </resources>

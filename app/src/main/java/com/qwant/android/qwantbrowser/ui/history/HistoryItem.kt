@@ -12,6 +12,7 @@ import mozilla.components.concept.storage.VisitInfo
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRowWithIcon
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
+import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import mozilla.components.browser.icons.BrowserIcons
 
 data class MenuItem(val title: String, @DrawableRes val icon: Int, val onClick: () -> Unit)
@@ -42,13 +43,13 @@ fun HistoryItem(
                 }
                 Dropdown(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     menuItems.forEach { menuItem ->
-                        DropdownMenuItem(
-                            text = { Text(menuItem.title) },
+                        DropdownItem(
+                            text = menuItem.title,
+                            icon = menuItem.icon,
                             onClick = {
                                 menuItem.onClick()
                                 showMenu = false
-                            },
-                            leadingIcon = { Icon(painter = painterResource(id = menuItem.icon), contentDescription = menuItem.title) }
+                            }
                         )
                     }
                 }

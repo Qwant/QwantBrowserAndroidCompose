@@ -29,7 +29,7 @@ class ThresholdNestedScrollConnection(
         }
         lastOffsetSign = available.y.sign
 
-        return Offset.Zero // available ?
+        return available // Offset.Zero // available ?
     }
 
     override suspend fun onPreFling(available: Velocity): Velocity {

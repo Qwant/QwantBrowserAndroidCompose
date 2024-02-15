@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +31,7 @@ fun ToolbarDecorator(
     trailingIcons: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val siteSecurity by state.siteSecurity.collectAsState()
+    val currentUrl by state.currentUrl.collectAsState()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -41,14 +40,15 @@ fun ToolbarDecorator(
             .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(50))
             .padding(4.dp)
     ) {
-        val shouldShowQwantIcon = state.hasFocus || state.onQwant
+        val shouldShowQwantIcon = state.hasFocus || state.onQwant || state.text.text.isEmpty()
         AnimatedVisibility(visible = shouldShowQwantIcon) {
             QwantIconOnBackground(shape = CircleShape)
         }
         AnimatedVisibility(visible = !shouldShowQwantIcon) {
-            siteSecurity?.let {
+            SiteSecurityIcon(state)
+            /* siteSecurity?.let {
                 SiteSecurityIcon(securityInfo = it)
-            } ?: Box(modifier = Modifier.size(24.dp))
+            } ?: Box(modifier = Modifier.size(24.dp)) */
         }
 
         // TODO hide toolbar cursor cleverly.
@@ -59,16 +59,28 @@ fun ToolbarDecorator(
 
         Box(modifier = Modifier
             .weight(2f)
-            .padding(horizontal = 4.dp)
+            .padding(start = 12.dp)
         ) {
+            // { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() ?: false && !(currentUrl?.isQwantUrl() ?: false) }
             if (state.text.text.isEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.browser_toolbar_hint),
-                    fontSize = 14.sp,
-                    color = hintColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (currentUrl?.isNotBlank() == true && currentUrl?.startsWith("http://") == false && currentUrl?.startsWith("https://") == false) {
+                    // Intermediate status when loading pages ("about:blank" example) for which we don't want the hint to show
+                    Text(
+                        text = currentUrl ?: "",
+                        fontSize = 16.sp,
+                        color = hintColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.browser_toolbar_hint),
+                        fontSize = 16.sp,
+                        color = hintColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
             // CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
                 innerTextField()

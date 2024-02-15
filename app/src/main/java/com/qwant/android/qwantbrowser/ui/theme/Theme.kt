@@ -1,7 +1,8 @@
 package com.qwant.android.qwantbrowser.ui.theme
 
 import android.app.Activity
-import android.os.Build
+import android.view.WindowManager
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,10 +14,25 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.qwant.android.qwantbrowser.R
 
+data class QwantIcons(
+    @DrawableRes val zap: Int,
+    @DrawableRes val zapAnimated: Int
+)
 
-data class QwantTheme(val dark: Boolean, val private: Boolean)
-val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false) }
+private val lightIcons = QwantIcons(
+    zap = R.drawable.icons_zap,
+    zapAnimated = R.drawable.animated_zap
+)
+
+private val darkAndPrivateIcons = QwantIcons(
+    zap = R.drawable.icons_zap_night,
+    zapAnimated = R.drawable.animated_zap_dark
+)
+
+data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantIcons)
+val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
 private val lightColorScheme = lightColorScheme(
     primary = ActionBlue400,
@@ -29,6 +45,9 @@ private val lightColorScheme = lightColorScheme(
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
     outline = Grey900Alpha12,
+    surfaceVariant = Grey100,
+    onSurfaceVariant = Grey900,
+    error = Red
 )
 
 private val darkColorScheme = darkColorScheme(
@@ -42,6 +61,9 @@ private val darkColorScheme = darkColorScheme(
     tertiaryContainer = Grey700,
     onTertiaryContainer = Color.White,
     outline = Grey000Alpha16,
+    surfaceVariant = Grey600,
+    onSurfaceVariant = Color.White,
+    error = RedLight
 )
 
 private val privateColorScheme = darkColorScheme.copy(
@@ -55,13 +77,16 @@ private val privateColorScheme = darkColorScheme.copy(
     tertiaryContainer = PurpleTertiary,
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,
+    surfaceVariant = Grey000Alpha16,
+    onSurfaceVariant = Color.White,
+    error = RedLight
 )
 
 @Composable
 private fun animateColor(targetValue: Color) =
     animateColorAsState(
         targetValue = targetValue,
-        animationSpec = tween(durationMillis = 1000),
+        animationSpec = tween(durationMillis = 250),
         label = "theme colors"
     ).value
 
@@ -79,6 +104,8 @@ fun ColorScheme.animatedColors() = copy(
     outline = animateColor(outline),
     surface = animateColor(primaryContainer),
     onSurface = animateColor(onPrimaryContainer),
+    surfaceVariant = animateColor(surfaceVariant),
+    onSurfaceVariant = animateColor(onSurfaceVariant),
     background = animateColor(primaryContainer),
     onBackground = animateColor(onPrimaryContainer)
 )
@@ -95,22 +122,24 @@ fun QwantBrowserTheme(
         else -> lightColorScheme
     }.animatedColors()
 
+    val icons = if (privacy || darkTheme) darkAndPrivateIcons else lightIcons
+
+    // TODO: This prevents previews from rendering with the qwant theme. Maybe this could be extracted in its own component.
     val view = LocalView.current
+    val window = (view.context as Activity).window
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
-            /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                window.navigationBarDividerColor = colorScheme.outline.toArgb()
-            } */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = colorScheme.surface.toArgb()
+            window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
         }
     }
 
     CompositionLocalProvider(
-        LocalQwantTheme provides QwantTheme(darkTheme, privacy)
+        LocalQwantTheme provides QwantTheme(darkTheme, privacy, icons)
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

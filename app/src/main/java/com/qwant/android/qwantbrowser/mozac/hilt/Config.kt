@@ -2,9 +2,8 @@ package com.qwant.android.qwantbrowser.mozac.hilt
 
 import android.content.Context
 import com.qwant.android.qwantbrowser.AppRequestInterceptor
-import com.qwant.android.qwantbrowser.ext.UA
-import com.qwant.android.qwantbrowser.legacy.history.History
-import dagger.Binds
+import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.ext.UAQwant
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -22,6 +21,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GeckoSettingsHiltModule {
+    private val debugEnabled = BuildConfig.DEBUG
+
     @Singleton
     @Provides
     fun provideGeckoRuntimeSettings(
@@ -29,11 +30,10 @@ object GeckoSettingsHiltModule {
         val builder = GeckoRuntimeSettings.Builder()
         // TODO explore runtime settings
         // TODO runtime builder.contentBlocking(...)
-        // TODO set debug attribute of runtime relative to build type
-        builder.aboutConfigEnabled(true)
-        builder.consoleOutput(true)
-        builder.debugLogging(true)
-        builder.remoteDebuggingEnabled(true)
+        builder.aboutConfigEnabled(debugEnabled)
+        builder.consoleOutput(debugEnabled)
+        builder.debugLogging(debugEnabled)
+        builder.remoteDebuggingEnabled(debugEnabled)
         return builder.build()
     }
 
@@ -48,10 +48,9 @@ object GeckoSettingsHiltModule {
         return DefaultSettings(
             historyTrackingDelegate = HistoryDelegate(lazy { historyStorage.get() }),
             requestInterceptor = appRequestInterceptor,
-            userAgentString = context.UA,
-            // TODO move debugging options to gradle (or provide different source for variants ?)
-            remoteDebuggingEnabled = true, // prefs.getBoolean(context.getPreferenceKey(pref_key_remote_debugging), false),
-            testingModeEnabled = true
+            userAgentString = context.UAQwant,
+            remoteDebuggingEnabled = debugEnabled,
+            testingModeEnabled = debugEnabled
         )
     }
 }

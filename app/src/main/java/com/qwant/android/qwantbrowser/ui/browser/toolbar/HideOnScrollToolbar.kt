@@ -3,12 +3,14 @@ package com.qwant.android.qwantbrowser.ui.browser.toolbar
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -16,7 +18,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
+import mozilla.components.concept.engine.EngineView
 import kotlin.math.roundToInt
+import kotlin.math.sign
 
 enum class HideOnScrollPosition {
     Top, Bottom
@@ -26,6 +30,7 @@ enum class HideOnScrollPosition {
 fun HideOnScrollToolbar(
     toolbarState: ToolbarState,
     toolbar: @Composable (Modifier) -> Unit,
+    engineView: EngineView?,
     height: Dp,
     modifier: Modifier = Modifier,
     lock: () -> Boolean = { false },
@@ -68,23 +73,38 @@ fun HideOnScrollToolbar(
     }
 
     val nestedScrollConnection = rememberThresholdNestedScrollConnection(
-        onScroll = { sign -> toolbarState.updateVisibility(sign == 1f) },
-        scrollThreshold = if (position == HideOnScrollPosition.Top) 10 else 1,
-        consecutiveThreshold = if (position == HideOnScrollPosition.Top) 4 else 1
+        onScroll = { sign ->
+            if (engineView?.canScrollVerticallyUp() == false) {
+                toolbarState.updateVisibility(true)
+            } else {
+                toolbarState.updateVisibility(sign == 1f)
+            }
+        },
+        scrollThreshold = if (position == HideOnScrollPosition.Top) 5 else 1,
+        consecutiveThreshold = 1 // if (position == HideOnScrollPosition.Top) 4 else 1
     )
+
+//    val nestedScrollConnection = remember {
+//        object: NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//                toolbarState.updateVisibility(available.y.sign == 1f)
+//                return Offset.Zero
+//            }
+//        }
+//    }
 
     LaunchedEffect(shouldHideOnScroll, trueHeight) {
         toolbarState.updateTrueHeightPx(trueHeight)
     }
 
     Box(modifier = modifier) {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outline,
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(100f)
-                .align(if (position == HideOnScrollPosition.Top) Alignment.BottomCenter else Alignment.TopCenter)
+                .align(if (position == HideOnScrollPosition.Top) Alignment.BottomCenter else Alignment.TopCenter),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outline
         )
 
         toolbar(
@@ -105,8 +125,7 @@ fun HideOnScrollToolbar(
             )
             .then(
                 if (position == HideOnScrollPosition.Top) {
-                    Modifier
-                        .offset { IntOffset(x = 0, y = trueHeight) }
+                    Modifier.offset { IntOffset(x = 0, y = trueHeight) }
                 } else Modifier
             )
         )

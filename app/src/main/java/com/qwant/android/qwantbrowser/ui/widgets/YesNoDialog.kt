@@ -1,27 +1,21 @@
 package com.qwant.android.qwantbrowser.ui.widgets
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
 fun YesNoDialog(
@@ -33,100 +27,175 @@ fun YesNoDialog(
     @DrawableRes icon: Int? = null,
     yesText: String = stringResource(id = R.string.ok),
     noText: String = stringResource(id = R.string.cancel),
-    additionalContent: @Composable ColumnScope.() -> Unit = {}
+    additionalContent: (@Composable ColumnScope.() -> Unit)? = null
 ) {
-    // TODO should use `Layout` to compose YesNoDialog instead of paddings
-    val density = LocalDensity.current
-    var topSize by remember { mutableStateOf(0.dp) }
-    var bottomSize by remember { mutableStateOf(0.dp) }
-
-    val scrollState = rememberScrollState()
-
-    Dialog(onDismissRequest = onDismissRequest) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp)
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = { Button(onClick = onYes) { Text(text = yesText) }},
+        dismissButton = { TextButton(onClick = onNo) { Text(text = noText) }},
+        icon = { icon?.let { Icon(painterResource(id = it), contentDescription = "icon") } },
+        title = { title?.let { Text(text = it, modifier = Modifier.fillMaxWidth(), textAlign = if (icon != null) TextAlign.Center else TextAlign.Start) } },
+        text = {
+            if (additionalContent != null) {
+                Column {
+                    val scrollState = rememberScrollState()
+                    if (scrollState.canScrollBackward) {
+                        HorizontalDivider()
+                    }
+                    Column(modifier = Modifier.verticalScroll(scrollState)) {
+                        description?.let { Text(text = it) }
+                        additionalContent()
+                    }
+                    if (scrollState.canScrollForward) {
+                        HorizontalDivider()
+                    }
+                }
+            } else {
+                description?.let { Text(text = it) }
+            }
+        },
+        shape = MaterialTheme.shapes.extraSmall,
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        modifier = Modifier
             .clip(MaterialTheme.shapes.extraSmall)
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
             .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
-            .padding(24.dp)
-        ) {
-            Column(modifier = Modifier
-                .align(Alignment.TopCenter)
-                .onSizeChanged {
-                    with(density) {
-                        topSize = it.height.toDp()
-                    }
-                }
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                ) {
-                    icon?.let {
-                        Icon(
-                            painter = painterResource(id = icon),
-                            contentDescription = "dialog icon"
-                        )
-                    }
+    )
+}
 
-                    title?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
+@Preview(name = "Complete", showSystemUi = true)
+@Composable
+fun YesNoDialogPreviewComplete() {
+    QwantBrowserTheme(
+        darkTheme = true,
+        privacy = false
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YesNoDialog(
+                onDismissRequest = {},
+                onYes = {},
+                onNo = {},
+                title = "Title",
+                description = "Description",
+                icon = R.drawable.icons_paste,
+                additionalContent = {
+                    TextField(value = "additional content", onValueChange = {})
                 }
+            )
+        }
+    }
+}
 
-                if (scrollState.canScrollBackward) {
-                    Divider()
-                }
-            }
+@Preview(name = "Text only", showSystemUi = true)
+@Composable
+fun YesNoDialogPreviewTextOnly() {
+    QwantBrowserTheme(
+        darkTheme = false,
+        privacy = false
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YesNoDialog(
+                onDismissRequest = {},
+                onYes = {},
+                onNo = {},
+                description = stringResource(id = R.string.cleardata_confirm_text)// "Description"
+            )
+        }
+    }
+}
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .fillMaxWidth()
-                    .padding(top = topSize, bottom = bottomSize)
-                    .verticalScroll(scrollState)
-            ) {
-                description?.let {
-                    Text(text = it)
-                }
+@Preview(name = "Icon and text", showSystemUi = true)
+@Composable
+fun YesNoDialogPreviewIconAndText() {
+    QwantBrowserTheme(
+        darkTheme = false,
+        privacy = false
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YesNoDialog(
+                onDismissRequest = {},
+                onYes = {},
+                onNo = {},
+                icon = R.drawable.icons_paste,
+                description = stringResource(id = R.string.cleardata_confirm_text)// "Description"
+            )
+        }
+    }
+}
 
-                additionalContent()
-            }
+@Preview(name = "Title and text", showSystemUi = true)
+@Composable
+fun YesNoDialogPreviewTitleAndText() {
+    QwantBrowserTheme(
+        darkTheme = false,
+        privacy = false
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YesNoDialog(
+                onDismissRequest = {},
+                onYes = {},
+                onNo = {},
+                title = "Titre",
+                description = "Description"
+            )
+        }
+    }
+}
 
-            Column(modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .onSizeChanged {
-                    with(density) {
-                        bottomSize = it.height.toDp()
-                    }
+@Preview(name = "Overflow", showSystemUi = true)
+@Composable
+fun YesNoDialogPreviewOverflow() {
+    QwantBrowserTheme(
+        darkTheme = false,
+        privacy = false
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YesNoDialog(
+                onDismissRequest = {},
+                onYes = {},
+                onNo = {},
+                title = "Title",
+                description = "Description",
+                icon = R.drawable.icons_paste,
+                additionalContent = {
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    Text("Additional content")
+                    TextField(value = "aaaza", onValueChange = {})
                 }
-            ) {
-                if (scrollState.canScrollForward) {
-                    Divider()
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(top = 16.dp)
-                ) {
-                    TextButton(onClick = onNo) {
-                        Text(text = noText)
-                    }
-                    Button(onClick = onYes) {
-                        Text(text = yesText)
-                    }
-                }
-            }
+            )
         }
     }
 }

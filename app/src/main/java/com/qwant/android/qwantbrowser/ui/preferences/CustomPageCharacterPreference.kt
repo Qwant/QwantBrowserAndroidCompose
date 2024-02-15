@@ -1,6 +1,8 @@
 package com.qwant.android.qwantbrowser.ui.preferences
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
@@ -97,12 +99,14 @@ fun CustomPageCharacterPreference(
         label = R.string.custom_page_character_label,
         description = currentOption.label,
         popupContent = {
-            PreferenceIconSelector(
-                options = options,
-                selectedValue = value,
-                onSelected = onValueChange,
-                shape = RoundedCornerShape(8.dp)
-            )
+            Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+                PreferenceIconSelector(
+                    options = options,
+                    selectedValue = value,
+                    onSelected = onValueChange,
+                    shape = RoundedCornerShape(8.dp)
+                )
+            }
         },
         icon = {
             currentOption.icon?.let {

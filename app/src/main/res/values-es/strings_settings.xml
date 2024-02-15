@@ -117,10 +117,13 @@
     <string name="cleardata_tabs_private">Pestañas privadas abiertas</string>
     <string name="cleardata_use_now">Eliminar datos</string>
     <string name="cleardata_confirm_text">Este botón cierra todas tus pestañas y borra todos tus datos de navegación.</string>
+    <string name="cleardata_done">Datos eliminados</string>
 
     <string name="clear_data_on_quit_label">Borrar datos al salir</string>
     <string name="clear_data_on_quit_description">Utilice el botón Salir de la aplicación para asegurarse de que se aplique</string>
 
+    <string name="piwik_optout_title">Medición estadística de audiencias</string>
+    <string name="piwik_optout_description">Los servicios de medición estadística de audiencia son necesarios para el funcionamiento de la aplicación permitiendo su adecuada administración. Sin embargo, tiene la posibilidad de oponerse a su uso haciendo clic en el botón \"Toggle\".\n</string>
     <string name="privacy_policy_label">Política de privacidad</string>
 
     <string name="rate_us_label">Califica esta aplicación</string>

@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui
 
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -11,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.legacy.history.History
+import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
@@ -40,7 +40,8 @@ class QwantApplicationViewModel @Inject constructor(
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
     appPreferencesRepository: AppPreferencesRepository,
     qwantUseCases: QwantUseCases,
-    clearDataUseCase: ClearDataUseCase
+    clearDataUseCase: ClearDataUseCase,
+    private val piwik: Piwik
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
     private val history = historyStorage as History
@@ -135,9 +136,22 @@ class QwantApplicationViewModel @Inject constructor(
         )
 
     val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
-    fun zap(then: (Boolean) -> Unit = {}) {
-        zapState.zap {
-            then(it)
+    fun zap(
+        from: String = "Toolbar",
+        skipConfirmation: Boolean = false,
+        then: (Boolean) -> Unit = {}
+    ) {
+        if (skipConfirmation) {
+            piwik.event("Zap", "Auto", name = "App quit")
+        } else {
+            piwik.event("Zap", "Intention", from)
+        }
+
+        zapState.zap(skipConfirmation) { success ->
+            if (success && !skipConfirmation) {
+                piwik.event("Zap", "Confirmation", from)
+            }
+            then(success)
         }
     }
 }

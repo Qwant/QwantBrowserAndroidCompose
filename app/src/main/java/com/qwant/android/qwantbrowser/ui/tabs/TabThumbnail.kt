@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.images.ImageLoadRequest
 
@@ -28,8 +29,10 @@ fun TabThumbnail(
     val pixelSize = with(LocalDensity.current) { size.roundToPx() }
     var loadedImage: Bitmap? by remember { mutableStateOf(null) }
 
+    // val private = LocalQwantTheme.current.private
+
     LaunchedEffect(tabId) {
-        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize)).await()
+        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize/* , private */)).await()
     }
 
     loadedImage?.let {

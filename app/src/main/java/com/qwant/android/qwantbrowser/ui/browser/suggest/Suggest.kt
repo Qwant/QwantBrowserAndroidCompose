@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
-import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
+import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
@@ -28,6 +28,7 @@ import mozilla.components.browser.icons.BrowserIcons
 fun Suggest(
     suggestions: Map<SuggestionProvider, List<Suggestion>>,
     onSuggestionClicked: (suggestion: Suggestion) -> Unit,
+    onSetTextClicked: (text: String) -> Unit,
     toolbarPosition: ToolbarPosition,
     browserIcons: BrowserIcons,
     modifier: Modifier = Modifier
@@ -36,11 +37,11 @@ fun Suggest(
     val providersOrdered = remember(suggestions.keys) {
         listOf(
             suggestions.keys.find { it is ClipboardProvider },
-            suggestions.keys.find { it is QwantOpensearchProvider },
+            suggestions.keys.find { it is QwantSuggestProvider },
             suggestions.keys.find { it is DomainProvider },
-            suggestions.keys.find { it is SessionTabsProvider },
             suggestions.keys.find { it is BookmarksStorage },
-            suggestions.keys.find { it is History }
+            suggestions.keys.find { it is History },
+            suggestions.keys.find { it is SessionTabsProvider }
         )
     }
 
@@ -48,12 +49,13 @@ fun Suggest(
         .background(MaterialTheme.colorScheme.background)
     ) {
         providersOrdered.forEach { provider ->
-            items(items = suggestions.getOrDefault(provider, listOf())) { suggestion ->
-                provider?.let {
+            suggestions[provider]?.let { suggestions ->
+                items(items = suggestions) { suggestion ->
                     SuggestItem( // TODO add key and animateItemPlacement to suggest item
                         suggestion = suggestion,
                         toolbarPosition = toolbarPosition,
                         browserIcons = browserIcons,
+                        onSetTextClicked = onSetTextClicked,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(52.dp)

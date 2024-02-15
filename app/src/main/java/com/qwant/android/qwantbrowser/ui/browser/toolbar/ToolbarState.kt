@@ -1,65 +1,48 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
+import com.qwant.android.qwantbrowser.ext.toCleanHost
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.urlDecode
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
-import com.qwant.android.qwantbrowser.suggest.providers.QwantOpensearchProvider
+import com.qwant.android.qwantbrowser.stats.Datahub
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
-import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
-import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
-import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.lib.state.ext.flow
-import java.net.URI
 
 @AssistedFactory
 interface ToolbarStateFactory {
     fun create(coroutineScope: CoroutineScope = MainScope()) : ToolbarState
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ToolbarState @AssistedInject constructor(
-    client: Client,
     store: BrowserStore,
     appPreferencesRepository: AppPreferencesRepository,
-    bookmarkStorage: BookmarksStorage,
-    historyStorage: HistoryStorage,
-    @ApplicationContext context: Context,
+    suggestionProviders: @JvmSuppressWildcards List<SuggestionProvider>,
+    val browserIcons: BrowserIcons,
+    val datahub: Datahub,
     @Assisted private val coroutineScope: CoroutineScope = MainScope()
 ) {
-    private val suggestionProviders: List<SuggestionProvider> = listOf(
-        ClipboardProvider(context),
-        QwantOpensearchProvider(client),
-        DomainProvider(context),
-        SessionTabsProvider(store),
-        historyStorage as History,
-        bookmarkStorage
-    )
-
     var visible by mutableStateOf(true)
         private set
 
@@ -72,28 +55,27 @@ class ToolbarState @AssistedInject constructor(
     var trueHeightPx by mutableIntStateOf(0)
         private set
 
-    var suggestions = suggestionProviders.map { it to emptyList<Suggestion>() }.toMutableStateMap()
-        private set
+    private val backgroundScope = CoroutineScope(Dispatchers.IO + Job())
+    private val emptySuggestions = suggestionProviders.associateWith { emptyList<Suggestion>() }
+    val suggestions = snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
+        .distinctUntilChanged()
+        .mapLatest { search ->
+            delay(100)
+            if (hasFocus && search.isNotBlank()) {
+                suggestionProviders.associateWith { provider -> provider.getSuggestions(search) }
+            } else emptySuggestions
+        }
+        .stateIn(
+            scope = backgroundScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = emptySuggestions
+        )
 
     var onQwant by mutableStateOf(true)
         private set
 
-    init {
-        coroutineScope.launch {
-            snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
-                .distinctUntilChanged()
-                .onEach { search ->
-                    if (hasFocus && search.isNotBlank()) {
-                        suggestionProviders.forEach { provider ->
-                            suggestions[provider] = provider.getSuggestions(search)
-                        }
-                    } else {
-                        suggestions.keys.forEach { suggestions[it] = listOf() }
-                    }
-                }
-                .collect()
-        }
-    }
+    var showSiteSecurity by mutableStateOf(false)
+        private set
 
     val toolbarPosition = appPreferencesRepository.flow
         .map { it.toolbarPosition }
@@ -128,7 +110,7 @@ class ToolbarState @AssistedInject constructor(
             initialValue = null
         )
 
-    private val currentUrl = store.flow()
+    val currentUrl = store.flow()
         .map { state -> state.selectedTab?.content?.url }
         .distinctUntilChanged()
         .onEach {
@@ -156,6 +138,10 @@ class ToolbarState @AssistedInject constructor(
         this.visible = visible
     }
 
+    fun updateShowSiteSecurity(visible: Boolean) {
+        this.showSiteSecurity = visible
+    }
+
     internal fun updateFocus(hasFocus: Boolean) {
         this.hasFocus = hasFocus
         coroutineScope.launch {
@@ -172,13 +158,7 @@ class ToolbarState @AssistedInject constructor(
                     else TextFieldValue(search.urlDecode())
                 } ?: TextFieldValue("")
             } else if (!hasFocus) {
-                // TextFieldValue(url.removePrefix("https://").removePrefix("www."))
-                TextFieldValue(try {
-                    URI(url).normalize().host.removePrefix("www.")
-                } catch (e: Exception) {
-                    Log.w("QB_TOOLBAR", "Could not normalize url and get the host. Fallback to empty string for security concerns")
-                    ""
-                })
+                TextFieldValue(url.toCleanHost())
             } else {
                 // TODO Constraint url to a maximum size
                 TextFieldValue(url, selection = TextRange(0, url.length))
