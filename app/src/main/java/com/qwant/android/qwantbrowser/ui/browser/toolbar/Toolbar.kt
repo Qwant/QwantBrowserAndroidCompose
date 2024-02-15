@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.ui.browser.suggest.Suggest
-import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import mozilla.components.browser.icons.BrowserIcons
 
 @Composable
@@ -40,11 +39,14 @@ fun Toolbar(
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
 
-    /* val toolbarTextFieldPaddingEnd by animateDpAsState(
-        targetValue = if (toolbarState.hasFocus) 8.dp else 0.dp,
-        animationSpec = tween(durationMillis = animationDurationMs, easing = animationEasing),
-        label = "toolbarTextFieldPaddingEnd"
-    ) */
+    // TODO move suggestShown variable to viewmodel
+    //  or handle dividers differently
+    //  or pass down this values to ToolbarSuggest which does the same again
+    //  as it's expensive here for only handling toolbar divider visibility
+    val suggestions by toolbarState.suggestions.collectAsState()
+    val suggestShown = remember(toolbarState.hasFocus, suggestions) {
+        toolbarState.hasFocus && suggestions.any { it.value.isNotEmpty() }
+    }
 
     val toolbarTextFieldPaddingStart by animateDpAsState(
         targetValue = if (!beforeTextFieldVisible() || toolbarState.hasFocus) 8.dp else 0.dp,
@@ -67,10 +69,6 @@ fun Toolbar(
         }
     }
 
-    // TODO Move toolbar divider color to some material theme color
-    val qwantTheme = LocalQwantTheme.current
-    val dividerColor = if (qwantTheme.dark || qwantTheme.private) Color(0xFF4B5058) else Color(0xFFD9DBDE)
-
     Column(modifier = modifier) {
         if (toolbarPosition == ToolbarPosition.BOTTOM) {
             ToolbarSuggest(
@@ -80,7 +78,9 @@ fun Toolbar(
                 modifier = Modifier.weight(2f)
             )
             ToolbarProgressBar(toolbarState = toolbarState)
-            HorizontalDivider(thickness = 1.dp, color = dividerColor)
+            if (!suggestShown) {
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            }
         }
 
         Row(modifier = Modifier
@@ -128,7 +128,9 @@ fun Toolbar(
         }
 
         if (toolbarPosition == ToolbarPosition.TOP) {
-            HorizontalDivider(thickness = 1.dp, color = dividerColor)
+            if (!suggestShown) {
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
+            }
             ToolbarProgressBar(toolbarState = toolbarState)
             ToolbarSuggest(
                 toolbarState = toolbarState,
