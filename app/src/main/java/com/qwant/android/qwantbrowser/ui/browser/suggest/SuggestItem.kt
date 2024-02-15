@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -139,23 +140,26 @@ fun SuggestItem(
                     Box(modifier = Modifier.size(24.dp))
                 }
                 is Suggestion.BrandSuggestion -> {
+                    // TODO make a separated component for brand suggestion trailing
                     Box {
                         var showInformationPopup by remember { mutableStateOf(false) }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier.clickable { showInformationPopup = true }
+                            modifier = Modifier
+                                .clickable { showInformationPopup = true }
+                                .padding(start = 4.dp)
                         ) {
                             Text(
                                 text = stringResource(R.string.browser_brand_suggest_ad),
-                                fontSize = 14.sp,
+                                fontSize = 12.sp,
                                 color = LocalContentColor.current.copy(0.6f)
                             )
                             Icon(
                                 painterResource(id = R.drawable.icons_information),
                                 contentDescription = "information",
                                 tint = LocalContentColor.current.copy(0.6f),
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(16.dp)
                             )
                         }
                         Dropdown(
