@@ -46,10 +46,6 @@ fun HistoryList(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            // TODO History lazylist loading icon
-            /* if (visits.loadState.refresh == LoadState.Loading) {
-                item { Loading indicator ... }
-            } */
             if (visits.itemCount > 0) {
                 val calendar = Calendar.getInstance()
                 val todayDayOfYear = calendar.apply { time = Date() }.get(Calendar.DAY_OF_YEAR)
@@ -57,7 +53,6 @@ fun HistoryList(
 
                 for (i in 0 until visits.itemCount) {
                     visits[i]?.let { item ->
-
                         calendar.apply { time = Date(item.visitTime) }
                         val visitDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
                         if (lastDayOfYear == null || visitDayOfYear != lastDayOfYear) {
@@ -71,7 +66,7 @@ fun HistoryList(
                                         )
                                     }"
                                 }
-                            item(key = "date-$dateString-${calendar.get(Calendar.YEAR)}") {
+                            item(key = "date-$dateString-${calendar.get(Calendar.YEAR)}", contentType = 0) {
                                 Text(
                                     text = dateString,
                                     modifier = Modifier.padding(start = 8.dp)
@@ -80,7 +75,7 @@ fun HistoryList(
                             lastDayOfYear = visitDayOfYear
                         }
 
-                        item(visits.itemKey().invoke(i)) {
+                        item(key = item.url, contentType = 1) {
                             val clipboardManager = LocalClipboardManager.current
                             HistoryItem(
                                 visit = item,
