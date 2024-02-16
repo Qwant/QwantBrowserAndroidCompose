@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import mozilla.components.concept.storage.HistoryStorage
 import javax.inject.Singleton
 
 @Module
@@ -15,5 +16,12 @@ object HistoryHiltModule {
     @Provides fun provideHistoryDatabase(@ApplicationContext context: Context)
     : HistoryDatabase {
         return HistoryDatabase.create(context)
+    }
+
+    @Singleton
+    @Provides fun provideHistoryStorage(
+        historyRepository: HistoryRepository
+    ) : HistoryStorage {
+        return historyRepository
     }
 }

@@ -3,18 +3,15 @@ package com.qwant.android.qwantbrowser.ui
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.storage.history.HistoryRepository
 import com.qwant.android.qwantbrowser.ui.zap.ZapState
 import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
@@ -23,7 +20,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.state.ext.flow
 import javax.inject.Inject
@@ -35,7 +31,7 @@ enum class PrivacyMode {
 @HiltViewModel
 class QwantApplicationViewModel @Inject constructor(
     store: BrowserStore,
-    historyStorage: HistoryStorage,
+    historyRepository: HistoryRepository,
     sessionUseCases: SessionUseCases,
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
     appPreferencesRepository: AppPreferencesRepository,
@@ -44,19 +40,16 @@ class QwantApplicationViewModel @Inject constructor(
     private val piwik: Piwik
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
-    private val history = historyStorage as History
 
     private val selectedTabPrivacy = store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
 
-    var hasHistory by mutableStateOf(history.size != 0)
-        private set
-
-    init {
-        history.onSizeChanged = {
-            hasHistory = (it != 0)
-        }
-    }
+    val hasHistory = historyRepository.hasHistoryFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
 
     val snackbarHostState = SnackbarHostState()
     data class SnackbarAction(val label: String, val apply: () -> Unit)

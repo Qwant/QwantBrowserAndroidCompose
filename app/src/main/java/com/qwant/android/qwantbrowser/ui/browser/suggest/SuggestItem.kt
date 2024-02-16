@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,7 +39,6 @@ import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.toCleanUrl
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -50,6 +48,7 @@ import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.UrlIcon
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.HistoryStorage
 
 
 fun <T> IntRange.toAnnotatedStringRange(item: T) : AnnotatedString.Range<T> =
@@ -118,7 +117,7 @@ fun SuggestItem(
                         url = (suggestion as Suggestion.OpenTabSuggestion).url,
                         miniature = R.drawable.icons_bookmark
                     )
-                is History ->
+                is HistoryStorage ->
                     SuggestUrlIcon(
                         browserIcons = browserIcons,
                         url = (suggestion as Suggestion.OpenTabSuggestion).url,

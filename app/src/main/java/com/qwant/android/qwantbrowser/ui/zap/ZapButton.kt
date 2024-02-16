@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,8 @@ fun ZapButton(
     val prefs: SharedPreferences = remember { PreferenceManager.getDefaultSharedPreferences(context) }
     var shouldHighlightZapPref by remember { mutableStateOf(prefs.getBoolean(prefkey, true)) }
 
+    val hasHistory by appViewModel.hasHistory.collectAsState()
+
     val listener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
         key?.takeIf { it == prefkey }?.let {
             shouldHighlightZapPref = p.getBoolean(it, true)
@@ -63,7 +66,7 @@ fun ZapButton(
         if (success) appViewModel.showSnackbar(zapDoneString)
         afterZap?.invoke(success)
     } }
-    if (shouldHighlightZapPref && appViewModel.hasHistory) {
+    if (shouldHighlightZapPref && hasHistory) {
         AnimatedZapButton(zap = {
             with(prefs.edit()) {
                 putBoolean(prefkey, false)
@@ -145,7 +148,9 @@ fun AnimatedZapButton(
             Image(
                 painter = staticPainter,
                 contentDescription = "zap",
-                modifier = Modifier.fillMaxSize().padding(8.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
             )
         } else {
             Image(

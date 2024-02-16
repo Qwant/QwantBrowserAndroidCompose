@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.mozac.hilt
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.mozac.downloads.DownloadService
 import dagger.Module
 import dagger.Provides
@@ -18,7 +17,6 @@ import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.DownloadManager
@@ -64,17 +62,6 @@ object MozacComponentHiltModule {
         @ApplicationContext context: Context
     ) : DownloadStorage {
         return DownloadStorage(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideHistoryStorage(
-        @ApplicationContext context: Context
-    ) : HistoryStorage {
-        return History(context).apply {
-            this.restore()
-            this.setupAutoPersist(30000)
-        }
     }
 
     @Singleton

@@ -1,7 +1,7 @@
 package com.qwant.android.qwantbrowser.suggest
 
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
+import com.qwant.android.qwantbrowser.storage.history.HistoryRepository
 import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
 import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
 import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
@@ -10,7 +10,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import mozilla.components.concept.storage.HistoryStorage
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -20,7 +19,7 @@ object SuggestionProvidersHiltModule {
         qwantSuggestProvider: QwantSuggestProvider,
         domainProvider: DomainProvider,
         sessionTabsProvider: SessionTabsProvider,
-        historyStorage: HistoryStorage,
+        historyRepository: HistoryRepository,
         bookmarkStorage: BookmarksStorage
     ): List<SuggestionProvider> {
         return listOf(
@@ -28,7 +27,7 @@ object SuggestionProvidersHiltModule {
             qwantSuggestProvider,
             domainProvider,
             sessionTabsProvider,
-            historyStorage as History,
+            historyRepository,
             bookmarkStorage
         )
     }

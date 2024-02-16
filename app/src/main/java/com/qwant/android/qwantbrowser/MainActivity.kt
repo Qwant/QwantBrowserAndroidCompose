@@ -89,13 +89,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        (historyStorage as History).run { this.persist() }
         bookmarkStorage.run { this.persist() }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        (historyStorage as History).run { this.restore() }
         bookmarkStorage.run { this.restore() }
     }
 }
