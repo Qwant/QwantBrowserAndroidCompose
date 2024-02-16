@@ -69,6 +69,7 @@ android {
             applicationIdSuffix ".debug"
             buildConfigField("String", "PIWIK_URL", piwikDevSettings['PIWIK_URL'])
             buildConfigField("String", "PIWIK_SITE_ID", piwikDevSettings['PIWIK_SITE_ID'])
+            buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
         }
         internal {
             initWith(debug)
@@ -79,6 +80,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "PIWIK_URL", piwikProdSettings['PIWIK_URL'])
             buildConfigField("String", "PIWIK_SITE_ID", piwikProdSettings['PIWIK_SITE_ID'])
+            buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
         }
     }
 

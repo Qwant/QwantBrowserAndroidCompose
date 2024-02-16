@@ -18,7 +18,6 @@ import org.json.JSONObject
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.min
 
 @Singleton
 class QwantSuggestProvider @Inject constructor(
@@ -42,7 +41,7 @@ class QwantSuggestProvider @Inject constructor(
     override suspend fun getSuggestions(text: String): List<Suggestion> {
         if (text.isNotEmpty()) {
             try {
-                val request = Request(SuggestFormatUrl.format(qwantClientProvider.client, locale, text))
+                val request = Request(SuggestFormatUrl.format(qwantClientProvider.clientState.value, locale, text))
                 client.fetch(request).use { response ->
                     if (response.status == 200) {
                         response.body.use { body ->

@@ -28,3 +28,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "QwantBrowserCompose"
 include ':app'
+include ':qwantcompanion'
