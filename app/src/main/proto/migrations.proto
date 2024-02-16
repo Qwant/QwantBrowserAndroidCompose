@@ -5,4 +5,5 @@ option java_multiple_files = true;
 
 message MigrationData {
     bool migration_503 = 1;
+    bool migration_504 = 2;
 }
