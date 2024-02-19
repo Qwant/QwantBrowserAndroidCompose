@@ -7,7 +7,9 @@ import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.BufferedReader
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DomainProvider @Inject constructor(
     @ApplicationContext val context: Context
 ) : SuggestionProvider {
@@ -22,7 +24,4 @@ class DomainProvider @Inject constructor(
         .filter { it.startsWith(text) }
         .take(2) // TODO make this suggestion limit a parameter
         .map { Suggestion.SearchSuggestion(this, text, it) }
-        // .firstOrNull { it.startsWith(text) }
-        // ?.let { listOf(Suggestion.SearchSuggestion(this, text, it)) }
-        // ?: listOf()
 }

@@ -1,8 +1,7 @@
 package com.qwant.android.qwantbrowser
 
 import android.app.Application
-import com.qwant.android.qwantbrowser.ext.isQwantUrl
-import com.qwant.android.qwantbrowser.piwik.Piwik
+import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*

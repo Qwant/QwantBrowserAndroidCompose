@@ -19,4 +19,7 @@
     <string name="browser_site_insecure">Ungesicherte Verbindung</string>
 
     <string name="browser_toolbar_hint">Adresse suchen oder eingeben</string>
+
+    <string name="browser_brand_suggest_ad">Anzeigen</string>
+    <string name="browser_brand_suggest_information">Dieser Suchvorschlag ist eine Werbung für %1$s, Sie werden auf die Seite des Werbebetreibenden weitergeleitet: %2$s</string>
 </resources>
