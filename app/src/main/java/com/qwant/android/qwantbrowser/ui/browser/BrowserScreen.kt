@@ -327,7 +327,10 @@ fun TabsButton(
             .width(40.dp)
             .fillMaxHeight()
             .combinedClickable(
-                onClick = { navigateTo(NavDestination.Tabs) },
+                onClick = {
+                    viewModel.piwik.event("Tab", "Tap", "Open tray")
+                    navigateTo(NavDestination.Tabs)
+                },
                 onLongClick = { showTabsDropdown = true },
                 enabled = true,
                 role = Role.Button,

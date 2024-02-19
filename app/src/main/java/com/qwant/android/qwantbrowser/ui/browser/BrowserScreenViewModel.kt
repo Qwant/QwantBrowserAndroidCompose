@@ -8,11 +8,13 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
     val sessionUseCases: SessionUseCases,
@@ -50,7 +53,8 @@ class BrowserScreenViewModel @Inject constructor(
     val store: BrowserStore,
     val engine: Engine,
     val client: Client,
-    val qwantUseCases: QwantUseCases
+    val qwantUseCases: QwantUseCases,
+    val piwik: Piwik
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
     val toolbarState: ToolbarState by lazy {
@@ -84,6 +88,12 @@ class BrowserScreenViewModel @Inject constructor(
             .distinctUntilChanged()
             .mapNotNull { it }
             .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
+            .mapLatest {
+                android.util.Log.d("QWANT_PIWIK", "waiting after url changed $it")
+                delay(1000)
+                android.util.Log.d("QWANT_PIWIK", "sending screenview after delay for $it")
+                piwik.screenView(it)
+            }
             .launchIn(viewModelScope)
 
         bookmarkStorage.onChange {
@@ -124,15 +134,6 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
-
-    val currentEngineSession = store.flow()
-        .map { state -> state.selectedTab?.engineState?.engineSession }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
 
     var showFindInPage by mutableStateOf(false)
         private set
@@ -185,9 +186,11 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun closeCurrentTab() {
-        val lastTab = store.state.normalTabs.count() == 1 && store.state.selectedTab?.content?.private == false
+        val private = store.state.selectedTab?.content?.private ?: false
+        val lastTab = store.state.normalTabs.count() == 1 && !private
         store.state.selectedTabId?.let {
             tabsUseCases.removeTab(it, selectParentIfExists = true)
+            piwik.event("Tab", "Tap", "Close current tab - ${if (private) "Private" else "Normal"}")
             if (lastTab) {
                 qwantUseCases.openQwantPage()
             }
