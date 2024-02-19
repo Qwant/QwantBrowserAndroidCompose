@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.TabsViewOption
+import com.qwant.android.qwantbrowser.stats.Piwik
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,8 +20,9 @@ class TabsScreenViewModel @Inject constructor(
     store: BrowserStore,
     private val tabsUseCases: TabsUseCases,
     private val appPreferencesRepository: AppPreferencesRepository,
+    private val piwik: Piwik,
     val thumbnailStorage: ThumbnailStorage,
-    val browserIcons: BrowserIcons
+    val browserIcons: BrowserIcons,
 ): ViewModel() {
     val tabs = store.flow()
         .map { state -> state.tabs }
@@ -51,6 +53,7 @@ class TabsScreenViewModel @Inject constructor(
     }
 
     fun removeTabs(private: Boolean = false) {
+        piwik.event("Tab", "Confirmation", "Close all - ${if (private) "Private" else "Normal"}")
         if (private) {
             tabsUseCases.removePrivateTabs.invoke()
         } else {
@@ -58,9 +61,10 @@ class TabsScreenViewModel @Inject constructor(
         }
     }
 
-    // val thumbnailStorage = mozac.thumbnailStorage
-    // val browserIcons = mozac.browserIcons
-
     val selectTab = tabsUseCases.selectTab
-    val removeTab = tabsUseCases.removeTab
+
+    fun removeTab(tabId: String, private: Boolean) {
+        piwik.event("Tab", "Tap", "Close one - ${if (private) "Private" else "Normal"}")
+        tabsUseCases.removeTab(tabId)
+    }
 }
