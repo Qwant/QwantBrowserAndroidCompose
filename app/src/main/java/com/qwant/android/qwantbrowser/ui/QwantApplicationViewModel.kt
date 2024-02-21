@@ -16,6 +16,9 @@ import com.qwant.android.qwantbrowser.ui.zap.ZapState
 import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
@@ -44,9 +47,10 @@ class QwantApplicationViewModel @Inject constructor(
     private val selectedTabPrivacy = store.flow()
         .map { state -> state.selectedTab?.content?.private ?: false }
 
+    private val backgroundScope = CoroutineScope(Dispatchers.IO + Job())
     val hasHistory = historyRepository.hasHistoryFlow
         .stateIn(
-            scope = viewModelScope,
+            scope = backgroundScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
