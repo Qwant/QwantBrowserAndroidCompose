@@ -1,34 +1,28 @@
 package com.qwant.android.qwantbrowser.preferences.frontend
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
-import com.qwant.android.qwantbrowser.usecases.QwantUseCases
-import mozilla.components.browser.state.state.TabSessionState
-import mozilla.components.feature.session.SessionUseCases
+import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 
 @Composable
 fun QwantUrlEngineSyncFeature(
-    qwantUrl: String,
-    qwantTabs: List<TabSessionState>,
-    loadUrlUseCases: SessionUseCases.DefaultLoadUrlUseCase,
-    getQwantUrlUseCase: QwantUseCases.GetQwantUrlUseCase
+    browserScreenViewModel: BrowserScreenViewModel
 ) {
-    LaunchedEffect(qwantUrl) {
-        qwantTabs.forEach { tab ->
-            if (tab.content.url.isQwantUrl()) {
-                val newUrl = getQwantUrlUseCase.invoke(
-                    search = tab.content.url.getQwantSERPSearch()
+    val currentUrl by browserScreenViewModel.currentUrl.collectAsState()
+    val qwantUrl by browserScreenViewModel.qwantUrl.collectAsState()
+
+    LaunchedEffect(currentUrl, qwantUrl) {
+        currentUrl?.let { url ->
+            if (url.isQwantUrl()) {
+                val newUrl = browserScreenViewModel.qwantUseCases.getQwantUrl(
+                    search = url.getQwantSERPSearch()
                 )
-                if (newUrl != tab.content.url) {
-                    loadUrlUseCases.invoke(
-                        url = getQwantUrlUseCase.invoke(
-                            search = tab.content.url.getQwantSERPSearch()
-                        ),
-                        sessionId = tab.id
-                    )
+                if (newUrl != url) {
+                    browserScreenViewModel.sessionUseCases.loadUrl(newUrl)
                 }
             }
         }

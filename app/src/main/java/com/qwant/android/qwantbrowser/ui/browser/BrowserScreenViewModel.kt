@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
@@ -41,14 +42,15 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
+    frontEndPreferencesRepository: FrontEndPreferencesRepository,
+    private val bookmarkStorage: BookmarksStorage,
+    private val webAppUseCases: WebAppUseCases,
     val sessionUseCases: SessionUseCases,
     val tabsUseCases: TabsUseCases,
-    val webAppUseCases: WebAppUseCases,
     val contextMenuUseCases: ContextMenuUseCases,
     val downloadUseCases: DownloadsUseCases,
     val permissionStorage: GeckoSitePermissionsStorage,
     val browserIcons: BrowserIcons,
-    private val bookmarkStorage: BookmarksStorage,
     val downloadManager: DownloadManager,
     val store: BrowserStore,
     val engine: Engine,
@@ -70,6 +72,13 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = 0
         )
 
+    val qwantUrl = frontEndPreferencesRepository.homeUrl
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
     private val urlFlow = store.flow()
         .map { state -> state.selectedTab?.content?.url }
 
@@ -89,9 +98,7 @@ class BrowserScreenViewModel @Inject constructor(
             .mapNotNull { it }
             .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
             .mapLatest {
-                android.util.Log.d("QWANT_PIWIK", "waiting after url changed $it")
                 delay(1000)
-                android.util.Log.d("QWANT_PIWIK", "sending screenview after delay for $it")
                 piwik.screenView(it)
             }
             .launchIn(viewModelScope)
