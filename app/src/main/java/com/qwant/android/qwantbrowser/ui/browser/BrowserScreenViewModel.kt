@@ -98,7 +98,7 @@ class BrowserScreenViewModel @Inject constructor(
             .mapNotNull { it }
             .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
             .mapLatest {
-                delay(1000)
+                delay(2000)
                 piwik.screenView(it)
             }
             .launchIn(viewModelScope)

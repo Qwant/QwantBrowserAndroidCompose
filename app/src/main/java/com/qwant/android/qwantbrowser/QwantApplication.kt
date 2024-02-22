@@ -31,8 +31,8 @@ class QwantApplication : Application() {
     @Inject lateinit var tabsUseCases: dagger.Lazy<TabsUseCases>
     @Inject lateinit var sessionUseCases: dagger.Lazy<SessionUseCases>
     @Inject lateinit var qwantUseCases: dagger.Lazy<QwantUseCases>
-    @Inject lateinit var piwik: Piwik
-    @Inject lateinit var migrationUtility: MigrationUtility
+    @Inject lateinit var piwik: dagger.Lazy<Piwik>
+    @Inject lateinit var migrationUtility: dagger.Lazy<MigrationUtility>
 
     override fun onCreate() {
         super.onCreate()
@@ -55,10 +55,12 @@ class QwantApplication : Application() {
 
         restoreBrowserState()
 
-        migrationUtility.checkMigrations()
+        migrationUtility.get().checkMigrations()
 
-        piwik.trackApplicationDownload()
-        piwik.event("App", "Opening", name = "App opening")
+        with(piwik.get()) {
+            this.trackApplicationDownload()
+            this.event("App", "Opening", name = "App opening")
+        }
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated
