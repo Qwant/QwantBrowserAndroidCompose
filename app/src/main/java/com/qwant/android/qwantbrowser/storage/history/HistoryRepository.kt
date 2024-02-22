@@ -120,10 +120,13 @@ class HistoryRepository @Inject constructor(
             }
         }
 
+    override suspend fun runMaintenance(dbSizeLimit: UInt) {
+        // TODO maintenance (size limit) for history
+    }
+
     /*
       Not applicable.
      */
     override suspend fun prune() {}
-    override suspend fun runMaintenance(dbSizeLimit: UInt) {}
     override suspend fun warmUp() {}
 }
