@@ -9,12 +9,15 @@ import androidx.paging.cachedIn
 import com.qwant.android.qwantbrowser.storage.history.HistoryPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.tabs.TabsUseCases
 import javax.inject.Inject
+import javax.inject.Scope
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
@@ -32,7 +35,7 @@ class HistoryViewModel @Inject constructor(
         pagingSourceFactory = source
     )
 
-    val historyItems = pager.flow.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
+    val historyItems = pager.flow.cachedIn(viewModelScope)
 
     val openNewTab = tabsUseCases.addTab
 

@@ -2,6 +2,8 @@ package com.qwant.android.qwantbrowser.storage.history
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
@@ -16,12 +18,14 @@ class HistoryPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VisitInfo> {
         val page = params.key ?: 0
         val offset: Long = page * RESULT_PER_PAGE
-        val data = historyStorage.getVisitsPaginated(offset, RESULT_PER_PAGE, listOf(
-            VisitType.NOT_A_VISIT,
-            VisitType.REDIRECT_PERMANENT,
-            VisitType.REDIRECT_TEMPORARY,
-            VisitType.DOWNLOAD
-        ))
+        val data = withContext(Dispatchers.IO) {
+            historyStorage.getVisitsPaginated(offset, RESULT_PER_PAGE, listOf(
+                VisitType.NOT_A_VISIT,
+                VisitType.REDIRECT_PERMANENT,
+                VisitType.REDIRECT_TEMPORARY,
+                VisitType.DOWNLOAD
+            ))
+        }
         return LoadResult.Page(
             data = data,
             prevKey = if (page == 0) null else (page - 1),
