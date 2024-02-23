@@ -1,7 +1,12 @@
 package com.qwant.android.qwantbrowser.storage.bookmarks
 
+import android.content.Context
+import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -13,9 +18,38 @@ import javax.inject.Singleton
 
 @Singleton
 class BookmarksRepository @Inject constructor(
-    db: BookmarksDatabase
+    db: BookmarksDatabase,
+    @ApplicationContext context: Context
 ): BookmarksStorage, SuggestionProvider {
     private val dao = db.bookmarksDao()
+
+    val root = BookmarkNode(
+        type = BookmarkNodeType.FOLDER,
+        guid = ROOT_GUID,
+        title = context.getString(R.string.bookmarks),
+        parentGuid = null,
+        position = null,
+        url = null,
+        dateAdded = 0,
+        children = null
+    )
+
+    fun getBookmarksInFolderFlow(guid: String): Flow<List<BookmarkNode>> =
+        dao.getBookmarksInFolderFlow(guid).map { list ->
+            list.map { it.toMozillaBookmarkNode() }
+        }
+
+    fun isUrlBookmarkedFlow(url: String): Flow<Boolean> =
+        dao.isUrlBookmarkedFlow(url)
+
+    suspend fun getFolderTree(guid: String): BookmarkNode? {
+        val children = dao.getChildren(guid, BookmarkNodeType.FOLDER)
+            .mapNotNull { child -> this.getFolderTree(child.guid) }
+        return when (guid) {
+            root.guid -> root.copy(children = children)
+            else -> dao.get(guid)?.toMozillaBookmarkNode(children)
+        }
+    }
 
     override suspend fun addFolder(
         parentGuid: String,
@@ -74,6 +108,10 @@ class BookmarksRepository @Inject constructor(
          return exists
     }
 
+    suspend fun deleteBookmarksByUrl(url: String) {
+        dao.deleteByUrl(url)
+    }
+
     override suspend fun getBookmark(guid: String): BookmarkNode? =
         dao.get(guid)?.toMozillaBookmarkNode()
 
@@ -88,19 +126,17 @@ class BookmarksRepository @Inject constructor(
         dao.getRecent(maxAge ?: 0, currentTime, limit).map { it.toMozillaBookmarkNode() }
 
     override suspend fun getTree(guid: String, recursive: Boolean): BookmarkNode? {
-        val daoRoot = dao.get(guid)
-        daoRoot?.let { root ->
-            val daoChildren = dao.getChildren(guid)
-            val children = daoChildren.mapNotNull { child ->
-                if (recursive) {
-                    this.getTree(child.guid, true)
-                } else {
-                    child.toMozillaBookmarkNode()
-                }
+        val children = dao.getChildren(guid).mapNotNull { child ->
+            if (recursive) {
+                this.getTree(child.guid, true)
+            } else {
+                child.toMozillaBookmarkNode()
             }
-            return root.toMozillaBookmarkNode(children)
         }
-        return null
+        return when (guid) {
+            root.guid -> root.copy(children = children)
+            else -> dao.get(guid)?.toMozillaBookmarkNode(children)
+        }
     }
 
     override suspend fun searchBookmarks(query: String, limit: Int): List<BookmarkNode> =
@@ -133,6 +169,10 @@ class BookmarksRepository @Inject constructor(
     // Not applicable
     override suspend fun warmUp() {}
     override suspend fun runMaintenance(dbSizeLimit: UInt) {}
+
+    companion object {
+        private const val ROOT_GUID = "bookmarks_root"
+    }
 }
 
 fun com.qwant.android.qwantbrowser.storage.bookmarks.BookmarkNode.toMozillaBookmarkNode(

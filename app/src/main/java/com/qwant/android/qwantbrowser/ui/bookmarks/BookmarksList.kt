@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,7 +30,9 @@ import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRow
 import com.qwant.android.qwantbrowser.ui.browser.suggest.WebsiteRowWithIcon
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
-import org.mozilla.reference.browser.storage.BookmarkItemV2
+import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.feature.contextmenu.R as mozacR
 
 @Composable
@@ -36,116 +41,131 @@ fun BookmarksList(
     onBrowse: () -> Unit,
     lazyListState: LazyListState = rememberLazyListState()
 ) {
-    var editItem: BookmarkItemV2? by remember { mutableStateOf(null) }
-    var moveItem: BookmarkItemV2? by remember { mutableStateOf(null) }
+    val bookmarks by viewModel.bookmarks.collectAsState()
+    val folder by viewModel.folder.collectAsState()
 
-    LazyColumn(state = lazyListState) {
-        viewModel.currentBookmarks.forEach { bookmark ->
-            val itemMenu: @Composable RowScope.() -> Unit = {
-                Box {
-                    var showMenu by remember { mutableStateOf(false) }
+    var editItem: BookmarkNode? by remember { mutableStateOf(null) }
+    var moveItem: BookmarkNode? by remember { mutableStateOf(null) }
 
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icons_more_vertical),
-                            contentDescription = "more"
-                        )
-                    }
-                    Dropdown(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                        val folderOrBookmarkString = when (bookmark.type) {
-                            BookmarkItemV2.BookmarkType.BOOKMARK -> stringResource(R.string.bookmarks_bookmark)
-                            else -> stringResource(R.string.bookmarks_folder)
+    if (bookmarks.isNotEmpty()) {
+        LazyColumn(state = lazyListState) {
+            bookmarks.forEach { bookmark ->
+                val itemMenu: @Composable RowScope.() -> Unit = {
+                    Box {
+                        var showMenu by remember { mutableStateOf(false) }
+
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.icons_more_vertical),
+                                contentDescription = "more"
+                            )
                         }
-                        if (bookmark.type == BookmarkItemV2.BookmarkType.BOOKMARK) {
+                        Dropdown(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                            val folderOrBookmarkString = when (bookmark.type) {
+                                BookmarkNodeType.ITEM -> stringResource(R.string.bookmarks_bookmark)
+                                BookmarkNodeType.FOLDER -> stringResource(R.string.bookmarks_folder)
+                                else -> ""
+                            }
+                            if (bookmark.type == BookmarkNodeType.ITEM) {
+                                DropdownItem(
+                                    text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab),
+                                    icon = R.drawable.icons_add_tab,
+                                    onClick = {
+                                        viewModel.openBookmarkTab(bookmark)
+                                        onBrowse()
+                                    }
+                                )
+                                DropdownItem(
+                                    text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab),
+                                    icon = R.drawable.icons_privacy_mask,
+                                    onClick = {
+                                        viewModel.openBookmarkTab(bookmark, private = true)
+                                        onBrowse()
+                                    }
+                                )
+                                bookmark.url?.let {
+                                    val clipboardManager = LocalClipboardManager.current
+                                    DropdownItem(
+                                        text = stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
+                                        icon = R.drawable.icons_paste,
+                                        onClick = {
+                                            clipboardManager.setText(AnnotatedString(it))
+                                            showMenu = false
+                                        }
+                                    )
+                                }
+                            }
                             DropdownItem(
-                                text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_new_tab),
-                                icon = R.drawable.icons_add_tab,
+                                text = stringResource(R.string.bookmarks_move_x_to, folderOrBookmarkString),
+                                icon = R.drawable.icons_arrow_forward,
                                 onClick = {
+                                    moveItem = bookmark
+                                    showMenu = false
+                                }
+                            )
+                            DropdownItem(
+                                text = "${stringResource(R.string.edit)} $folderOrBookmarkString",
+                                icon = R.drawable.icons_edit,
+                                onClick = {
+                                    editItem = bookmark
+                                    showMenu = false
+                                }
+                            )
+                            DropdownItem(
+                                text = "${stringResource(R.string.delete)} $folderOrBookmarkString",
+                                icon = R.drawable.icons_trash,
+                                onClick = {
+                                    viewModel.deleteBookmark(bookmark)
+                                    showMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                item { // TODO add key and animateItemPlacement
+                    when (bookmark.type) {
+                        BookmarkNodeType.ITEM -> WebsiteRowWithIcon(
+                            title = bookmark.title,
+                            url = bookmark.url ?: "",
+                            browserIcons = viewModel.browserIcons,
+                            trailing = itemMenu,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
                                     viewModel.openBookmarkTab(bookmark)
                                     onBrowse()
                                 }
-                            )
-                            DropdownItem(
-                                text = stringResource(mozacR.string.mozac_feature_contextmenu_open_link_in_private_tab),
-                                icon = R.drawable.icons_privacy_mask,
-                                onClick = {
-                                    viewModel.openBookmarkTab(bookmark, private = true)
-                                    onBrowse()
-                                }
-                            )
-                            bookmark.url?.let {
-                                val clipboardManager = LocalClipboardManager.current
-                                DropdownItem(
-                                    text = stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
-                                    icon = R.drawable.icons_paste,
-                                    onClick = {
-                                        clipboardManager.setText(AnnotatedString(it))
-                                        showMenu = false
-                                    }
-                                )
-                            }
-                        }
-                        DropdownItem(
-                            text = stringResource(R.string.bookmarks_move_x_to, folderOrBookmarkString),
-                            icon = R.drawable.icons_arrow_forward,
-                            onClick = {
-                                moveItem = bookmark
-                                showMenu = false
-                            }
+                                .padding(start = 16.dp)
                         )
-                        DropdownItem(
-                            text = "${stringResource(R.string.edit)} $folderOrBookmarkString",
-                            icon = R.drawable.icons_edit,
-                            onClick = {
-                                editItem = bookmark
-                                showMenu = false
-                            }
+                        BookmarkNodeType.FOLDER -> WebsiteRow(
+                            title = bookmark.title,
+                            leading = { Icon(
+                                painter = painterResource(id = R.drawable.icons_folder),
+                                contentDescription = "folder icon",
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(4.dp)
+                            ) },
+                            trailing = itemMenu,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { viewModel.visitFolder(bookmark.guid) }
+                                .padding(start = 16.dp)
                         )
-                        DropdownItem(
-                            text = "${stringResource(R.string.delete)} $folderOrBookmarkString",
-                            icon = R.drawable.icons_trash,
-                            onClick = {
-                                viewModel.deleteBookmark(bookmark)
-                                showMenu = false
-                            }
-                        )
+                        BookmarkNodeType.SEPARATOR -> HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
                     }
                 }
             }
-
-            item { // TODO add key and animateItemPlacement
-                when (bookmark.type) {
-                    BookmarkItemV2.BookmarkType.BOOKMARK -> WebsiteRowWithIcon(
-                        title = bookmark.title,
-                        url = bookmark.url ?: "",
-                        browserIcons = viewModel.browserIcons,
-                        trailing = itemMenu,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                viewModel.openBookmarkTab(bookmark)
-                                onBrowse()
-                            }
-                            .padding(start = 16.dp)
-                    )
-                    BookmarkItemV2.BookmarkType.FOLDER -> WebsiteRow(
-                        title = bookmark.title,
-                        leading = { Icon(
-                            painter = painterResource(id = R.drawable.icons_folder),
-                            contentDescription = "folder icon",
-                            modifier = Modifier
-                                .size(32.dp)
-                                .padding(4.dp)
-                        ) },
-                        trailing = itemMenu,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.visitFolder(bookmark) }
-                            .padding(start = 16.dp)
-                    )
-                }
-            }
         }
+    } else {
+        EmptyPagePlaceholder(
+            icon = R.drawable.icons_bookmark,
+            title = stringResource(id = R.string.bookmarks_empty_title,
+                folder.title ?: stringResource(R.string.bookmarks_empty_default_folder_name)
+            ),
+            subtitle = stringResource(id = R.string.bookmarks_empty_message)
+        )
     }
 
     editItem?.let { item ->
@@ -158,14 +178,15 @@ fun BookmarksList(
         )
     }
 
+    val folderTree by viewModel.folderTree.collectAsState()
     moveItem?.let { item ->
-        BookmarkMoveDialog(
-            item = item,
-            bookmarksRoot = viewModel.bookmarksRoot,
-            onSubmit = { to ->
-                viewModel.moveBookmark(item, to)
-            },
-            onDismiss = { moveItem = null }
-        )
+        folderTree?.let { folderTree ->
+            BookmarkMoveDialog(
+                item = item,
+                folderTree = folderTree,
+                onSubmit = { to -> viewModel.moveBookmark(item, to) },
+                onDismiss = { moveItem = null }
+            )
+        }
     }
 }

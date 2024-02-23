@@ -8,9 +8,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.qwant.android.qwantbrowser.storage.history.HistoryPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.storage.HistoryStorage
@@ -33,11 +32,9 @@ class HistoryViewModel @Inject constructor(
         pagingSourceFactory = source
     )
 
-    private val backgroundScope = CoroutineScope(Dispatchers.IO + Job())
-    val historyItems = pager.flow.cachedIn(backgroundScope)
+    val historyItems = pager.flow.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
 
     val openNewTab = tabsUseCases.addTab
-    // val browserIcons = core.browserIcons
 
     fun deleteUrlFromHistory(url: String) {
         viewModelScope.launch {

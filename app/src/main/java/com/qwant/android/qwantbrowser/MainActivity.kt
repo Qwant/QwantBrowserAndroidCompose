@@ -11,13 +11,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.ui.QwantBrowserApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.support.base.android.NotificationsDelegate
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -25,8 +23,6 @@ import kotlin.system.exitProcess
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var frontEndPreferencesRepository: FrontEndPreferencesRepository
-    @Inject lateinit var historyStorage: HistoryStorage
-    @Inject lateinit var bookmarkStorage: BookmarksStorage
     @Inject lateinit var notificationsDelegate: NotificationsDelegate
     @Inject lateinit var clientProvider: QwantClientProvider
 
@@ -83,15 +79,5 @@ class MainActivity : AppCompatActivity() {
                 frontEndPreferencesRepository.updateInterfaceLanguage(it)
             }
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        bookmarkStorage.run { this.persist() }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        bookmarkStorage.run { this.restore() }
     }
 }

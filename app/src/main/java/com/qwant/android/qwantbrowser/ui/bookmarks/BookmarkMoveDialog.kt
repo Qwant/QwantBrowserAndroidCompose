@@ -28,101 +28,61 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.ui.widgets.YesNoDialog
-import org.mozilla.reference.browser.storage.BookmarkItemV2
 import com.qwant.android.qwantbrowser.R
+import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.BookmarkNodeType
 
 @Composable
 fun BookmarkMoveDialog(
-    item: BookmarkItemV2,
-    bookmarksRoot: ArrayList<BookmarkItemV2>,
+    item: BookmarkNode,
+    folderTree: BookmarkNode,
     onDismiss: () -> Unit = {},
-    onSubmit: (to: BookmarkItemV2?) -> Unit = {}
+    onSubmit: (toGuid: String?) -> Unit = {}
 ) {
-    var selectedItem by remember { mutableStateOf(item.parent) }
+    var selectedFolderGuid by remember { mutableStateOf(item.parentGuid) }
 
     YesNoDialog(
         onDismissRequest = { onDismiss() },
         title = stringResource(id = R.string.bookmarks_move_x_to, stringResource(
-            if (item.type == BookmarkItemV2.BookmarkType.BOOKMARK) R.string.bookmarks_bookmark
+            if (item.type == BookmarkNodeType.ITEM) R.string.bookmarks_bookmark
             else R.string.bookmarks_folder
         )),
         onYes = {
-            onSubmit(selectedItem)
+            onSubmit(selectedFolderGuid)
             onDismiss()
         },
         onNo = { onDismiss() },
         yesText = stringResource(id = R.string.save)
     ) {
-        RootBookmarkFolderTreeItem(
-            root = bookmarksRoot,
-            exclude = item,
-            selectedFolder = selectedItem,
-            onSelected = { selectedItem = it }
+        BookmarkFolderTreeItem(
+            currentFolder = folderTree,
+            excludeGuid = if (item.type == BookmarkNodeType.FOLDER) item.guid else null,
+            selectedFolderGuid = selectedFolderGuid,
+            onSelected = { selectedFolderGuid = it }
         )
     }
 }
 
 @Composable
-fun RootBookmarkFolderTreeItem(
-    root: ArrayList<BookmarkItemV2>,
-    exclude: BookmarkItemV2?,
-    selectedFolder: BookmarkItemV2?,
-    onSelected: (BookmarkItemV2?) -> Unit
-) {
-    val background = if (selectedFolder == null) MaterialTheme.colorScheme.primary else Color.Transparent
-
-    Column {
-        CompositionLocalProvider(LocalContentColor provides
-                if (selectedFolder == null) MaterialTheme.colorScheme.onPrimary else LocalContentColor.current
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(background)
-                    .clickable { onSelected(null) }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icons_folder),
-                    contentDescription = "Folder icon",
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-
-                Text(text = stringResource(id = R.string.bookmarks))
-            }
-        }
-        root
-            .filter { it != exclude && it.type == BookmarkItemV2.BookmarkType.FOLDER }
-            .sortedBy { it.title.lowercase() }
-            .forEach { child ->
-                BookmarkFolderTreeItem(child, exclude, selectedFolder, onSelected)
-            }
-    }
-}
-
-@Composable
 fun BookmarkFolderTreeItem(
-    currentFolder: BookmarkItemV2,
-    exclude: BookmarkItemV2? = null,
-    selectedFolder: BookmarkItemV2? = null,
-    onSelected: (BookmarkItemV2?) -> Unit
+    currentFolder: BookmarkNode,
+    excludeGuid: String?,
+    selectedFolderGuid: String?,
+    onSelected: (String?) -> Unit
 ) {
-    val background = if (selectedFolder == currentFolder) MaterialTheme.colorScheme.primary else Color.Transparent
+    val background = if (selectedFolderGuid == currentFolder.guid) MaterialTheme.colorScheme.primary else Color.Transparent
 
-    // if we only want actual selected parents to be open, use as starting value for open
-    //      exclude?.let { currentFolder.isParentOf(exclude) } ?: false
     var open by remember { mutableStateOf( true) }
 
     val arrowRotation by animateFloatAsState(targetValue = if (open) 90f else 180f, label = "arrowRotation")
 
     Column(modifier = Modifier.padding(start = 16.dp)) {
         val children = currentFolder.children
-            .filter { it != exclude && it.type == BookmarkItemV2.BookmarkType.FOLDER }
-            .sortedBy { it.title.lowercase() }
+            ?.filter { it.guid != excludeGuid }
+            ?.sortedBy { it.title?.lowercase() }
 
         CompositionLocalProvider(LocalContentColor provides
-                if (selectedFolder == currentFolder) MaterialTheme.colorScheme.onPrimary else LocalContentColor.current
+            if (selectedFolderGuid == currentFolder.guid) MaterialTheme.colorScheme.onPrimary else LocalContentColor.current
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -130,7 +90,7 @@ fun BookmarkFolderTreeItem(
                     .height(48.dp)
                     .fillMaxWidth()
                     .background(background)
-                    .clickable { onSelected(currentFolder) }
+                    .clickable { onSelected(currentFolder.guid) }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.icons_folder),
@@ -138,9 +98,9 @@ fun BookmarkFolderTreeItem(
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
 
-                Text(text = currentFolder.title, modifier = Modifier.weight(2f))
+                Text(text = currentFolder.title ?: "", modifier = Modifier.weight(2f))
 
-                if (children.isNotEmpty()) {
+                if (children?.isNotEmpty() == true) {
                     IconButton(onClick = { open = !open }) {
                         Icon(
                             painterResource(
@@ -155,8 +115,8 @@ fun BookmarkFolderTreeItem(
         }
         AnimatedVisibility(open) {
             Column {
-                children.forEach {
-                    BookmarkFolderTreeItem(it, exclude, selectedFolder, onSelected)
+                children?.forEach {
+                    BookmarkFolderTreeItem(it, excludeGuid, selectedFolderGuid, onSelected)
                 }
             }
         }

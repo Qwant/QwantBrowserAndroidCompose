@@ -76,6 +76,7 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
     val canGoBack by viewModel.canGoBack.collectAsState()
     val canGoForward by viewModel.canGoForward.collectAsState()
     val loadingProgress by viewModel.toolbarState.loadingProgress.collectAsState()
+    val isUrlBookmarked by viewModel.isUrlBookmarked.collectAsState()
 
     Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
         IconButton(onClick = { viewModel.goBack() }, enabled = canGoBack) {
@@ -85,7 +86,7 @@ fun BrowserNavigation(viewModel: BrowserScreenViewModel) {
             Icon(painter = painterResource(id = R.drawable.icons_arrow_forward), contentDescription = "forward")
         }
 
-        if (viewModel.isUrlBookmarked) {
+        if (isUrlBookmarked) {
             IconButton(onClick = { viewModel.removeBookmark() }) {
                 Icon(painter = painterResource(id = R.drawable.icons_delete_bookmark), contentDescription = "delete bookmark")
             }

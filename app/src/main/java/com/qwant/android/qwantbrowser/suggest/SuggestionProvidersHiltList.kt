@@ -1,6 +1,6 @@
 package com.qwant.android.qwantbrowser.suggest
 
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.storage.history.HistoryRepository
 import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
 import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
@@ -20,7 +20,7 @@ object SuggestionProvidersHiltModule {
         domainProvider: DomainProvider,
         sessionTabsProvider: SessionTabsProvider,
         historyRepository: HistoryRepository,
-        bookmarkStorage: BookmarksStorage
+        bookmarksRepository: BookmarksRepository
     ): List<SuggestionProvider> {
         return listOf(
             clipboardProvider,
@@ -28,7 +28,7 @@ object SuggestionProvidersHiltModule {
             domainProvider,
             sessionTabsProvider,
             historyRepository,
-            bookmarkStorage
+            bookmarksRepository
         )
     }
 }

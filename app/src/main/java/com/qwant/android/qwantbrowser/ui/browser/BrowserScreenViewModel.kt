@@ -7,14 +7,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.stats.Piwik
+import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -43,7 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
     frontEndPreferencesRepository: FrontEndPreferencesRepository,
-    private val bookmarkStorage: BookmarksStorage,
+    private val bookmarksRepository: BookmarksRepository,
     private val webAppUseCases: WebAppUseCases,
     val sessionUseCases: SessionUseCases,
     val tabsUseCases: TabsUseCases,
@@ -83,39 +84,52 @@ class BrowserScreenViewModel @Inject constructor(
         .map { state -> state.selectedTab?.content?.url }
 
     val currentUrl = urlFlow
+        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = null
         )
 
-    var isUrlBookmarked by mutableStateOf(false)
-        private set
+    var isUrlBookmarked = urlFlow
+        .filterNotNull()
+        .flatMapLatest { bookmarksRepository.isUrlBookmarkedFlow(it) }
+        .flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
 
     init {
         urlFlow
-            .distinctUntilChanged()
             .mapNotNull { it }
-            .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
             .mapLatest {
                 delay(2000)
                 piwik.screenView(it)
             }
             .launchIn(viewModelScope)
+    }
 
-        bookmarkStorage.onChange {
-            store.state.selectedTab?.let {
-                isUrlBookmarked = bookmarkStorage.contains(it.content.url)
+    fun addBookmark() {
+        store.state.selectedTab?.let { tab ->
+            viewModelScope.launch(Dispatchers.IO) {
+                bookmarksRepository.addItem(
+                    parentGuid = bookmarksRepository.root.guid,
+                    url = tab.content.url,
+                    title = tab.content.title,
+                    position = null
+                )
             }
         }
     }
 
-    fun addBookmark() {
-        bookmarkStorage.addBookmark(store.state.selectedTab)
-    }
-
     fun removeBookmark() {
-        bookmarkStorage.deleteBookmark(store.state.selectedTab)
+        store.state.selectedTab?.content?.url?.let { url ->
+            viewModelScope.launch(Dispatchers.IO) {
+                bookmarksRepository.deleteBookmarksByUrl(url)
+            }
+        }
     }
 
     val canGoBack = store.flow()

@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -21,6 +20,7 @@ import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
 import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
 import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.concept.storage.HistoryStorage
 
 

@@ -6,87 +6,124 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.BookmarkInfo
+import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
-import org.mozilla.reference.browser.storage.BookmarkItemV2
-import java.security.InvalidParameterException
-import java.util.Locale
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BookmarksScreenViewModel @Inject constructor(
+    private val bookmarksRepository: BookmarksRepository,
     private val tabsUseCases: TabsUseCases,
-    val browserIcons: BrowserIcons, // TODO set private
-    private val storage: BookmarksStorage
+    val browserIcons: BrowserIcons
 ): ViewModel() {
-    var currentFolder: BookmarkItemV2? by mutableStateOf(null)
-        private set
-    var currentBookmarks by mutableStateOf(storage.root().toTypedArray())
+    var folderGuid: String by mutableStateOf(bookmarksRepository.root.guid)
         private set
 
-    val bookmarksRoot = storage.root()
+    val folder = snapshotFlow { folderGuid }
+        .mapLatest { bookmarksRepository.getBookmark(folderGuid) ?: bookmarksRepository.root }
+        .flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = bookmarksRepository.root
+        )
+
+    val isRootFolder = snapshotFlow { folderGuid }
+        .map { it == bookmarksRepository.root.guid }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = true
+        )
+
+    val bookmarks = snapshotFlow { folderGuid }
+        .flatMapLatest { bookmarksRepository.getBookmarksInFolderFlow(it) }
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = listOf()
+        )
+
+    private var folderTreeStateFlow: MutableStateFlow<BookmarkNode?> = MutableStateFlow(null)
+    val folderTree = folderTreeStateFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
 
     init {
-        storage.onChange { setBookmarksFromFolder() }
-        snapshotFlow { currentFolder }
-            .distinctUntilChanged()
-            .onEach { setBookmarksFromFolder() }
-            .launchIn(viewModelScope)
+        loadFolderTree()
     }
 
-    fun visitFolder(folder: BookmarkItemV2?) {
-        currentFolder = folder
-    }
-
-    fun addFolder(name: String, parent: BookmarkItemV2? = null) {
-        storage.addBookmark(
-            BookmarkItemV2(BookmarkItemV2.BookmarkType.FOLDER, name, parent = parent)
-        )
-    }
-
-    fun deleteBookmark(item: BookmarkItemV2) {
-        storage.deleteBookmark(item)
-    }
-
-    fun editBookmark(item: BookmarkItemV2, title: String, url: String? = null) {
-        item.title = title
-        item.url = url
-
-        storage.persist()
-    }
-
-    fun moveBookmark(item: BookmarkItemV2, to: BookmarkItemV2?) {
-        if (to == null || to.type == BookmarkItemV2.BookmarkType.FOLDER) {
-            if (item.parent != to) {
-                // remove from parent or root
-                item.parent?.removeChild(item) ?: bookmarksRoot.remove(item)
-                // add to parent or root
-                to?.addChild(item) ?: bookmarksRoot.add(item)
-                // change child parent
-                item.parent = to
-
-                setBookmarksFromFolder()
-                storage.persist()
+    private fun loadFolderTree() {
+        viewModelScope.launch(Dispatchers.IO) {
+            folderTreeStateFlow.update {
+                bookmarksRepository.getFolderTree(bookmarksRepository.root.guid)
             }
-        } else {
-            throw InvalidParameterException("Can't move bookmark to non-folder location `to` = $to")
         }
     }
 
-    private fun setBookmarksFromFolder() {
-        currentBookmarks = (currentFolder?.children ?: storage.root())
-            .sortedWith(compareByDescending<BookmarkItemV2> { it.type }
-                .thenBy { it.title.lowercase(Locale.getDefault()) })
-            .toTypedArray()
+    fun visitFolder(folderGuid: String) {
+        this.folderGuid = folderGuid
     }
 
-    fun openBookmarkTab(item: BookmarkItemV2, private: Boolean = false) {
+    fun addFolder(title: String, parentGuid: String? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bookmarksRepository.addFolder(parentGuid ?: bookmarksRepository.root.guid, title)
+        }.invokeOnCompletion { this.loadFolderTree() }
+    }
+
+    fun deleteBookmark(item: BookmarkNode) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bookmarksRepository.deleteNode(item.guid)
+        }.invokeOnCompletion { this.loadFolderTree() }
+    }
+
+    fun editBookmark(item: BookmarkNode, title: String, url: String? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bookmarksRepository.updateNode(item.guid, BookmarkInfo(
+                title = title,
+                url = url,
+                parentGuid = null,
+                position = null
+            ))
+        }.invokeOnCompletion { this.loadFolderTree() }
+    }
+
+    fun moveBookmark(item: BookmarkNode, toGuid: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bookmarksRepository.updateNode(item.guid, BookmarkInfo(
+                parentGuid = toGuid ?: bookmarksRepository.root.guid,
+                title = null,
+                url = null,
+                position = null
+            ))
+        }.invokeOnCompletion { this.loadFolderTree() }
+    }
+
+    fun openBookmarkTab(item: BookmarkNode, private: Boolean = false) {
         item.url?.let {
             tabsUseCases.addTab(it.toNormalizedUrl(), private = private)
         }

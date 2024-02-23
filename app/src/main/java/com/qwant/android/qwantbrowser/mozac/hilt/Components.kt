@@ -2,7 +2,6 @@ package com.qwant.android.qwantbrowser.mozac.hilt
 
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.mozac.downloads.DownloadService
 import dagger.Module
 import dagger.Provides
@@ -62,16 +61,6 @@ object MozacComponentHiltModule {
         @ApplicationContext context: Context
     ) : DownloadStorage {
         return DownloadStorage(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideBookmarkStorage(
-        @ApplicationContext context: Context
-    ) : BookmarksStorage {
-        return BookmarksStorage(context).apply {
-            this.restore()
-        }
     }
 
     @Singleton

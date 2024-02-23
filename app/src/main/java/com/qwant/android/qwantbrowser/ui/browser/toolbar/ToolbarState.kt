@@ -55,7 +55,6 @@ class ToolbarState @AssistedInject constructor(
     var trueHeightPx by mutableIntStateOf(0)
         private set
 
-    private val backgroundScope = CoroutineScope(Dispatchers.IO + Job())
     private val emptySuggestions = suggestionProviders.associateWith { emptyList<Suggestion>() }
     val suggestions = snapshotFlow { text.getTextBeforeSelection(text.text.length).text }
         .distinctUntilChanged()
@@ -65,8 +64,9 @@ class ToolbarState @AssistedInject constructor(
                 suggestionProviders.associateWith { provider -> provider.getSuggestions(search) }
             } else emptySuggestions
         }
+        .flowOn(Dispatchers.IO)
         .stateIn(
-            scope = backgroundScope,
+            scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = emptySuggestions
         )

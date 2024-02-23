@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.toCleanUrl
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -48,6 +47,7 @@ import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.UrlIcon
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.BookmarksStorage
 import mozilla.components.concept.storage.HistoryStorage
 
 
