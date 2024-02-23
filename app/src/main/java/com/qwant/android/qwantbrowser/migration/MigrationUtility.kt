@@ -59,10 +59,10 @@ class MigrationUtility @Inject constructor(
 
     private suspend fun migration504(migrationData: MigrationData) {
         withContext(Dispatchers.IO + Job()) {
-            if (migrationData.migration504History) {
+            if (!migrationData.migration504History) {
                 migrateHistoryV4()
             }
-            if (migrationData.migration504Bookmarks) {
+            if (!migrationData.migration504Bookmarks) {
                 migrateBookmarksV4()
             }
         }
@@ -98,7 +98,7 @@ class MigrationUtility @Inject constructor(
                 migrationDataRepository.migration504HistoryDone()
                 shouldDeleteFile = true
             } else {
-                Log.w("QWANT_MIGRATE", "No history to yet")
+                Log.w("QWANT_MIGRATE", "No history yet")
                 migrationDataRepository.migration504HistoryDone()
             }
         } catch (e: FileNotFoundException) {
@@ -136,19 +136,19 @@ class MigrationUtility @Inject constructor(
                 shouldDeleteFile = true
             } else {
                 migrationDataRepository.migration504BookmarksDone()
-                Log.w("QWANT_BROWSER" ,"No bookmarks yet")
+                Log.w("QWANT_MIGRATE" ,"No bookmarks yet")
             }
         } catch (e: FileNotFoundException) {
-            Log.e("QWANT_BROWSER", "Failed reading history file: File not found: " + e.message)
+            Log.e("QWANT_MIGRATE", "Failed reading history file: File not found: " + e.message)
             // e.printStackTrace()
         } catch (e: IOException) {
-            Log.e("QWANT_BROWSER", "Failed reading bookmarks file: IO exception: " + e.message)
+            Log.e("QWANT_MIGRATE", "Failed reading bookmarks file: IO exception: " + e.message)
             e.printStackTrace()
         } catch (e: ClassNotFoundException) {
-            Log.e("QWANT_BROWSER", "Failed reading bookmarks file: Class not found: " + e.message)
+            Log.e("QWANT_MIGRATE", "Failed reading bookmarks file: Class not found: " + e.message)
             e.printStackTrace()
         } catch (e: Exception) {
-            Log.e("QWANT_BROWSER", "Failed reading bookmarks file: " + e.message)
+            Log.e("QWANT_MIGRATE", "Failed reading bookmarks file: " + e.message)
             e.printStackTrace()
         } finally {
             objectInputStream?.close()

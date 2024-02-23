@@ -10,8 +10,8 @@ import java.io.OutputStream
 object MigrationDataSerializer : Serializer<MigrationData> {
     override val defaultValue: MigrationData = MigrationData.getDefaultInstance().toBuilder()
         .setMigration503(true)
-        .setMigration504History(true)
-        .setMigration504Bookmarks(true)
+        .setMigration504History(false)
+        .setMigration504Bookmarks(false)
         .build()
 
     override suspend fun readFrom(input: InputStream): MigrationData {

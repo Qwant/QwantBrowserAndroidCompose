@@ -30,13 +30,13 @@ class MigrationDataRepository @Inject constructor(
 
     suspend fun migration504HistoryDone() {
         datastore.updateData { data ->
-            data.toBuilder().setMigration504History(false).build()
+            data.toBuilder().setMigration504History(true).build()
         }
     }
 
     suspend fun migration504BookmarksDone() {
         datastore.updateData { data ->
-            data.toBuilder().setMigration504Bookmarks(false).build()
+            data.toBuilder().setMigration504Bookmarks(true).build()
         }
     }
 }
