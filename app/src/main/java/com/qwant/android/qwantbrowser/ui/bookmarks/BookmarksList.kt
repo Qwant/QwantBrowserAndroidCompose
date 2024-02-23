@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +34,8 @@ import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
+import org.mozilla.reference.browser.storage.BookmarkItemV2
+import java.util.Locale
 import mozilla.components.feature.contextmenu.R as mozacR
 
 @Composable
@@ -41,7 +44,13 @@ fun BookmarksList(
     onBrowse: () -> Unit,
     lazyListState: LazyListState = rememberLazyListState()
 ) {
-    val bookmarks by viewModel.bookmarks.collectAsState()
+    val bookmarksUnordered by viewModel.bookmarks.collectAsState()
+    val bookmarks by remember(bookmarksUnordered) { derivedStateOf {
+        bookmarksUnordered
+            .sortedWith(compareByDescending<BookmarkNode> { it.type }
+                .thenBy { it.title?.lowercase(Locale.getDefault()) })
+    }}
+
     val folder by viewModel.folder.collectAsState()
 
     var editItem: BookmarkNode? by remember { mutableStateOf(null) }
