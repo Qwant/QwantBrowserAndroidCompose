@@ -5,8 +5,11 @@ import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -37,15 +40,15 @@ class BookmarksRepository @Inject constructor(
     fun getBookmarksInFolderFlow(guid: String): Flow<List<BookmarkNode>> =
         dao.getBookmarksInFolderFlow(guid).map { list ->
             list.map { it.toMozillaBookmarkNode() }
-        }
+        }.flowOn(Dispatchers.IO)
 
     fun isUrlBookmarkedFlow(url: String): Flow<Boolean> =
-        dao.isUrlBookmarkedFlow(url)
+        dao.isUrlBookmarkedFlow(url).flowOn(Dispatchers.IO)
 
-    suspend fun getFolderTree(guid: String): BookmarkNode? {
+    suspend fun getFolderTree(guid: String): BookmarkNode? = withContext(Dispatchers.IO) {
         val children = dao.getChildren(guid, BookmarkNodeType.FOLDER)
-            .mapNotNull { child -> this.getFolderTree(child.guid) }
-        return when (guid) {
+            .mapNotNull { child -> this@BookmarksRepository.getFolderTree(child.guid) }
+        when (guid) {
             root.guid -> root.copy(children = children)
             else -> dao.get(guid)?.toMozillaBookmarkNode(children)
         }
@@ -55,7 +58,7 @@ class BookmarksRepository @Inject constructor(
         parentGuid: String,
         title: String,
         position: UInt?
-    ): String {
+    ): String = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -66,7 +69,7 @@ class BookmarksRepository @Inject constructor(
             url = null,
             dateAdded = System.currentTimeMillis()
         ))
-        return guid
+        guid
     }
 
     override suspend fun addItem(
@@ -74,7 +77,7 @@ class BookmarksRepository @Inject constructor(
         url: String,
         title: String,
         position: UInt?
-    ): String {
+    ): String = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -85,10 +88,10 @@ class BookmarksRepository @Inject constructor(
             url = url,
             dateAdded = System.currentTimeMillis()
         ))
-        return guid
+        guid
     }
 
-    override suspend fun addSeparator(parentGuid: String, position: UInt?): String {
+    override suspend fun addSeparator(parentGuid: String, position: UInt?): String = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -99,50 +102,54 @@ class BookmarksRepository @Inject constructor(
             url = null,
             dateAdded = System.currentTimeMillis()
         ))
-        return guid
+        guid
     }
 
-    override suspend fun deleteNode(guid: String): Boolean {
+    override suspend fun deleteNode(guid: String): Boolean = withContext(Dispatchers.IO) {
          val exists = dao.alreadyExists(guid)
          if (exists) dao.deleteByGuid(guid)
-         return exists
+         exists
     }
 
-    suspend fun deleteBookmarksByUrl(url: String) {
+    suspend fun deleteBookmarksByUrl(url: String) = withContext(Dispatchers.IO) {
         dao.deleteByUrl(url)
     }
 
-    override suspend fun getBookmark(guid: String): BookmarkNode? =
+    override suspend fun getBookmark(guid: String): BookmarkNode? = withContext(Dispatchers.IO) {
         dao.get(guid)?.toMozillaBookmarkNode()
+    }
 
-    override suspend fun getBookmarksWithUrl(url: String): List<BookmarkNode> =
+    override suspend fun getBookmarksWithUrl(url: String): List<BookmarkNode> = withContext(Dispatchers.IO) {
         dao.getByUrl(url).map { it.toMozillaBookmarkNode() }
+    }
 
     override suspend fun getRecentBookmarks(
         limit: Int,
         maxAge: Long?,
         currentTime: Long
-    ): List<BookmarkNode> =
+    ): List<BookmarkNode> = withContext(Dispatchers.IO) {
         dao.getRecent(maxAge ?: 0, currentTime, limit).map { it.toMozillaBookmarkNode() }
+    }
 
-    override suspend fun getTree(guid: String, recursive: Boolean): BookmarkNode? {
+    override suspend fun getTree(guid: String, recursive: Boolean): BookmarkNode? = withContext(Dispatchers.IO) {
         val children = dao.getChildren(guid).mapNotNull { child ->
             if (recursive) {
-                this.getTree(child.guid, true)
+                this@BookmarksRepository.getTree(child.guid, true)
             } else {
                 child.toMozillaBookmarkNode()
             }
         }
-        return when (guid) {
+        when (guid) {
             root.guid -> root.copy(children = children)
             else -> dao.get(guid)?.toMozillaBookmarkNode(children)
         }
     }
 
-    override suspend fun searchBookmarks(query: String, limit: Int): List<BookmarkNode> =
+    override suspend fun searchBookmarks(query: String, limit: Int): List<BookmarkNode> = withContext(Dispatchers.IO) {
         dao.search(query, limit).map { it.toMozillaBookmarkNode() }
+    }
 
-    override suspend fun updateNode(guid: String, info: BookmarkInfo) {
+    override suspend fun updateNode(guid: String, info: BookmarkInfo): Unit = withContext(Dispatchers.IO) {
         val bookmark = dao.get(guid)
         bookmark?.let { b ->
             info.parentGuid?.let { b.parentGuid = it }
@@ -153,10 +160,11 @@ class BookmarksRepository @Inject constructor(
         }
     }
 
-    override suspend fun getSuggestions(text: String): List<Suggestion> =
+    override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
         dao.search(text, 1).map { // TODO make bookmarks suggestions limit dynamic
-            Suggestion.OpenTabSuggestion(this, text, it.title, it.url)
+            Suggestion.OpenTabSuggestion(this@BookmarksRepository, text, it.title, it.url)
         }
+    }
 
     private suspend fun getNewGuid(): String {
         var guid: String

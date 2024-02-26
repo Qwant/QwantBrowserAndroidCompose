@@ -94,7 +94,6 @@ class BrowserScreenViewModel @Inject constructor(
     var isUrlBookmarked = urlFlow
         .filterNotNull()
         .flatMapLatest { bookmarksRepository.isUrlBookmarkedFlow(it) }
-        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

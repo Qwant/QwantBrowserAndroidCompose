@@ -14,13 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
@@ -40,7 +38,6 @@ class BookmarksScreenViewModel @Inject constructor(
 
     val folder = snapshotFlow { folderGuid }
         .mapLatest { bookmarksRepository.getBookmark(folderGuid) ?: bookmarksRepository.root }
-        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -58,7 +55,6 @@ class BookmarksScreenViewModel @Inject constructor(
     val bookmarks = snapshotFlow { folderGuid }
         .flatMapLatest { bookmarksRepository.getBookmarksInFolderFlow(it) }
         .distinctUntilChanged()
-        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

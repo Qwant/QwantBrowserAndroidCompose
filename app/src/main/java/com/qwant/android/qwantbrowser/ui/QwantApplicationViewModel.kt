@@ -43,7 +43,6 @@ class QwantApplicationViewModel @Inject constructor(
         .map { state -> state.selectedTab?.content?.private ?: false }
 
     val hasHistory = historyRepository.hasHistoryFlow
-        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

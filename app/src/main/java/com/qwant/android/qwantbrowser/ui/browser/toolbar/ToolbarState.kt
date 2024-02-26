@@ -64,7 +64,6 @@ class ToolbarState @AssistedInject constructor(
                 suggestionProviders.associateWith { provider -> provider.getSuggestions(search) }
             } else emptySuggestions
         }
-        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5000L),

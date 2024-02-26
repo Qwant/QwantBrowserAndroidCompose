@@ -3,6 +3,9 @@ package com.qwant.android.qwantbrowser.storage.history
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.PageObservation
@@ -22,66 +25,77 @@ class HistoryRepository @Inject constructor(
 ): HistoryStorage, SuggestionProvider {
     private val dao = db.historyDao()
 
-    val hasHistoryFlow = dao.hasHistoryFlow()
+    val hasHistoryFlow = dao.hasHistoryFlow().flowOn(Dispatchers.IO)
 
     override fun canAddUri(uri: String): Boolean =
         !uri.isQwantUrl() && !uri.startsWith("moz-extension://")
 
-    override suspend fun recordVisit(uri: String, visit: PageVisit) {
+    override suspend fun recordVisit(uri: String, visit: PageVisit) = withContext(Dispatchers.IO) {
         dao.insertIfNeeded(Page(uri))
         dao.insert(Visit(uri, System.currentTimeMillis(), visit.visitType))
     }
 
-    suspend fun recordVisitWithTimestamp(uri: String, visit: PageVisit, timestamp: Long) {
+    suspend fun recordVisitWithTimestamp(uri: String, visit: PageVisit, timestamp: Long) = withContext(Dispatchers.IO) {
         dao.insertIfNeeded(Page(uri))
         dao.insert(Visit(uri, timestamp, visit.visitType))
     }
 
-    override suspend fun recordObservation(uri: String, observation: PageObservation) {
+    override suspend fun recordObservation(uri: String, observation: PageObservation) = withContext(Dispatchers.IO) {
         val page = dao.getPage(uri) ?: Page(uri)
         observation.title?.let { page.title = it }
         observation.previewImageUrl?.let { page.previewImageUrl = it }
         dao.upsert(page)
     }
 
-    override suspend fun deleteEverything() =
+    override suspend fun deleteEverything() = withContext(Dispatchers.IO) {
         db.clearAllTables()
+    }
 
-    override suspend fun deleteVisit(url: String, timestamp: Long) =
+    override suspend fun deleteVisit(url: String, timestamp: Long) = withContext(Dispatchers.IO) {
         dao.deleteVisitByKey(VisitKey(url, timestamp))
+    }
 
-    override suspend fun deleteVisitsBetween(startTime: Long, endTime: Long) =
+    override suspend fun deleteVisitsBetween(startTime: Long, endTime: Long) = withContext(Dispatchers.IO) {
         dao.deleteVisitsBetween(startTime, endTime)
+    }
 
-    override suspend fun deleteVisitsFor(url: String) =
+    override suspend fun deleteVisitsFor(url: String) = withContext(Dispatchers.IO) {
         dao.deleteURI(url)
+    }
 
-    override suspend fun deleteVisitsSince(since: Long) =
+    override suspend fun deleteVisitsSince(since: Long) = withContext(Dispatchers.IO) {
         dao.deleteVisitsSince(since)
+    }
 
     override suspend fun getDetailedVisits(
         start: Long,
         end: Long,
         excludeTypes: List<VisitType>
-    ): List<VisitInfo> = dao.getVisitsDetailed(start, end, excludeTypes).getVisitInfos()
+    ): List<VisitInfo> = withContext(Dispatchers.IO) {
+        dao.getVisitsDetailed(start, end, excludeTypes).getVisitInfos()
+    }
 
-    override fun getSuggestions(query: String, limit: Int): List<SearchResult> =
-        dao.getSuggestions(query, limit)
-            .mapIndexed { index, page -> SearchResult(
-                id = page.uri,
-                url = page.uri,
-                title = page.title,
-                score = index // Not really relevant. Should rank it using levenshteinDistance
-            ) }
 
-    override suspend fun getSuggestions(text: String): List<Suggestion> =
+    override fun getSuggestions(query: String, limit: Int): List<SearchResult> {
+        TODO("should run this on background thread. Not done yet as it's unused in our app")
+        // dao.getSuggestions(query, limit)
+        //     .mapIndexed { index, page -> SearchResult(
+        //         id = page.uri,
+        //         url = page.uri,
+        //         title = page.title,
+        //         score = index // Not really relevant. Should rank it using levenshteinDistance
+        //     ) }
+    }
+
+    override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
         dao.getSuggestions(query = text, limit = 2) // TODO History suggestions limit should be a parameter
             .map { Suggestion.OpenTabSuggestion(
-                provider = this,
+                provider = this@HistoryRepository,
                 search = text,
                 title = it.title,
                 url = it.uri
             ) }
+    }
 
     override suspend fun getTopFrecentSites(
         numItems: Int,
@@ -94,17 +108,21 @@ class HistoryRepository @Inject constructor(
             .map { TopFrecentSiteInfo(it.uri, it.title) } */
     }
 
-    override suspend fun getVisited(): List<String> =
+    override suspend fun getVisited(): List<String> = withContext(Dispatchers.IO) {
         dao.getAllPages().map { it.uri }
+    }
 
-    override suspend fun getVisited(uris: List<String>): List<Boolean> =
+    override suspend fun getVisited(uris: List<String>): List<Boolean> = withContext(Dispatchers.IO) {
         uris.map { dao.getPage(it) != null }
+    }
 
     override suspend fun getVisitsPaginated(
         offset: Long,
         count: Long,
         excludeTypes: List<VisitType>
-    ): List<VisitInfo> = dao.getVisitsPaginated(offset, count, excludeTypes).getVisitInfos()
+    ): List<VisitInfo> = withContext(Dispatchers.IO) {
+        dao.getVisitsPaginated(offset, count, excludeTypes).getVisitInfos()
+    }
 
     private fun Map<Page, List<Visit>>.getVisitInfos() = this
         .flatMap { (page, visits) ->
