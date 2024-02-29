@@ -81,9 +81,10 @@ fun SuggestItem(
 ) {
     var showClipboardSuggestionContent by remember { mutableStateOf(false) }
 
+
     WebsiteRow(
         title = if (suggestion.provider is ClipboardProvider) {
-            "Copied text" // TODO translations
+            stringResource(R.string.browser_suggest_clipboard_text)
         } else {
             when (suggestion) {
                 is Suggestion.SearchSuggestion -> suggestion.text
@@ -245,7 +246,7 @@ fun SuggestItem(
     )
 }
 
-// TODO Move WebsiteRow this to it's own widget file as it is used all over the app
+// TODO Move WebsiteRow to it's own widget file as it is used all over the app
 @Composable
 fun WebsiteRow(
     title: String?,
