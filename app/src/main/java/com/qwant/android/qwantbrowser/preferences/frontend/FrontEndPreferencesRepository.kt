@@ -33,7 +33,7 @@ class ClHolder @Inject constructor(
 class FrontEndPreferencesRepository @Inject constructor(
     private val datastore: DataStore<FrontEndPreferences>,
     private val clHolder: ClHolder,
-    qwantClientProvider: QwantClientProvider
+    private val qwantClientProvider: QwantClientProvider
 ) {
     companion object {
         // TODO Use gradle to set qwant base URL so we can easily use pre-prod
@@ -54,43 +54,14 @@ class FrontEndPreferencesRepository @Inject constructor(
         buildString {
             append(QwantBaseUrl)
             append("?client=").append(client)
-            append("&theme=").append(when(prefs.appearance) {
-                Appearance.LIGHT -> 0
-                Appearance.DARK -> 1
-                Appearance.SYSTEM_SETTINGS -> -1
-                else -> -1
-            })
-            append("&c=").append(when(prefs.customPageColor) {
-                CustomPageColor.BLUE -> "blue"
-                CustomPageColor.GREEN -> "green"
-                CustomPageColor.PINK -> "pink"
-                CustomPageColor.PURPLE -> "purple"
-                else -> "blue"
-            })
-            append("&ch=").append(when(prefs.customPageCharacter) {
-                CustomPageCharacter.NO_CHARACTER -> "none"
-                CustomPageCharacter.RANDOM_CHARACTER -> "random"
-                CustomPageCharacter.DOUDOUNE -> "puffa"
-                CustomPageCharacter.FOOTBALL -> "football"
-                CustomPageCharacter.TURTLENECK -> "turtleneck"
-                CustomPageCharacter.GLASSES -> "glasses"
-                CustomPageCharacter.CAT -> "cat"
-                CustomPageCharacter.BALLOON -> "balloon"
-                CustomPageCharacter.PULL -> "pull"
-                CustomPageCharacter.HAT -> "hat"
-                CustomPageCharacter.HANDS -> "hands"
-                else -> "random"
-            })
-            if (prefs.showNews) append("&hc=1") else append("&hc=0")
-            if (prefs.showSponsor) append("&hti=1") else append("&hti=0")
-            append("&s=").append(when(prefs.adultFilter) {
-                AdultFilter.NO_FILTER -> 0
-                AdultFilter.MODERATE -> 1
-                AdultFilter.STRICT -> 2
-                else -> 0
-            })
-            if (prefs.showFavicons) append("&si=1") else append("&si=0")
-            if (prefs.openResultsInNewTab) append("&b=1") else append("&b=0")
+            append("&theme=").append(getThemeUrlValue(prefs.appearance))
+            append("&c=").append(getCustomPageColorUrlValue(prefs.customPageColor))
+            append("&ch=").append(getCustomPageCharacterUrlValue(prefs.customPageCharacter))
+            append("&hc=").append(getBooleanUrlValue(prefs.showNews))
+            append("&hti=").append(getBooleanUrlValue(prefs.showSponsor))
+            append("&s=").append(getAdultFilterUrlValue(prefs.adultFilter))
+            append("&si=").append(getBooleanUrlValue(prefs.showFavicons))
+            append("&b=").append(getBooleanUrlValue(prefs.openResultsInNewTab))
             append("&l=").append(prefs.interfaceLanguage)
             append("&locale=").append(prefs.searchResultRegion)
 
@@ -100,6 +71,62 @@ class FrontEndPreferencesRepository @Inject constructor(
 
             append("&omnibar=1")
         }
+    }
+
+    suspend fun checkUrlParameters(url: String): Boolean {
+        val prefs = flow.first()
+        return url.contains(("[\\?&]client=" + qwantClientProvider.clientState.value).toRegex())
+                && url.contains(("[\\?&]theme=" + getThemeUrlValue(prefs.appearance)).toRegex())
+                && url.contains(("[\\?&]c=" + getCustomPageColorUrlValue(prefs.customPageColor)).toRegex())
+                && url.contains(("[\\?&]ch=" + getCustomPageCharacterUrlValue(prefs.customPageCharacter)).toRegex())
+                && url.contains(("[\\?&]hc=" + getBooleanUrlValue(prefs.showNews)).toRegex())
+                && url.contains(("[\\?&]hti=" + getBooleanUrlValue(prefs.showSponsor)).toRegex())
+                && url.contains(("[\\?&]s=" + getAdultFilterUrlValue(prefs.adultFilter)).toRegex())
+                && url.contains(("[\\?&]si=" + getBooleanUrlValue(prefs.showFavicons)).toRegex())
+                && url.contains(("[\\?&]b=" + getBooleanUrlValue(prefs.openResultsInNewTab)).toRegex())
+                && url.contains("""[\\?&]omnibar=1""".toRegex())
+    }
+
+    private fun getThemeUrlValue(appearance: Appearance) = when(appearance) {
+        Appearance.LIGHT -> 0
+        Appearance.DARK -> 1
+        Appearance.SYSTEM_SETTINGS -> -1
+        else -> -1
+    }
+
+    private fun getCustomPageColorUrlValue(color: CustomPageColor) = when(color) {
+        CustomPageColor.BLUE -> "blue"
+        CustomPageColor.GREEN -> "green"
+        CustomPageColor.PINK -> "pink"
+        CustomPageColor.PURPLE -> "purple"
+        else -> "blue"
+    }
+
+    private fun getCustomPageCharacterUrlValue(character: CustomPageCharacter) = when(character) {
+        CustomPageCharacter.NO_CHARACTER -> "none"
+        CustomPageCharacter.RANDOM_CHARACTER -> "random"
+        CustomPageCharacter.DOUDOUNE -> "puffa"
+        CustomPageCharacter.FOOTBALL -> "football"
+        CustomPageCharacter.TURTLENECK -> "turtleneck"
+        CustomPageCharacter.GLASSES -> "glasses"
+        CustomPageCharacter.CAT -> "cat"
+        CustomPageCharacter.BALLOON -> "balloon"
+        CustomPageCharacter.PULL -> "pull"
+        CustomPageCharacter.HAT -> "hat"
+        CustomPageCharacter.HANDS -> "hands"
+        else -> "random"
+    }
+
+    private fun getAdultFilterUrlValue(filter: AdultFilter) = when(filter) {
+        AdultFilter.NO_FILTER -> 0
+        AdultFilter.MODERATE -> 1
+        AdultFilter.STRICT -> 2
+        else -> 0
+    }
+
+    private fun getBooleanUrlValue(b: Boolean) = when (b) {
+        true -> 1
+        false -> 0
     }
 
     suspend fun updateShowNews(show: Boolean) {

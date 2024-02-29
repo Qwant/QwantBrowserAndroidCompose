@@ -7,6 +7,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
@@ -73,18 +75,11 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = 0
         )
 
-    val qwantUrl = frontEndPreferencesRepository.homeUrl
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
     private val urlFlow = store.flow()
         .map { state -> state.selectedTab?.content?.url }
+        .distinctUntilChanged()
 
     val currentUrl = urlFlow
-        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -99,6 +94,23 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
+
+    val isQwantUrlValid = urlFlow.combine(frontEndPreferencesRepository.homeUrl) { currentUrl, _ ->
+        if (currentUrl?.isQwantUrl() == true) {
+            val newUrl = qwantUseCases.getQwantUrl(search = currentUrl.getQwantSERPSearch())
+            if (currentUrl.startsWith(newUrl)) {
+                true
+            } else {
+                // Check all parameters, one by one
+                frontEndPreferencesRepository.checkUrlParameters(currentUrl)
+            }
+        }
+        else true
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = true
+    )
 
     init {
         urlFlow
