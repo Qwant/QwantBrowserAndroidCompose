@@ -27,9 +27,9 @@ class Piwik @Inject constructor(
         BuildConfig.PIWIK_SITE_ID,
         "default"
     )).also {
+        it.setAnonymizationState(true)
         it.dispatchInterval = 0
         it.isPrefixing = false
-        it.setAnonymizationState(false)
     }
 
     init {
