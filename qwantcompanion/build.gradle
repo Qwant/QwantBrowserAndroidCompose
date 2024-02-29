@@ -35,6 +35,10 @@ android {
             dimension "target"
             buildConfigField("String", "PARTNER_CLIENT", "\"orange\"")
         }
+        genymobile {
+            dimension "target"
+            buildConfigField("String", "PARTNER_CLIENT", "\"genymobile\"")
+        }
     }
 
     compileOptions {

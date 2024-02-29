@@ -93,6 +93,9 @@ android {
             dimension "target"
             versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
         }
+        genymobile {
+            dimension "target"
+        }
     }
 
     buildFeatures {
