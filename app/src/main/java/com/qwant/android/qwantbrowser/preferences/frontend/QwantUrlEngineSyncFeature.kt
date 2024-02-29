@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.preferences.frontend
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,7 +22,7 @@ fun QwantUrlEngineSyncFeature(
                 val newUrl = browserScreenViewModel.qwantUseCases.getQwantUrl(
                     search = url.getQwantSERPSearch()
                 )
-                if (newUrl != url) {
+                if (!url.startsWith(newUrl)) {
                     browserScreenViewModel.sessionUseCases.loadUrl(newUrl)
                 }
             }
