@@ -35,8 +35,8 @@ fun PromptAbuserConsumer(
         var stopAbusingCheckbox by remember { mutableStateOf(false) }
 
         content(
-            promptAbuserConfirm = { promptAbuserDetector.userWantsMoreDialogs(!stopAbusingCheckbox) },
-            promptAbuserControls = {
+            { promptAbuserDetector.userWantsMoreDialogs(!stopAbusingCheckbox) },
+            {
                 if (abusing) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
@@ -45,7 +45,7 @@ fun PromptAbuserConsumer(
                                 stopAbusingCheckbox = it
                             }
                         )
-                        Text(text = stringResource(id = mozacR.string.mozac_feature_prompts_no_more_dialogs)) // TODO text and traduction
+                        Text(text = stringResource(id = mozacR.string.mozac_feature_prompts_no_more_dialogs))
                     }
                 }
             }
