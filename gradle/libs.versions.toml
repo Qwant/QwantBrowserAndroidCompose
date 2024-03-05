@@ -33,6 +33,7 @@ android-gradle-plugin = "8.3.0"
 kotlin-plugin = "1.9.22"
 hilt-plugin = "2.50"
 protobuf-plugin = "0.9.4"
+ksp = "1.9.22-1.0.17"
 
 [libraries]
 # Legacy
@@ -108,3 +109,4 @@ android-library = { id = "com.android.library", version.ref = "android-gradle-pl
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-plugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

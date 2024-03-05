@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.ksp)
     id 'kotlin-kapt'
 }
 
@@ -31,10 +32,8 @@ android {
             useSupportLibrary true
         }
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
 
         resourceConfigurations += ["en", "fr", "de", "es", "it"]
@@ -173,7 +172,7 @@ dependencies {
     implementation libs.room.ktx
     implementation libs.room.runtime
     // implementation libs.room.paging
-    kapt libs.room.compiler
+    ksp libs.room.compiler
     annotationProcessor libs.room.compiler
     testImplementation libs.room.testing
 
