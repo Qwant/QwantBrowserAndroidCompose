@@ -59,7 +59,7 @@ class QwantApplication : Application() {
 
         with(piwik.get()) {
             this.trackApplicationDownload()
-            this.event("App", "Opening", name = "App opening")
+            this.event("App", "Open")
         }
 
         // TODO
