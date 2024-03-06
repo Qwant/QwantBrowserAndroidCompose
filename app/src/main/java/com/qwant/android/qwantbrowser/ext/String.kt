@@ -27,9 +27,7 @@ fun String.isQwantSERPUrl(): Boolean {
 
 fun String.getQwantSERPSearch(): String? {
     if (this.isQwantSERPUrl()) {
-        if (this.contains("?q=") || this.contains("&q=")) {
-            return this.split("?q=", "&q=")[1].split("&")[0]
-        }
+        return this.split("?q=", "&q=")[1].split("&")[0]
     }
     return null
 }
@@ -42,11 +40,15 @@ fun String.toCleanUrl(): String {
     return this
         .removePrefix("http://")
         .removePrefix("https://")
+        // TODO use 'hostWithoutCommonPrefixes' from mozilla support ktx
+        //  https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/components/support/ktx/src/main/java/mozilla/components/support/ktx/android/net/Uri.kt
         .removePrefix("www.")
         // .substringBefore('?')
 }
 
 fun String.toCleanHost(): String {
+    // TODO use 'toShortUrl' from mozilla support ktx there
+    //  https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/components/support/ktx/src/main/java/mozilla/components/support/ktx/kotlin/String.kt
     return try {
         URI(this).normalize().host.removePrefix("www.")
     } catch (e: Exception) {

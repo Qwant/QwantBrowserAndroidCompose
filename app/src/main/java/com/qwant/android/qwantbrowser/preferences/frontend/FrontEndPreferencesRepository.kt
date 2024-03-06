@@ -75,6 +75,7 @@ class FrontEndPreferencesRepository @Inject constructor(
 
     suspend fun checkUrlParameters(url: String): Boolean {
         val prefs = flow.first()
+        // TODO use URL(url).query.split("&") to avoid regexs and check directly parameters without special chars
         return url.contains(("[\\?&]client=" + qwantClientProvider.clientState.value).toRegex())
                 && url.contains(("[\\?&]theme=" + getThemeUrlValue(prefs.appearance)).toRegex())
                 && url.contains(("[\\?&]c=" + getCustomPageColorUrlValue(prefs.customPageColor)).toRegex())
