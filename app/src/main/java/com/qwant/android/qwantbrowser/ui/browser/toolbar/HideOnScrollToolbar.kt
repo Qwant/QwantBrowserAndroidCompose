@@ -61,10 +61,11 @@ fun HideOnScrollToolbar(
                     thickness = 1.dp,
                     color = MaterialTheme.colorScheme.outline
                 )
-            }
-            toolbar(Modifier.fillMaxWidth())
-            content(Modifier.fillMaxWidth().weight(2f, true))
-            if (toolbarPosition == ToolbarPosition.TOP) {
+                content(Modifier.fillMaxWidth().weight(2f, true))
+                toolbar(Modifier.fillMaxWidth())
+            } else if (toolbarPosition == ToolbarPosition.TOP) {
+                toolbar(Modifier.fillMaxWidth())
+                content(Modifier.fillMaxWidth().weight(2f, true))
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
