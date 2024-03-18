@@ -33,11 +33,14 @@ class HistoryRepository @Inject constructor(
     override suspend fun recordVisit(uri: String, visit: PageVisit) = withContext(Dispatchers.IO) {
         dao.insertIfNeeded(Page(uri))
         dao.insert(Visit(uri, System.currentTimeMillis(), visit.visitType))
+        runMaintenance(0U)
     }
 
     suspend fun recordVisitWithTimestamp(uri: String, visit: PageVisit, timestamp: Long) = withContext(Dispatchers.IO) {
-        dao.insertIfNeeded(Page(uri))
-        dao.insert(Visit(uri, timestamp, visit.visitType))
+        if (System.currentTimeMillis() - timestamp < TIME_LIMIT) {
+            dao.insertIfNeeded(Page(uri))
+            dao.insert(Visit(uri, timestamp, visit.visitType))
+        }
     }
 
     override suspend fun recordObservation(uri: String, observation: PageObservation) = withContext(Dispatchers.IO) {
@@ -139,7 +142,7 @@ class HistoryRepository @Inject constructor(
         }
 
     override suspend fun runMaintenance(dbSizeLimit: UInt) {
-        // TODO maintenance (size limit) for history
+        dao.deleteVisitsBefore(System.currentTimeMillis() - TIME_LIMIT)
     }
 
     /*
@@ -147,4 +150,8 @@ class HistoryRepository @Inject constructor(
      */
     override suspend fun prune() {}
     override suspend fun warmUp() {}
+
+    companion object {
+        const val TIME_LIMIT = 1000L * 60 * 60 * 24 * 180 // 180 days ~ 6 months
+    }
 }

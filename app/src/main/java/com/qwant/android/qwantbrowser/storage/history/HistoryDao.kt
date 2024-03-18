@@ -31,6 +31,9 @@ interface HistoryDao {
     @Query("DELETE from visits WHERE time BETWEEN :startTime AND :endTime")
     suspend fun deleteVisitsBetween(startTime: Long, endTime: Long)
 
+    @Query("DELETE from visits WHERE time < :time")
+    suspend fun deleteVisitsBefore(time: Long)
+
     @Query("SELECT * from pages")
     fun getAllPages(): List<Page>
 
