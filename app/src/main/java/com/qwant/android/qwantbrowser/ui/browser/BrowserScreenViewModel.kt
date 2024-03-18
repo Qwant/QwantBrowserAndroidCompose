@@ -95,9 +95,9 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
-    val isQwantUrlValid = urlFlow.combine(frontEndPreferencesRepository.homeUrl) { currentUrl, _ ->
+    val isQwantUrlValid = urlFlow.combine(frontEndPreferencesRepository.homeUrl) { currentUrl, homeUrl ->
         if (currentUrl?.isQwantUrl() == true) {
-            val newUrl = qwantUseCases.getQwantUrl(search = currentUrl.getQwantSERPSearch())
+            val newUrl = currentUrl.getQwantSERPSearch()?.let { "$homeUrl&q=$it" } ?: homeUrl
             if (currentUrl.startsWith(newUrl)) {
                 true
             } else {
