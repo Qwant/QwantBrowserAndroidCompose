@@ -12,10 +12,10 @@ image: eclipse-temurin:17-jdk-jammy
 variables:
 
   # develop branch name
-  DEVELOP_BRANCH: "ci" # For testing only. Update to develop
+  DEVELOP_BRANCH: "ci" # For testing only. Update to dev
 
-  # Proxy
-  GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
+  # Proxy - Not necessary on Gitlab OVH
+  # GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
 
   # ANDROID_COMPILE_SDK is the version of Android you're compiling with.
   # It should match compileSdkVersion.
@@ -68,19 +68,6 @@ before_script:
   # Not necessary, but just for surity
   - chmod +x ./gradlew
 
-# Basic android and gradle stuff
-# Check linting
-# lintDebug:
-#  interruptible: true
-#  stage: build
-#  script:
-#    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
-#  artifacts:
-#    paths:
-#      - app/lint/reports/lint-results-debug.html
-#    expose_as: "lint-report"
-#    when: always
-
 # build project for develop branch with artifacts
 build_develop:
   interruptible: true
@@ -90,11 +77,11 @@ build_develop:
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
       when: always
-  artifacts:
-    paths:
-      - app/build/outputs/
+  # artifacts: # Do not keep artifacts for now
+  #  paths:
+  #    - app/build/outputs/
 
-  # build project for all features branches without artifacts
+# build project for all features branches without artifacts to speed up
 build:
   interruptible: true
   stage: build
@@ -105,7 +92,7 @@ build:
       when: always
   # no artifacts needed
 
-# Run all tests on develop branch, if any fails, interrupt the pipeline(fail it)
+# Run all tests on develop branch, if any fails, interrupt the pipeline
 debugTests:
   needs: [build_develop]
   interruptible: true
@@ -113,4 +100,4 @@ debugTests:
   script:
     - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
   only:
-    - $DEVELOP_BRANCH # For testing only. Update to develop
+    - $DEVELOP_BRANCH
