@@ -193,6 +193,7 @@ dependencies {
     implementation libs.mozac.feature.pwa
     implementation libs.mozac.feature.intent
     implementation libs.mozac.feature.webcompat
+    implementation libs.mozac.feature.media
     implementation libs.mozac.support.utils
     implementation libs.mozac.support.ktx
     implementation libs.mozac.support.rusthttp
