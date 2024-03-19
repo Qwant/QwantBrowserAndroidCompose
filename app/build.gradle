@@ -214,7 +214,14 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.10" // TODO find a way to use version catalog here
+        def protoVersion = "3.9.2"
+        // Protobuf compiler is not supported for Apple M1 architecture,
+        // fallback to specific 'protoc_platform' version if specify
+        if (project.hasProperty('protoc_platform')) {
+            artifact = "com.google.protobuf:protoc:$protoVersion:${protoc_platform}"
+        } else {
+            artifact = "com.google.protobuf:protoc:$protoVersion"
+        }
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
