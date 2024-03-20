@@ -68,20 +68,8 @@ before_script:
   # Not necessary, but just for surity
   - chmod +x ./gradlew
 
-# build project for develop branch with artifacts
-build_develop:
-  interruptible: true
-  stage: build
-  script:
-    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
-      when: always
-  # artifacts: # Do not keep artifacts for now
-  #  paths:
-  #    - app/build/outputs/
 
-# build project for all features branches without artifacts to speed up
+# build project for all features branches (except main and dev) without artifacts to speed up
 build:
   interruptible: true
   stage: build
@@ -92,12 +80,40 @@ build:
       when: always
   # no artifacts needed
 
-# Run all tests on develop branch, if any fails, interrupt the pipeline
+# build project for dev branch with artifacts
+build_playstore_aab:
+  interruptible: true
+  stage: build
+  script:
+    - echo "Building AAB for 'playstore' flavor..."
+    - ./gradlew --console=plain --no-configuration-cache --no-build-cache bundlePlaystoreRelease
+    - mv app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab qwant-browser-playstore.aab
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
+      when: always
+  artifacts: # Do not keep artifacts for now
+    paths:
+      - qwant-browser-playstore.aab
+    expire_in: 10 days
+
+# Run all tests on dev branch, if any fails, interrupt the pipeline
 debugTests:
-  needs: [build_develop]
+  needs: [build_playstore_aab]
   interruptible: true
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
   only:
     - $DEVELOP_BRANCH
+
+sign_playstore_bundle:
+  stage: deploy
+  dependencies:
+    - build_playstore_aab
+  script:
+    # Extract keystore from secure file
+    - echo "Copying keystore file..."
+    - cp $CI_PROJECT_DIR/keystore_playstore.jks .
+    # Sign AAB using jarsigner
+    - echo "Signing AAB..."
+    - jarsigner -verbose -keystore keystore_playstore.jks -storepass $KEYSTORE_PLAYSTORE_PASSWORD -keypass $KEYSTORE_PLAYSTORE_KEY_PASSWORD -signedjar qwant-browser-playstore-signed.aab qwant-browser-playstore.aab $KEYSTORE_PLAYSTORE_KEY_ALIAS
