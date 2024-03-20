@@ -126,7 +126,9 @@ deploy_internal_app_bundle:
     - bundle install
 
     # Copy keystore file to the current directory
-    - echo "$KEYSTORE_PLAYSTORE" | base64 -d > app/keystore_playstore.jks
+    - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
+    - keystore_playstore_path = $(realpath keystore_playstore.jks)
+    - echo "Keystore Playsore path $keystore_playstore_path"
     - bundle exec fastlane upload_to_internal
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
