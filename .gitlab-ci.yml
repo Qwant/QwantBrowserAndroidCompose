@@ -46,9 +46,6 @@ before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
-  # - gem install bundler
-  - bundle install
-
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   # Create a new directory at specified location
@@ -100,7 +97,7 @@ build_playstore_aab:
     - ./gradlew bundlePlaystoreRelease # --console=plain --no-configuration-cache --no-build-cache
     - mv app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab qwant-browser-playstore.aab
   rules:
-    - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
+    - if: '$CI_COMMIT_BRANCH != $DEVELOP_BRANCH' # test
       when: always
   artifacts:
     paths:
@@ -128,6 +125,7 @@ sign_and_upload_to_internal:
     # Install Ruby and Fastlane
     - apt-get install -qqy --no-install-recommends build-essential ruby-full
     - gem install bundler fastlane
+    - bundle install
   script:
     # Copy playstore file to the current directory
     - echo "$PLAYSTORE_JSON_BASE64" | base64 -d > fastlane/playstore.json
@@ -137,8 +135,32 @@ sign_and_upload_to_internal:
 
     # Run Fastlane action to sign the AAB
     - echo "Signing AAB..."
-    - fastlane android sign_aab bundle:./qwant-browser-playstore.aab keystore_file:./keystore_playstore.jks keystore_password:$KEYSTORE_PLAYSTORE_PASSWORD key_alias:$KEYSTORE_PLAYSTORE_KEY_ALIAS key_password:$KEYSTORE_PLAYSTORE_KEY_PASSWORD
+    - fastlane android sign_aab bundle:./qwant-browser-playstore.aab keystore_file:./keystore_playstore.jks keystore_password:$KEYSTORE_PLAYSTORE_PASSWORD key_alias:$   key_password:$KEYSTORE_PLAYSTORE_KEY_PASSWORD
 
     # Run Fastlane supply with the extracted JSON key
     - echo "Uploading AAB to internal Play Store..."
     - fastlane run supply --aab qwant-browser-playstore-signed.aab --track internal --json_key playstore.json
+
+deploy_internal_app_bundle:
+  stage: deploy
+  before_script:
+    - echo "Setup fastlane"
+    - apt-get --quiet update --yes
+    - apt-get --quiet install --yes wget unzip
+
+    # Install Ruby and Fastlane
+    - apt-get install -qqy --no-install-recommends build-essential ruby-full
+    - gem install bundler fastlane
+    - bundle install
+
+    # Copy keystore file to the current directory
+    - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
+  script:
+    - bundle exec fastlane upload_to_internal
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
+      when: always
+  artifacts:
+    paths:
+      - app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab
+    expire_in: 10 days
