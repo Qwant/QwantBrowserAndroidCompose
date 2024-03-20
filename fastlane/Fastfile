@@ -43,7 +43,7 @@ platform :android do
         flavor: "playstore",
         build_type: 'release',
         properties: {
-          "android.injected.signing.store.file" => "../keystore_playstore.jks",
+          "android.injected.signing.store.file" => "####",
           "android.injected.signing.store.password" => "####",
           "android.injected.signing.key.alias" => "####",
           "android.injected.signing.key.password" => "####",
