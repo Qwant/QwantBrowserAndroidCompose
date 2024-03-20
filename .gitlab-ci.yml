@@ -131,13 +131,11 @@ sign_and_upload_to_internal:
     - echo "Download secure files..."
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
 
-    # Copy keystore file to the current directory
-    # - echo "Moving keystore file..."
-    # - mv .secure_files/keystore_playstore.jks keystore_playstore.jks
+    # Copy playstore file to the current directory
+    - echo "$PLAYSTORE_JSON_BASE64" | base64 -d > playstore.json
 
-      # Copy playstore file to the fastlane directory
-    # - echo "Moving playstore file..."
-    # - mv .secure_files/playstore.json playstore.json
+    # Copy keystore file to the current directory
+    - echo "$KEYSTORE_PLAYSTORE_BASE64" | base64 -d > keystore_playstore.jks
 
     # Run Fastlane action to sign the AAB
     - echo "Signing AAB..."
