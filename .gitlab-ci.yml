@@ -12,7 +12,7 @@ stages:
   - test
   - deploy
 
-image: eclipse-temurin:17-jdk-jammy
+image: openjdk:11-jdk
 
 variables:
 
