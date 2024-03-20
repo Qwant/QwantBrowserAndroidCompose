@@ -113,7 +113,30 @@ sign_playstore_bundle:
   script:
     # Extract keystore from secure file
     - echo "Copying keystore file..."
-    - cp $CI_PROJECT_DIR/keystore_playstore.jks .
-    # Sign AAB using jarsigner
+    - gem install fastlane
+
+    # Copy keystore file to the fastlane directory
+    - cp $CI_PROJECT_DIR/keystore_playstore.jks fastlane/keystore_playstore.jks
+
+    # Run Fastlane action to sign the AAB
     - echo "Signing AAB..."
-    - jarsigner -verbose -keystore keystore_playstore.jks -storepass $KEYSTORE_PLAYSTORE_PASSWORD -keypass $KEYSTORE_PLAYSTORE_KEY_PASSWORD -signedjar qwant-browser-playstore-signed.aab qwant-browser-playstore.aab $KEYSTORE_PLAYSTORE_KEY_ALIAS
+    - fastlane android sign_aab bundle:./qwant-browser-playstore.aab keystore_file:./fastlane/keystore_playstore.jks keystore_password:$KEYSTORE_PLAYSTORE_PASSWORD key_alias:$KEYSTORE_PLAYSTORE_KEY_ALIAS key_password:$KEYSTORE_PLAYSTORE_KEY_PASSWORD
+  only:
+    - $DEVELOP_BRANCH
+
+upload_to_internal:
+  stage: deploy
+  dependencies:
+    - sign_playstore_bundle
+  script:
+    - echo "Uploading AAB to internal Play Store..."
+    # Install Fastlane
+    - gem install fastlane
+    # Extract the service account JSON key from the secure file
+    - echo "$PLAYSTORE_JSON" > fastlane/playstore.json
+    # Run Fastlane supply with the extracted JSON key
+    - fastlane run supply --aab qwant-browser-playstore-signed.aab --track internal --json_key fastlane/playstore.json
+  variables:
+    PLAYSTORE_JSON: $(cat $CI_PROJECT_DIR/playstore.json)
+  only:
+    - $DEVELOP_BRANCH
