@@ -126,7 +126,7 @@ sign_and_upload_to_internal:
     - apt-get install -qqy --no-install-recommends build-essential ruby-full
     - gem install bundler fastlane
   variables:
-    SECURE_FILES_DOWNLOAD_PATH: '.''
+    SECURE_FILES_DOWNLOAD_PATH: '.'
   script:
     - echo "Download secure files..."
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
