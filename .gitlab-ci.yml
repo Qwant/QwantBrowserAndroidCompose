@@ -108,7 +108,7 @@ unit_test:
     - $DEVELOP_BRANCH
 
 sign_playstore_bundle:
-  stage: sign
+  stage: deploy
   needs:
     - unit_test
   script:
