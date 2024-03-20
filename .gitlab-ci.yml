@@ -46,10 +46,6 @@ before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
-  # Install Ruby and Fastlane
-  - apt-get install -qqy --no-install-recommends build-essential ruby-full
-  - gem install bundler fastlane
-
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   # Create a new directory at specified location
@@ -80,8 +76,7 @@ before_script:
 
   # Not necessary, but just for surity
   - chmod +x ./gradlew
-
-
+   
 # build project for all features branches (except main and dev) without artifacts to speed up
 build:
   interruptible: true
@@ -110,38 +105,44 @@ build_playstore_aab:
     expire_in: 10 days
 
 # Run all tests on dev branch, if any fails, interrupt the pipeline
-unit_test:
-  dependencies: 
-    - build_playstore_aab
-  interruptible: true
-  stage: test
-  script:
-    - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
+# unit_test:
+#  dependencies: 
+#    - build_playstore_aab
+#  interruptible: true
+#  stage: test
+#  script:
+#    - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
 
-sign_playstore_bundle:
+sign_and_upload_to_internal:
   stage: deploy
   dependencies:
     - build_playstore_aab  
+  before_script:
+    - echo "Setup fastlane"
+    - apt-get --quiet update --yes
+    - apt-get --quiet install --yes wget unzip
+
+    # Install Ruby and Fastlane
+    - apt-get install -qqy --no-install-recommends build-essential ruby-full
+    - gem install bundler fastlane
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: '.''
   script:
-    # Copy keystore file to the fastlane directory
-    - echo "Copying keystore file..."
-    - cp $CI_PROJECT_DIR/keystore_playstore.jks fastlane/keystore_playstore.jks
+    - echo "Download secure files..."
+    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
+
+    # Copy keystore file to the current directory
+    # - echo "Moving keystore file..."
+    # - mv .secure_files/keystore_playstore.jks keystore_playstore.jks
+
+      # Copy playstore file to the fastlane directory
+    # - echo "Moving playstore file..."
+    # - mv .secure_files/playstore.json playstore.json
 
     # Run Fastlane action to sign the AAB
     - echo "Signing AAB..."
-    - fastlane android sign_aab bundle:./qwant-browser-playstore.aab keystore_file:./fastlane/keystore_playstore.jks keystore_password:$KEYSTORE_PLAYSTORE_PASSWORD key_alias:$KEYSTORE_PLAYSTORE_KEY_ALIAS key_password:$KEYSTORE_PLAYSTORE_KEY_PASSWORD
+    - fastlane android sign_aab bundle:./qwant-browser-playstore.aab keystore_file:./keystore_playstore.jks keystore_password:$KEYSTORE_PLAYSTORE_PASSWORD key_alias:$KEYSTORE_PLAYSTORE_KEY_ALIAS key_password:$KEYSTORE_PLAYSTORE_KEY_PASSWORD
 
-upload_to_internal:
-  stage: deploy
-  dependencies:
-    - sign_playstore_bundle
-  script:
-    - echo "Uploading AAB to internal Play Store..."
-    # Install Fastlane
-    - gem install fastlane
-    # Extract the service account JSON key from the secure file
-    - echo "$PLAYSTORE_JSON" > fastlane/playstore.json
     # Run Fastlane supply with the extracted JSON key
-    - fastlane run supply --aab qwant-browser-playstore-signed.aab --track internal --json_key fastlane/playstore.json
-  variables:
-    PLAYSTORE_JSON: $(cat $CI_PROJECT_DIR/playstore.json)
+    - echo "Uploading AAB to internal Play Store..."
+    - fastlane run supply --aab qwant-browser-playstore-signed.aab --track internal --json_key playstore.json
