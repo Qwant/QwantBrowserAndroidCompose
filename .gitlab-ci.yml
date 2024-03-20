@@ -115,7 +115,7 @@ build_playstore_aab:
 
 sign_and_upload_to_internal:
   stage: deploy
-  dependencies:
+  needs:
     - build_playstore_aab  
   before_script:
     - echo "Setup fastlane"
@@ -143,7 +143,7 @@ sign_and_upload_to_internal:
 
 deploy_internal_app_bundle:
   stage: deploy
-  before_script:
+  script:
     - echo "Setup fastlane"
     - apt-get --quiet update --yes
     - apt-get --quiet install --yes wget unzip
@@ -155,7 +155,6 @@ deploy_internal_app_bundle:
 
     # Copy keystore file to the current directory
     - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
-  script:
     - bundle exec fastlane upload_to_internal
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
