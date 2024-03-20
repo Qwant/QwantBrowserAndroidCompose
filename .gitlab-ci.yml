@@ -127,7 +127,7 @@ sign_and_upload_to_internal:
     - gem install bundler fastlane
   script:
     # Copy playstore file to the current directory
-    - echo "$PLAYSTORE_JSON_BASE64" | base64 -d > playstore.json
+    - echo "$PLAYSTORE_JSON_BASE64" | base64 -d > fastlane/playstore.json
 
     # Copy keystore file to the current directory
     - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
