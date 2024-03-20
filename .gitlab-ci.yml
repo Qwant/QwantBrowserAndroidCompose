@@ -46,10 +46,6 @@ before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
-  # Install Ruby and Fastlane
-  - apt-get install -qqy --no-install-recommends build-essential ruby-full
-  - gem install bundler fastlane
-
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   # Create a new directory at specified location
@@ -122,12 +118,13 @@ sign_playstore_bundle:
   stage: deploy
   dependencies:
     - unit_test
+  before_script:
+    # Install Ruby and Fastlane
+    - apt-get install -qqy --no-install-recommends build-essential ruby-full
+    - gem install bundler fastlane
   script:
-    # Extract keystore from secure file
-    - echo "Copying keystore file..."
-    - gem install fastlane
-
     # Copy keystore file to the fastlane directory
+    - echo "Copying keystore file..."
     - cp $CI_PROJECT_DIR/keystore_playstore.jks fastlane/keystore_playstore.jks
 
     # Run Fastlane action to sign the AAB
