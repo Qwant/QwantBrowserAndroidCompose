@@ -35,4 +35,24 @@ platform :android do
     gradle(task: "clean assembleRelease")
     upload_to_play_store
   end
+
+  desc "Submit a new Internal Build to Play Store"
+    lane :upload_to_internal do
+      gradle(
+        task: "bundle",
+        flavor: "playstore",
+        build_type: 'release',
+        properties: {
+          "android.injected.signing.store.file" => "../keystore_playstore.jks",
+          "android.injected.signing.store.password" => "####",
+          "android.injected.signing.key.alias" => "####",
+          "android.injected.signing.key.password" => "####",
+        })
+      upload_to_play_store(
+        track: 'internal',
+        release_status: 'draft',
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true)
+    end
 end

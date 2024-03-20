@@ -39,6 +39,14 @@ Submit a new Beta Build to Crashlytics Beta
 
 Deploy a new version to the Google Play
 
+### android upload_to_internal
+
+```sh
+[bundle exec] fastlane android upload_to_internal
+```
+
+Submit a new Internal Build to Play Store
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

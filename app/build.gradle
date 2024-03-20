@@ -14,7 +14,14 @@ hilt {
 android {
     namespace 'com.qwant.android.qwantbrowser'
     compileSdk 34
-
+    signingConfigs {
+        release {
+            storeFile file("../keystore_playstore.jks")
+            storePassword System.getenv('keystore_playstore_password')
+            keyAlias System.getenv('keystore_playstore_key_alias')
+            keyPassword System.getenv('keystore_playstore_key_password')
+        }
+    }
     defaultConfig {
         applicationId "com.qwant.liberty"
         minSdk 21
