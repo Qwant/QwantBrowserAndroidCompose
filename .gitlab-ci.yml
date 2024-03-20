@@ -97,8 +97,9 @@ build_playstore_aab:
     expire_in: 10 days
 
 # Run all tests on dev branch, if any fails, interrupt the pipeline
-debugTests:
-  needs: [build_playstore_aab]
+unit_test:
+  needs: 
+    - build_playstore_aab
   interruptible: true
   stage: test
   script:
@@ -107,9 +108,9 @@ debugTests:
     - $DEVELOP_BRANCH
 
 sign_playstore_bundle:
-  stage: deploy
-  dependencies:
-    - build_playstore_aab
+  stage: sign
+  needs:
+    - unit_test
   script:
     # Extract keystore from secure file
     - echo "Copying keystore file..."
@@ -126,7 +127,7 @@ sign_playstore_bundle:
 
 upload_to_internal:
   stage: deploy
-  dependencies:
+  needs:
     - sign_playstore_bundle
   script:
     - echo "Uploading AAB to internal Play Store..."
