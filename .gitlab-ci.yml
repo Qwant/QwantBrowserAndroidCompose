@@ -43,6 +43,7 @@ variables:
 
 # Packages installation before running script
 before_script:
+  - echo "foo$foo"
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
