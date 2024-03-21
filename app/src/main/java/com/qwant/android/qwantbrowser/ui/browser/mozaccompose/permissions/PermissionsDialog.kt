@@ -73,7 +73,7 @@ fun PermissionsDialog(
 
     YesNoDialog(
         onDismissRequest = { onClose(false, false) },
-        onYes = { onClose(false, shouldStore) },
+        onYes = { onClose(true, shouldStore) },
         onNo = { onClose(false, shouldStore) },
         description = stringResource(id = displayData.title, data.host.stripDefaultPort()),
         icon = displayData.icon,
