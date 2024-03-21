@@ -115,6 +115,8 @@ build_playstore_aab:
 
 deploy_internal_app_bundle:
   stage: deploy
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: '.'
   script:
     - echo "Setup fastlane"
     - apt-get --quiet update --yes
@@ -125,8 +127,11 @@ deploy_internal_app_bundle:
     - gem install bundler fastlane
     - bundle install
 
+    # Download keystore.jks from secure files
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+
     # Copy keystore file to the current directory and export path
-    - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
+    # - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
     
     # - echo "keystore_playstore_key_alias $keystore_playstore_key_alias"
