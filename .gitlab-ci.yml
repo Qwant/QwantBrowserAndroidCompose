@@ -128,13 +128,12 @@ deploy_internal_app_bundle:
     - bundle install
 
     # Download keystore.jks from secure files
-    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    # - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
 
     # Copy keystore file to the current directory and export path
-    # - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
+    - echo -n "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
     
-    # - echo "keystore_playstore_key_alias $keystore_playstore_key_alias"
     # Export keystore password, key alias, and key password as environment variables
     #- export keystore_playstore_password="$KEYSTORE_PLAYSTORE_PASSWORD"
     #- export keystore_playstore_key_alias="$KEYSTORE_PLAYSTORE_KEY_ALIAS"
