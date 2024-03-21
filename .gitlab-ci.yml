@@ -46,15 +46,6 @@ before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
-  # DEBUG
-  - cat /workspace/ca/ca.crt
-  - echo "$KEYSTORE_PLAYSTORE"
-  - echo $KEYSTORE_PLAYSTORE
-  - echo $keystore_playstore
-  - echo "$keystore_playstore"
-  - echo "$keystore_playstore_key_alias"
-  - echo $keystore_playstore_key_alias
-
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
   # Create a new directory at specified location
@@ -140,11 +131,7 @@ deploy_internal_app_bundle:
     # - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
 
     # Copy keystore file to the current directory and export path
-    - echo "keystore base64"
-    - echo $KEYSTORE_PLAYSTORE
-    - echo $keystore_playstore
-    - echo $keystore_playstore_key_alias
-    - echo -n "$KEYSTORE_PLAYSTORE" | base64 -d -o keystore_playstore.jks
+    - echo -n "$keystore_playstore" | base64 -d -o keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
     
     # Export keystore password, key alias, and key password as environment variables
