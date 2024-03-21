@@ -130,9 +130,10 @@ deploy_internal_app_bundle:
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
 
     # Export keystore password, key alias, and key password as environment variables
-    - export keystore_playstore_password="$keystore_playstore_password"
-    - export keystore_playstore_key_alias="$keystore_playstore_key_alias"
-    - export keystore_playstore_key_password="$keystore_playstore_key_password"
+    - export keystore_playstore_password="$KEYSTORE_PLAYSTORE_PASSWORD"
+    - export keystore_playstore_key_alias="$KEYSTORE_PLAYSTORE_KEY_ALIAS"
+    - export keystore_playstore_key_password="$KEYSTORE_PLAYSTORE_KEY_PASSWORD"
+    - echo "keystore_playstore_key_alias -> $keystore_playstore_key_alias"
 
     - bundle exec fastlane upload_to_internal
   rules:
