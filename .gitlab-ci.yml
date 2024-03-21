@@ -43,7 +43,6 @@ variables:
 
 # Packages installation before running script
 before_script:
-  - echo "keystore_playstore_key_alias $keystore_playstore_key_alias"
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
 
@@ -129,7 +128,8 @@ deploy_internal_app_bundle:
     # Copy keystore file to the current directory and export path
     - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
-    - echo "keystore_playstore_key_alias $keystore_playstore_key_alias"
+    
+    # - echo "keystore_playstore_key_alias $keystore_playstore_key_alias"
     # Export keystore password, key alias, and key password as environment variables
     #- export keystore_playstore_password="$KEYSTORE_PLAYSTORE_PASSWORD"
     #- export keystore_playstore_key_alias="$KEYSTORE_PLAYSTORE_KEY_ALIAS"
