@@ -41,24 +41,30 @@ platform :android do
 
       app_id = get_application_id()
 
-      previous_build_number = google_play_track_version_codes(
+      version_code = google_play_track_version_codes(
         package_name: app_id,
         track: "internal"
       )[0].to_s
 
-      current_build_number = bump_version_code(previous_build_number)
+      bumped_version_code = bump_version_code(version_code)
 
       android_set_version_code(
         gradle_file: "app/build.gradle",
-        version_code: current_build_number
+        version_code: bumped_version_code
+      )
+
+      android_set_version_name(
+        gradle_file: "app/build.gradle",
+        version_name: convert_to_version_name(bumped_version_code)
       )
 
       git_commit(
         path: "app/build.gradle",
-        message: "Bump version to #{current_build_number}"
+        message: "Bump version to #{bumped_version_code}"
       )
 
-      push_to_git_remote
+      # TODO: waiting for DevOps information in order to push from gitlab-runner
+      # push_to_git_remote
 
       gradle(
         task: "bundle",
@@ -83,7 +89,7 @@ end
 
 def bump_version_code(version_code)
     # Convert the version code to an integer
-    version_code_int = version_code.to_s.to_i
+    version_code_int = version_code.to_i
 
     # Extract the last digit
     last_digit = version_code_int % 10
@@ -95,7 +101,29 @@ def bump_version_code(version_code)
     incremented_version_code = version_code_without_last_digit + 1
 
     # Append the last digit back
-    new_version_code = incremented_version_code * 10 + last_digit
+    bumped_version_code = incremented_version_code * 10 + last_digit
 
-    return new_version_code
+    return bumped_version_code
+end
+
+def convert_to_version_name(version_code)
+    # Convert versionCode to string
+    version_str = version_code.to_s
+
+    # Remove the last digit
+    version_str = version_str[0..-2]
+
+    # Add a leading zero if necessary
+    version_str = version_str.rjust(8, '0')
+
+    # Split the string into groups of digits
+    groups = version_str.scan(/\d{2}/)
+
+    # Convert each group to a single digit if possible
+    groups.map! { |group| group.to_i.to_s }
+
+    # Join the groups with a period
+    version_name = groups.join(".")
+
+    return version_name
 end

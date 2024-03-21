@@ -88,35 +88,17 @@ build:
       when: always
   # no artifacts needed
 
-# build project for dev branch with artifacts
-build_playstore_aab:
+# Run unit tests on all branches, if any fails, interrupt the pipeline
+unit_test:
   interruptible: true
-  stage: build
+  stage: test
   script:
-    - echo "Building AAB for 'playstore' flavor..."
-    - ./gradlew bundlePlaystoreRelease # --console=plain --no-configuration-cache --no-build-cache
-    - mv app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab qwant-browser-playstore.aab
-  rules:
-    - if: '$CI_COMMIT_BRANCH != $DEVELOP_BRANCH' # test
-      when: always
-  artifacts:
-    paths:
-      - qwant-browser-playstore.aab
-    expire_in: 10 days
+    - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
+  allow_failure: false # Fail the pipeline if this job fails
 
-# Run all tests on dev branch, if any fails, interrupt the pipeline
-# unit_test:
-#  dependencies: 
-#    - build_playstore_aab
-#  interruptible: true
-#  stage: test
-#  script:
-#    - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
-
+# build project for dev branch and upload to internal play store
 deploy_internal_app_bundle:
   stage: deploy
-  variables:
-    SECURE_FILES_DOWNLOAD_PATH: '.'
   script:
     - echo "Setup fastlane"
     - apt-get --quiet update --yes
@@ -127,14 +109,11 @@ deploy_internal_app_bundle:
     - gem install bundler fastlane
     - bundle install
 
-    # Download keystore.jks from secure files
-    # - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
-
-    # Copy keystore file to the current directory and export path
+    # Copy keystore file to the current directory and export path for signing
     - echo -n "$keystore_playstore" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
 
-    # Copy playstore json file to the fastlane directory
+    # Copy PlayStore json file to the fastlane directory in order to push to PlayStore
     - echo -n "$playstore_json_base64" | base64 -d > fastlane/playstore.json
     
     - bundle exec fastlane upload_to_internal
