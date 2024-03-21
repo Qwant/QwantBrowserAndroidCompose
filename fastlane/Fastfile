@@ -47,6 +47,7 @@ platform :android do
       )[0].to_s
 
       bumped_version_code = bump_version_code(version_code)
+      bumped_version_name = convert_to_version_name(bumped_version_code)
 
       android_set_version_code(
         gradle_file: "app/build.gradle",
@@ -55,12 +56,16 @@ platform :android do
 
       android_set_version_name(
         gradle_file: "app/build.gradle",
-        version_name: convert_to_version_name(bumped_version_code)
+        version_name: bumped_version_name
       )
 
       git_commit(
         path: "app/build.gradle",
         message: "Bump version to #{bumped_version_code}"
+      )
+
+      add_git_tag(
+        tag: bumped_version_name
       )
 
       # TODO: waiting for DevOps information in order to push from gitlab-runner
