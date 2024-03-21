@@ -47,8 +47,11 @@ before_script:
   - apt-get --quiet install --yes wget unzip
 
   # DEBUG
+  - cat /workspace/ca/ca.crt
   - echo "$KEYSTORE_PLAYSTORE"
   - echo $KEYSTORE_PLAYSTORE
+  - echo $keystore_playstore
+  - echo "$keystore_playstore"
   - echo "$keystore_playstore_key_alias"
   - echo $keystore_playstore_key_alias
 
