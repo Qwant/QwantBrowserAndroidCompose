@@ -133,13 +133,10 @@ deploy_internal_app_bundle:
     # Copy keystore file to the current directory and export path
     - echo -n "$keystore_playstore" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
-    
-    # Export keystore password, key alias, and key password as environment variables
-    #- export keystore_playstore_password="$KEYSTORE_PLAYSTORE_PASSWORD"
-    #- export keystore_playstore_key_alias="$KEYSTORE_PLAYSTORE_KEY_ALIAS"
-    #- export keystore_playstore_key_password="$KEYSTORE_PLAYSTORE_KEY_PASSWORD"
-    # - echo "keystore_playstore_key_alias -> $KEYSTORE_PLAYSTORE_KEY_ALIAS"
 
+    # Copy playstore json file to the fastlane directory
+    - echo -n "$playstore_json_base64" | base64 -d > fastlane/playstore.json
+    
     - bundle exec fastlane upload_to_internal
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
