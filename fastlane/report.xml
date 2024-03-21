@@ -5,7 +5,29 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000231">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000173">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: get_application_id" time="0.115213">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: google_play_track_version_codes" time="2.07641">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: android_set_version_code" time="0.006669">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: android_commit_version_bump" time="0.121677">
+        
+          <failure message="/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/actions/actions_helper.rb:67:in `execute_action&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:255:in `block in execute_action&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:229:in `chdir&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:229:in `execute_action&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:157:in `trigger_action_by_name&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/fast_file.rb:159:in `method_missing&apos;&#10;Fastfile:56:in `block (2 levels) in parsing_binding&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/lane.rb:41:in `call&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:49:in `block in execute&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:45:in `chdir&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/runner.rb:45:in `execute&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/lane_manager.rb:46:in `cruise_lane&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/command_line_handler.rb:34:in `handle&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/commands_generator.rb:110:in `block (2 levels) in run&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/commander-4.6.0/lib/commander/command.rb:187:in `call&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/commander-4.6.0/lib/commander/command.rb:157:in `run&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/commander-4.6.0/lib/commander/runner.rb:444:in `run_active_command&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb:124:in `run!&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/commander-4.6.0/lib/commander/delegates.rb:18:in `run!&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/commands_generator.rb:354:in `run&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/commands_generator.rb:43:in `start&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/fastlane/lib/fastlane/cli_tools_distributor.rb:123:in `take_off&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/gems/fastlane-2.219.0/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/bin/fastlane:25:in `load&apos;&#10;/opt/homebrew/Cellar/fastlane/2.219.0_2/libexec/bin/fastlane:25:in `&lt;main&gt;&apos;&#10;&#10;Found unexpected uncommited changes in the working directory. Expected these files to have &#10;changed: &#10;app/build.gradle.&#10;But found these actual changes: &#10;Gemfile&#10;Gemfile.lock&#10;app/build.gradle&#10;fastlane/Fastfile&#10;fastlane/Pluginfile&#10;fastlane/report.xml&#10;gradle.properties&#10;.DS_Store&#10;app/.DS_Store&#10;app/keystore_playstore.jks&#10;app/keystore_playstore_2.jks&#10;app/keystore_playstore_3.jks&#10;app/keystore_playstore_n.jks&#10;app/keystore_playstore_without_n.jks&#10;app/src/.DS_Store&#10;app/src/androidTest/.DS_Store&#10;app/src/androidTest/java/.DS_Store&#10;app/src/androidTest/java/com/.DS_Store&#10;app/src/androidTest/java/com/example/.DS_Store&#10;app/src/androidTest/java/com/example/qwantbrowser/.DS_Store&#10;app/src/test/.DS_Store&#10;app/src/test/java/.DS_Store&#10;app/src/test/java/com/.DS_Store&#10;app/src/test/java/com/qwant/.DS_Store&#10;app/src/test/java/com/qwant/android/.DS_Store&#10;app/src/test/java/com/qwant/android/qwantbrowser/.DS_Store&#10;build/.DS_Store&#10;build/kotlin/.DS_Store&#10;fastlane/playstore.json.&#10;Make sure you have cleaned up the build artifacts and &#10;are only left with the changed version files at this stage in your lane, and don&apos;t touch the &#10;working directory while your lane is running. You can also use the :force option to bypass this &#10;check, and always commit a version bump regardless of the state of the working directory." />
         
       </testcase>
     
