@@ -116,7 +116,6 @@ build_playstore_aab:
 deploy_internal_app_bundle:
   stage: deploy
   script:
-    - echo "keystore_playstore_key_alias -> $KEYSTORE_PLAYSTORE_KEY_ALIAS"
     - echo "Setup fastlane"
     - apt-get --quiet update --yes
     - apt-get --quiet install --yes wget unzip
@@ -134,7 +133,7 @@ deploy_internal_app_bundle:
     #- export keystore_playstore_password="$KEYSTORE_PLAYSTORE_PASSWORD"
     #- export keystore_playstore_key_alias="$KEYSTORE_PLAYSTORE_KEY_ALIAS"
     #- export keystore_playstore_key_password="$KEYSTORE_PLAYSTORE_KEY_PASSWORD"
-    - echo "keystore_playstore_key_alias -> $KEYSTORE_PLAYSTORE_KEY_ALIAS"
+    # - echo "keystore_playstore_key_alias -> $KEYSTORE_PLAYSTORE_KEY_ALIAS"
 
     - bundle exec fastlane upload_to_internal
   rules:
