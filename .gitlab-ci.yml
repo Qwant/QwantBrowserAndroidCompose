@@ -125,10 +125,15 @@ deploy_internal_app_bundle:
     - gem install bundler fastlane
     - bundle install
 
-    # Copy keystore file to the current directory
+    # Copy keystore file to the current directory and export path
     - echo "$KEYSTORE_PLAYSTORE" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
-    - echo "Keystore Playsore path $keystore_playstore_path"
+
+    # Export keystore password, key alias, and key password as environment variables
+    - export keystore_playstore_password="$keystore_playstore_password"
+    - export keystore_playstore_key_alias="$keystore_playstore_key_alias"
+    - export keystore_playstore_key_password="$keystore_playstore_key_password"
+
     - bundle exec fastlane upload_to_internal
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
