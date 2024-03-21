@@ -47,8 +47,10 @@ before_script:
   - apt-get --quiet install --yes wget unzip
 
   # DEBUG
-  - echo "keystore base64"
   - echo "$KEYSTORE_PLAYSTORE"
+  - echo $KEYSTORE_PLAYSTORE
+  - echo "$keystore_playstore_key_alias"
+  - echo $keystore_playstore_key_alias
 
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
