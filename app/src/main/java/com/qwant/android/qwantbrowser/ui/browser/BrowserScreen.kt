@@ -413,7 +413,10 @@ fun BrowserMenuButton(
     Box {
         var showMenu by remember { mutableStateOf(false) }
 
-        ToolbarAction(onClick = { showMenu = true }) {
+        ToolbarAction(onClick = {
+            viewModel.piwik.event("Menu", "Tap", "Omnibar")
+            showMenu = true
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.icons_more_vertical),
                 contentDescription = "menu",

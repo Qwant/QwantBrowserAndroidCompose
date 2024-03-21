@@ -47,7 +47,7 @@ fun BrowserMenu(
             icon = R.drawable.icons_settings,
             onClick = {
                 onDismissRequest()
-                viewModel.piwik.event("Settings", "Tap", "Toolbar")
+                viewModel.piwik.event("Settings", "Tap", "Menu")
                 navigateTo(NavDestination.Preferences)
             }
         )
