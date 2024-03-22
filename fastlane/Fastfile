@@ -94,7 +94,9 @@ lane :commit_and_tag do |options|
     tag: tag
   )
 
-  push_to_git_remote
+  push_to_git_remote(
+    set_upstream: true
+  )
 
   UI.success("Committed changes with message '#{message}' and tagged with '#{tag}'.")
 end

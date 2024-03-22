@@ -20,6 +20,8 @@ variables:
   # develop branch name
   CI_DEVELOP_BRANCH: "ci" # For testing only. Update to dev
 
+  CI_BOT: "CI BOT"
+
   # Proxy - Not necessary on Gitlab OVH
   # GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
 
@@ -49,8 +51,10 @@ before_script:
 
   # Git config
   - apt-get install -y git
-  - git config --global user.name "CI BOT"
+  - git config --global user.name "$CI_BOT"
   - git config --global user.email "ci-mobile@qwant.com"
+  - git config --global http.sslVerify false
+  - git config receive.advertisePushOptions true
   - git config --global credential.helper store
   - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.com" > ~/.git-credentials
 
