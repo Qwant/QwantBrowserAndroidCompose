@@ -43,9 +43,15 @@ variables:
 
 # Packages installation before running script
 before_script:
-  - git --version
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget unzip
+
+  # Git config
+  - apt-get install -y git
+  - git config --global user.name "CI BOT"
+  - git config --global user.email "ci-mobile@qwant.com"
+  - git config --global credential.helper store
+  - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.com" > ~/.git-credentials
 
   # Setup path as android_home for moving/exporting the downloaded sdk into it
   - export ANDROID_HOME="${PWD}/android-sdk-root"
