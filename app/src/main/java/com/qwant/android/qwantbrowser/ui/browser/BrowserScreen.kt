@@ -173,7 +173,6 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
 
 
 // TODO Clean up and separate code for Qwant VIP UI
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QwantVIPAction(
     viewModel: BrowserScreenViewModel//  = hiltViewModel(),
@@ -294,7 +293,7 @@ fun AfterActions(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabsButton(
     navigateTo: (NavDestination) -> Unit,
