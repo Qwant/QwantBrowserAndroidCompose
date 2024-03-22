@@ -74,7 +74,7 @@ fun PullToRefreshBox(
             state = pullRefreshState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = 0.dp),
+                .offset(y = (-5).dp),
             indicator = { state -> PullToRefreshDefaults.Indicator(
                 state = state,
                 modifier = Modifier.border(
