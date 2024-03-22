@@ -39,12 +39,7 @@ platform :android do
   desc "Submit a new Internal Build to Play Store"
     lane :upload_to_internal do
 
-      app_id = get_application_id()
-
-      version_code = google_play_track_version_codes(
-        package_name: app_id,
-        track: "internal"
-      )[0].to_s
+      version_code = android_get_version_code()
 
       bumped_version_code = bump_version_code(version_code)
       bumped_version_name = convert_to_version_name(bumped_version_code)
@@ -59,17 +54,10 @@ platform :android do
         version_name: bumped_version_name
       )
 
-      git_commit(
-        path: "app/build.gradle",
-        message: "Bump version to #{bumped_version_code}"
-      )
-
-      add_git_tag(
+      commit_and_tag(
+        message: "Bump version to #{bumped_version_code}",
         tag: bumped_version_name
       )
-
-      # TODO: waiting for DevOps information in order to push from gitlab-runner
-      # push_to_git_remote
 
       gradle(
         task: "bundle",
@@ -90,6 +78,25 @@ platform :android do
         skip_upload_images: true,
         skip_upload_screenshots: true)
     end
+end
+
+desc "Commit and tag changes, then push to Git remote"
+lane :commit_and_tag do |options|
+  message = options[:message]
+  tag = options[:tag]
+
+  git_commit(
+    path: "app/build.gradle",
+    message: message
+  )
+
+  add_git_tag(
+    tag: tag
+  )
+
+  push_to_git_remote
+
+  UI.success("Committed changes with message '#{message}' and tagged with '#{tag}'.")
 end
 
 def bump_version_code(version_code)

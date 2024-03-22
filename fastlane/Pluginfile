@@ -5,3 +5,4 @@
 gem 'fastlane-plugin-mattermost'
 gem 'fastlane-plugin-gradle_manager'
 gem 'fastlane-plugin-android_version_manage'
+gem 'fastlane-plugin-versioning_android'

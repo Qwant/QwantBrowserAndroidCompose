@@ -110,9 +110,9 @@ GEM
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-android_version_manage (0.1.6)
-    fastlane-plugin-android_versioning (0.5.5)
     fastlane-plugin-gradle_manager (1.1.1)
     fastlane-plugin-mattermost (1.3.2)
+    fastlane-plugin-versioning_android (0.1.1)
     gh_inspector (1.1.3)
     google-apis-androidpublisher_v3 (0.54.0)
       google-apis-core (>= 0.11.0, < 2.a)
@@ -218,9 +218,9 @@ PLATFORMS
 DEPENDENCIES
   fastlane
   fastlane-plugin-android_version_manage
-  fastlane-plugin-android_versioning
   fastlane-plugin-gradle_manager
   fastlane-plugin-mattermost
+  fastlane-plugin-versioning_android
 
 BUNDLED WITH
    2.5.4

@@ -17,7 +17,7 @@ image: eclipse-temurin:17-jdk-jammy
 variables:
 
   # develop branch name
-  DEVELOP_BRANCH: "ci" # For testing only. Update to dev
+  CI_DEVELOP_BRANCH: "ci" # For testing only. Update to dev
 
   # Proxy - Not necessary on Gitlab OVH
   # GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
@@ -91,7 +91,7 @@ build:
   script:
     - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
   rules:
-    - if: '$CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main"'
+    - if: '$CI_COMMIT_BRANCH != $CI_DEVELOP_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       when: always
   # no artifacts needed
 
@@ -116,6 +116,14 @@ deploy_internal_app_bundle:
     - gem install bundler fastlane
     - bundle install
 
+    # Install and configure Git
+    # TODO: Update with DevOps insight
+    - apt-get install -y git
+    - git config --global user.name "CI BOT"
+    - git config --global user.email "ci-mobile@qwant.com"
+    - git config --global credential.helper store
+    - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.com" > ~/.git-credentials
+
     # Copy keystore file to the current directory and export path for signing
     - echo -n "$keystore_playstore" | base64 -d > keystore_playstore.jks
     - export keystore_playstore_path=$(realpath keystore_playstore.jks)
@@ -125,9 +133,24 @@ deploy_internal_app_bundle:
     
     - bundle exec fastlane upload_to_internal
   rules:
-    - if: '$CI_COMMIT_BRANCH == $DEVELOP_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEVELOP_BRANCH'
       when: always
   artifacts:
     paths:
       - app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab
     expire_in: 10 days
+
+# Create a release when a merge happens in main branch
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never                                  # Do not run this job when a tag is created manually
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH  # Run this job when commits are pushed or merged to the default branch
+  script:
+    - echo "running release_job for $TAG"
+  release:                                         # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    tag_name: 'v0.$CI_PIPELINE_IID'                # The version is incremented per pipeline.
+    description: 'v0.$CI_PIPELINE_IID'
+    ref: '$CI_COMMIT_SHA'
