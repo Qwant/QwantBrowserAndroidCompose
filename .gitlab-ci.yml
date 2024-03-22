@@ -11,6 +11,7 @@ stages:
   - build
   - test
   - deploy
+  - release
 
 image: eclipse-temurin:17-jdk-jammy
 
