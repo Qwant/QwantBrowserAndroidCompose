@@ -38,6 +38,7 @@ fun Toolbar(
     animationEasing: Easing = FastOutSlowInEasing
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
+    val loadingProgress by toolbarState.loadingProgress.collectAsState()
 
     // TODO move suggestShown variable to viewmodel
     //  or handle dividers differently
@@ -78,7 +79,7 @@ fun Toolbar(
                 modifier = Modifier.weight(2f)
             )
             ToolbarProgressBar(toolbarState = toolbarState)
-            if (!suggestShown) {
+            if (!suggestShown && loadingProgress == 1f) {
                 HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
         }
@@ -128,7 +129,7 @@ fun Toolbar(
         }
 
         if (toolbarPosition == ToolbarPosition.TOP) {
-            if (!suggestShown) {
+            if (!suggestShown && loadingProgress == 1f) {
                 HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
             }
             ToolbarProgressBar(toolbarState = toolbarState)
