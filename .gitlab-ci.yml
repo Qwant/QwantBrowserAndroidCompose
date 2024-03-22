@@ -126,8 +126,7 @@ deploy_internal_app_bundle:
     - apt-get install -y git
     - git config --global user.name "CI BOT"
     - git config --global user.email "ci-mobile@qwant.com"
-    - git config --global credential.helper store
-    - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.com" > ~/.git-credentials
+    - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.tooling.ovh.kube.qwant.ninja/qwant/mobile/QwantBrowserAndroid" > ~/.git-credentials
 
     # Copy keystore file to the current directory and export path for signing
     - echo -n "$keystore_playstore" | base64 -d > keystore_playstore.jks
