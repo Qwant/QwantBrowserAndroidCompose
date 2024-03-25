@@ -38,11 +38,11 @@ fun PullToRefreshBox(
                     onRefresh()
                 }
                 pullToRefreshRunning = false
-                pullRefreshState.resetOffset()
+                pullRefreshState.animateOffset(0f, 200)
             },
             onDragCancel = {
                 pullToRefreshRunning = false
-                pullRefreshState.resetOffset()
+                pullRefreshState.animateOffset(0f, 200)
             },
             onVerticalDrag = { change, dragAmount ->
                 if (dragAmount > 0 && (pullToRefreshRunning || enabled())) {
