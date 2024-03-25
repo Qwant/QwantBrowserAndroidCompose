@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -76,3 +77,9 @@ val Context.UA: String
 val Context.UAQwant: String
     get() = "$UA ${getString(R.string.user_agent_qwant_ext, com.qwant.android.qwantbrowser.BuildConfig.VERSION_NAME)}"
 
+fun Context.isPackageInstalled(packageToFind: String) = try {
+    this.packageManager.getPackageInfo(packageToFind, 0)
+    true
+} catch (e: PackageManager.NameNotFoundException) {
+    false
+}

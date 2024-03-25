@@ -7,7 +7,6 @@ import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
-import com.qwant.android.qwantbrowser.preferences.frontend.QwantUrlEngineSyncFeature
 import com.qwant.android.qwantbrowser.ui.nav.QwantNavHost
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 import androidx.compose.material3.Scaffold
@@ -37,22 +36,9 @@ fun QwantBrowserApp(
         }
     } }
 
-    val homeUrl by applicationViewModel.homeUrl.collectAsState()
-    val qwantTabs by applicationViewModel.qwantTabs.collectAsState()
-
     if (appearance != null && appearance != Appearance.UNRECOGNIZED
         && toolbarPosition != ToolbarPosition.UNRECOGNIZED
     ) {
-        homeUrl?.let {
-            // TODO remember this for recompositions somehow
-            QwantUrlEngineSyncFeature(
-                it,
-                qwantTabs,
-                applicationViewModel.loadUrlUseCase,
-                applicationViewModel.getQwantUrlUseCase
-            )
-        }
-
         QwantBrowserTheme(
             darkTheme = darkTheme,
             privacy = isPrivate

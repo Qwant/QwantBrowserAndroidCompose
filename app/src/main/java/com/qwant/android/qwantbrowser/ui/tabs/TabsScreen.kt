@@ -205,7 +205,7 @@ fun AnimatedTabList(
         }
         val tabClosedString = stringResource(id = R.string.browser_tab_closed)
         val onTabDeleted: (TabSessionState) -> Unit = { tab: SessionState ->
-            tabsViewModel.removeTab(tab.id)
+            tabsViewModel.removeTab(tab.id, private)
             appViewModel.showSnackbar(tabClosedString)
         }
 

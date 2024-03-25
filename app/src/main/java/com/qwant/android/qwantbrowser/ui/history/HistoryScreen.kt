@@ -32,7 +32,10 @@ fun HistoryScreen(
     var showDeleteAllConfirmation by remember { mutableStateOf(false) }
 
     val visits = historyViewModel.historyItems.collectAsLazyPagingItems()
-    val visitsEmpty = (visits.itemCount == 0 && visits.loadState.append != LoadState.Loading)
+    val visitsEmpty = (visits.itemCount == 0
+            && visits.loadState.append != LoadState.Loading
+            && visits.loadState.prepend != LoadState.Loading
+            && visits.loadState.refresh != LoadState.Loading)
 
     Column(modifier = Modifier
         .fillMaxSize()

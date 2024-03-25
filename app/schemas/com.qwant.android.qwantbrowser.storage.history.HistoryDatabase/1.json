@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dafe5b2d6af2edf7573c9758ee47e002",
+    "identityHash": "faac902788d291855482d61936769cc2",
     "entities": [
       {
         "tableName": "pages",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `title` TEXT NOT NULL, `previewImageUrl` TEXT, PRIMARY KEY(`uri`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `title` TEXT, `previewImageUrl` TEXT, PRIMARY KEY(`uri`))",
         "fields": [
           {
             "fieldPath": "uri",
@@ -18,7 +18,7 @@
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "previewImageUrl",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "visits",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pageUri` TEXT NOT NULL, `time` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`pageUri`, `time`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pageUri` TEXT NOT NULL, `time` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`pageUri`, `time`), FOREIGN KEY(`pageUri`) REFERENCES `pages`(`uri`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "pageUri",
@@ -67,13 +67,25 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "pages",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "pageUri"
+            ],
+            "referencedColumns": [
+              "uri"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dafe5b2d6af2edf7573c9758ee47e002')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'faac902788d291855482d61936769cc2')"
     ]
   }
 }

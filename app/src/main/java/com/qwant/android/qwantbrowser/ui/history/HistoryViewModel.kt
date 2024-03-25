@@ -33,7 +33,6 @@ class HistoryViewModel @Inject constructor(
     val historyItems = pager.flow.cachedIn(viewModelScope)
 
     val openNewTab = tabsUseCases.addTab
-    // val browserIcons = core.browserIcons
 
     fun deleteUrlFromHistory(url: String) {
         viewModelScope.launch {

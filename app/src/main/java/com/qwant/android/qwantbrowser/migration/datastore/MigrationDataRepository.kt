@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.migration.datastore
 import android.util.Log
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.*
-import mozilla.components.concept.engine.Engine
 import java.io.IOException
 import javax.inject.Inject
 
@@ -26,6 +25,18 @@ class MigrationDataRepository @Inject constructor(
     suspend fun migration503Done() {
         datastore.updateData { data ->
             data.toBuilder().setMigration503(false).build()
+        }
+    }
+
+    suspend fun migration504HistoryDone() {
+        datastore.updateData { data ->
+            data.toBuilder().setMigration504History(true).build()
+        }
+    }
+
+    suspend fun migration504BookmarksDone() {
+        datastore.updateData { data ->
+            data.toBuilder().setMigration504Bookmarks(true).build()
         }
     }
 }

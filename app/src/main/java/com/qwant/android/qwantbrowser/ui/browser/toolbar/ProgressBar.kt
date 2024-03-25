@@ -11,7 +11,7 @@ fun ProgressBar(
 ) {
     if (loadingProgress < 1 && loadingProgress > 0) {
         LinearProgressIndicator(
-            progress = loadingProgress,
+            progress = { loadingProgress },
             modifier = modifier
         )
     }

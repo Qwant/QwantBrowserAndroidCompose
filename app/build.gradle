@@ -6,6 +6,10 @@ plugins {
     id 'kotlin-kapt'
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
 // TODO make piwik optional for build
 def piwikProdSettingsFile = rootProject.file("piwik.prod.properties")
 def piwikProdSettings = new Properties()
@@ -23,8 +27,8 @@ android {
         applicationId "com.qwant.liberty"
         minSdk 21
         targetSdk 34
-        versionCode 50003050
-        versionName "5.0.3.5"
+        versionCode 50004070
+        versionName "5.0.4.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -65,6 +69,7 @@ android {
             applicationIdSuffix ".debug"
             buildConfigField("String", "PIWIK_URL", piwikDevSettings['PIWIK_URL'])
             buildConfigField("String", "PIWIK_SITE_ID", piwikDevSettings['PIWIK_SITE_ID'])
+            buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
         }
         internal {
             initWith(debug)
@@ -75,6 +80,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "PIWIK_URL", piwikProdSettings['PIWIK_URL'])
             buildConfigField("String", "PIWIK_SITE_ID", piwikProdSettings['PIWIK_SITE_ID'])
+            buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
         }
     }
 
@@ -86,6 +92,9 @@ android {
         sfr {
             dimension "target"
             versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
+        }
+        genymobile {
+            dimension "target"
         }
     }
 
@@ -124,14 +133,14 @@ dependencies {
     // Legacy Onboarding
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Legacy assistant
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
     // Old preferences for migration. Remove after migration is complete
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Android
     implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
-    implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
     implementation 'androidx.datastore:datastore:1.0.0'
     implementation 'androidx.paging:paging-runtime-ktx:3.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
@@ -146,9 +155,9 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.1.0'
 
     // Compose
-    implementation 'androidx.activity:activity-compose:1.8.1'
+    implementation 'androidx.activity:activity-compose:1.8.2'
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-viewbinding:1.6.0-alpha08"
+    implementation "androidx.compose.ui:ui-viewbinding:1.6.1"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
     implementation "androidx.compose.animation:animation-graphics:$compose_version"
     implementation "androidx.paging:paging-compose:3.2.1"
@@ -156,10 +165,10 @@ dependencies {
     // Compose debug
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_tooling_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_tooling_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.0-beta01"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.1"
 
     // Material
-    implementation "androidx.compose.material3:material3:1.2.0-alpha08"
+    implementation "androidx.compose.material3:material3:1.2.0"
 
     // Room
     implementation "androidx.room:room-ktx:$room_version"

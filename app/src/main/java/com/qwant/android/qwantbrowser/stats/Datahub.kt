@@ -45,7 +45,7 @@ class Datahub @Inject constructor(
 
     fun brandSuggestClicked(suggestion: Suggestion.BrandSuggestion) {
         call("suggest", BRAND_SUGGEST_PAYLOAD.format(
-            clientProvider.client,
+            clientProvider.clientState.value,
             interfaceLanguage,
             searchRegion,
             suggestion.brand,

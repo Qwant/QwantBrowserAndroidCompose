@@ -2,6 +2,8 @@ package com.qwant.android.qwantbrowser.stats
 
 import android.content.Context
 import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.ext.isQwantSERPUrl
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
@@ -24,9 +26,10 @@ class Piwik @Inject constructor(
         BuildConfig.PIWIK_URL,
         BuildConfig.PIWIK_SITE_ID,
         "default"
-    )).apply {
-        android.util.Log.d("QWANT_PIWIK", "new piwik tracker")
-        this.dispatchInterval = 0
+    )).also {
+        it.setAnonymizationState(true)
+        it.dispatchInterval = 0
+        it.isPrefixing = false
     }
 
     init {
@@ -40,7 +43,6 @@ class Piwik @Inject constructor(
     }
 
     fun trackApplicationDownload() {
-        android.util.Log.d("QWANT_PIWIK", "track app download")
         TrackHelper.track().sendApplicationDownload().with(tracker)
     }
 
@@ -49,9 +51,16 @@ class Piwik @Inject constructor(
         action: String,
         name: String? = null
     ) {
-        android.util.Log.d("QWANT_PIWIK", "track event $category - $action - $name")
         val builder = TrackHelper.track().event(category, action)
         name?.let { builder.name(it) }
         builder.with(tracker)
+    }
+
+    fun screenView(url: String) {
+        val screen = if (url.isQwantUrl()) {
+            if (url.isQwantSERPUrl()) "SERP navigation"
+            else "HP navigation"
+        } else "Web navigation"
+        TrackHelper.track().screens(listOf(screen)).with(tracker);
     }
 }

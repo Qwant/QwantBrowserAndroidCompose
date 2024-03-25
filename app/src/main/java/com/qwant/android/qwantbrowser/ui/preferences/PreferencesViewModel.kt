@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.preferences.app.*
 import com.qwant.android.qwantbrowser.preferences.frontend.*
+import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class PreferencesViewModel @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository,
     private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
+    private val piwik: Piwik,
     tabsUseCases: TabsUseCases,
     qwantUseCases: QwantUseCases
 ) : ViewModel() {
@@ -103,7 +106,11 @@ class PreferencesViewModel @Inject constructor(
     }
 
     fun updatePiwikOptout(optout: Boolean) {
-        viewModelScope.launch { appPreferencesRepository.updatePiwikOptout(optout) }
+        viewModelScope.launch {
+            if (optout) { piwik.event("Tracking", "Off") }
+            appPreferencesRepository.updatePiwikOptout(optout)
+            if (!optout) { piwik.event("Tracking", "On") }
+        }
     }
 
     val addTabsUseCase = tabsUseCases.addTab

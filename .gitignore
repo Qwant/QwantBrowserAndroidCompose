@@ -5,4 +5,7 @@
 /piwik.prod.properties
 /piwik.dev.properties
 /app/playstore/
+/app/genymobile/
 /.idea
+/qwantcompanion/genymobile/
+/local.properties

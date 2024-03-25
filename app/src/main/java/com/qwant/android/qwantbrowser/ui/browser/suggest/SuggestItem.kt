@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.toCleanUrl
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
-import com.qwant.android.qwantbrowser.legacy.history.History
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.suggest.providers.QwantSuggestProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -50,6 +47,8 @@ import com.qwant.android.qwantbrowser.suggest.providers.SessionTabsProvider
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.UrlIcon
 import mozilla.components.browser.icons.BrowserIcons
+import mozilla.components.concept.storage.BookmarksStorage
+import mozilla.components.concept.storage.HistoryStorage
 
 
 fun <T> IntRange.toAnnotatedStringRange(item: T) : AnnotatedString.Range<T> =
@@ -71,6 +70,7 @@ fun <T> IntRange.toAnnotatedStringRange(item: T) : AnnotatedString.Range<T> =
     )
 }
 
+// TODO decompose suggest items into multiple composable. Maybe put composable into providers ?
 @Composable
 fun SuggestItem(
     suggestion: Suggestion,
@@ -79,17 +79,34 @@ fun SuggestItem(
     onSetTextClicked: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showClipboardSuggestionContent by remember { mutableStateOf(false) }
+
+
     WebsiteRow(
-        title = when (suggestion) {
-            is Suggestion.SearchSuggestion -> suggestion.text
-            is Suggestion.BrandSuggestion -> suggestion.title
-            is Suggestion.OpenTabSuggestion -> suggestion.title ?: ""
-            is Suggestion.SelectTabSuggestion -> suggestion.title
+        title = if (suggestion.provider is ClipboardProvider) {
+            stringResource(R.string.browser_suggest_clipboard_text)
+        } else {
+            when (suggestion) {
+                is Suggestion.SearchSuggestion -> suggestion.text
+                is Suggestion.BrandSuggestion -> suggestion.title
+                is Suggestion.OpenTabSuggestion -> suggestion.title ?: ""
+                is Suggestion.SelectTabSuggestion -> suggestion.title
+            }
         },
-        subtitle = when (suggestion) {
-            is Suggestion.SearchSuggestion, is Suggestion.BrandSuggestion -> null
-            is Suggestion.OpenTabSuggestion -> suggestion.url
-            is Suggestion.SelectTabSuggestion -> stringResource(id = R.string.browser_go_to_tab)
+        subtitle = if (suggestion.provider is ClipboardProvider) {
+            if (showClipboardSuggestionContent) {
+                when (suggestion) {
+                    is Suggestion.SearchSuggestion -> suggestion.text
+                    is Suggestion.OpenTabSuggestion -> suggestion.url
+                    else -> null
+                }
+            } else null
+        } else {
+            when (suggestion) {
+                is Suggestion.SearchSuggestion, is Suggestion.BrandSuggestion -> null
+                is Suggestion.OpenTabSuggestion -> suggestion.url
+                is Suggestion.SelectTabSuggestion -> stringResource(id = R.string.browser_go_to_tab)
+            }
         },
         leading = {
             when (suggestion.provider) {
@@ -118,7 +135,7 @@ fun SuggestItem(
                         url = (suggestion as Suggestion.OpenTabSuggestion).url,
                         miniature = R.drawable.icons_bookmark
                     )
-                is History ->
+                is HistoryStorage ->
                     SuggestUrlIcon(
                         browserIcons = browserIcons,
                         url = (suggestion as Suggestion.OpenTabSuggestion).url,
@@ -135,68 +152,91 @@ fun SuggestItem(
             }
         },
         trailing = {
-            when (suggestion) {
-                is Suggestion.OpenTabSuggestion -> {
-                    Box(modifier = Modifier.size(24.dp))
-                }
-                is Suggestion.BrandSuggestion -> {
-                    // TODO make a separated component for brand suggestion trailing
-                    Box {
-                        var showInformationPopup by remember { mutableStateOf(false) }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier
-                                .clickable { showInformationPopup = true }
-                                .padding(start = 4.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.browser_brand_suggest_ad),
-                                fontSize = 12.sp,
-                                color = LocalContentColor.current.copy(0.6f)
-                            )
-                            Icon(
-                                painterResource(id = R.drawable.icons_information),
-                                contentDescription = "information",
-                                tint = LocalContentColor.current.copy(0.6f),
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                        Dropdown(
-                            expanded = showInformationPopup,
-                            onDismissRequest = { showInformationPopup = false },
-                            focusable = false,
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .sizeIn(maxWidth = 200.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.browser_brand_suggest_information, suggestion.brand, suggestion.domain),
-                                fontSize = 14.sp
-                            )
+            if (suggestion.provider is ClipboardProvider) {
+                Icon(
+                    painter = painterResource(id = when(showClipboardSuggestionContent) {
+                        true -> R.drawable.icons_eye_off
+                        false -> R.drawable.icons_eye
+                    }),
+                    contentDescription = when(showClipboardSuggestionContent) {
+                        true -> "Hide"
+                        false -> "Show"
+                    },
+                    tint = LocalContentColor.current.copy(0.6f),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { showClipboardSuggestionContent = !showClipboardSuggestionContent }
+                )
+            } else {
+                when (suggestion) {
+                    is Suggestion.OpenTabSuggestion -> {
+                        Box(modifier = Modifier.size(24.dp))
+                    }
+
+                    is Suggestion.BrandSuggestion -> {
+                        // TODO make a separated component for brand suggestion trailing
+                        Box {
+                            var showInformationPopup by remember { mutableStateOf(false) }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier
+                                    .clickable { showInformationPopup = true }
+                                    .padding(start = 4.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.browser_brand_suggest_ad),
+                                    fontSize = 12.sp,
+                                    color = LocalContentColor.current.copy(0.6f)
+                                )
+                                Icon(
+                                    painterResource(id = R.drawable.icons_information),
+                                    contentDescription = "information",
+                                    tint = LocalContentColor.current.copy(0.6f),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                            Dropdown(
+                                expanded = showInformationPopup,
+                                onDismissRequest = { showInformationPopup = false },
+                                focusable = false,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .sizeIn(maxWidth = 200.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        R.string.browser_brand_suggest_information,
+                                        suggestion.brand,
+                                        suggestion.domain
+                                    ),
+                                    fontSize = 14.sp
+                                )
+                            }
                         }
                     }
-                }
-                else -> {
-                    Icon(
-                        painter = painterResource(
-                            id = if (suggestion is Suggestion.SearchSuggestion) {
-                                when (toolbarPosition) {
-                                    ToolbarPosition.TOP -> R.drawable.icons_arrow_backward_up
-                                    else -> R.drawable.icons_arrow_backward_down
-                                }
-                            } else R.drawable.icons_arrow_tab
-                        ),
-                        contentDescription = "Go",
-                        tint = LocalContentColor.current.copy(0.6f),
-                        modifier = Modifier
-                            .size(24.dp)
-                            .then(
-                                if (suggestion is Suggestion.SearchSuggestion) {
-                                    Modifier.clickable { onSetTextClicked(suggestion.text) }
-                                } else Modifier
-                            )
-                    )
+
+                    else -> {
+                        Icon(
+                            painter = painterResource(
+                                id = if (suggestion is Suggestion.SearchSuggestion) {
+                                    when (toolbarPosition) {
+                                        ToolbarPosition.TOP -> R.drawable.icons_arrow_backward_up
+                                        else -> R.drawable.icons_arrow_backward_down
+                                    }
+                                } else R.drawable.icons_arrow_tab
+                            ),
+                            contentDescription = "Go",
+                            tint = LocalContentColor.current.copy(0.6f),
+                            modifier = Modifier
+                                .size(24.dp)
+                                .then(
+                                    if (suggestion is Suggestion.SearchSuggestion) {
+                                        Modifier.clickable { onSetTextClicked(suggestion.text) }
+                                    } else Modifier
+                                )
+                        )
+                    }
                 }
             }
         },
@@ -206,7 +246,7 @@ fun SuggestItem(
     )
 }
 
-// TODO Move WebsiteRow this to it's own widget file as it is used all over the app
+// TODO Move WebsiteRow to it's own widget file as it is used all over the app
 @Composable
 fun WebsiteRow(
     title: String?,

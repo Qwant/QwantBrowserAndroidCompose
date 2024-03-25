@@ -7,12 +7,18 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.legacy.bookmarks.BookmarksStorage
+import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
+import com.qwant.android.qwantbrowser.ext.isQwantUrl
+import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.stats.Piwik
+import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -36,21 +42,24 @@ import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
+    frontEndPreferencesRepository: FrontEndPreferencesRepository,
+    private val bookmarksRepository: BookmarksRepository,
+    private val webAppUseCases: WebAppUseCases,
     val sessionUseCases: SessionUseCases,
     val tabsUseCases: TabsUseCases,
-    val webAppUseCases: WebAppUseCases,
     val contextMenuUseCases: ContextMenuUseCases,
     val downloadUseCases: DownloadsUseCases,
     val permissionStorage: GeckoSitePermissionsStorage,
     val browserIcons: BrowserIcons,
-    private val bookmarkStorage: BookmarksStorage,
     val downloadManager: DownloadManager,
     val store: BrowserStore,
     val engine: Engine,
     val client: Client,
-    val qwantUseCases: QwantUseCases
+    val qwantUseCases: QwantUseCases,
+    val piwik: Piwik
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
     val toolbarState: ToolbarState by lazy {
@@ -68,6 +77,7 @@ class BrowserScreenViewModel @Inject constructor(
 
     private val urlFlow = store.flow()
         .map { state -> state.selectedTab?.content?.url }
+        .distinctUntilChanged()
 
     val currentUrl = urlFlow
         .stateIn(
@@ -76,29 +86,61 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = null
         )
 
-    var isUrlBookmarked by mutableStateOf(false)
-        private set
+    var isUrlBookmarked = urlFlow
+        .filterNotNull()
+        .flatMapLatest { bookmarksRepository.isUrlBookmarkedFlow(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
+
+    val isQwantUrlValid = urlFlow.combine(frontEndPreferencesRepository.homeUrl) { currentUrl, homeUrl ->
+        if (currentUrl?.isQwantUrl() == true) {
+            val newUrl = currentUrl.getQwantSERPSearch()?.let { "$homeUrl&q=$it" } ?: homeUrl
+            if (currentUrl.startsWith(newUrl)) {
+                true
+            } else {
+                // Check all parameters, one by one
+                frontEndPreferencesRepository.checkUrlParameters(currentUrl)
+            }
+        }
+        else true
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = true
+    )
 
     init {
         urlFlow
-            .distinctUntilChanged()
             .mapNotNull { it }
-            .onEach { isUrlBookmarked = bookmarkStorage.contains(it) }
+            .mapLatest {
+                delay(2000)
+                piwik.screenView(it)
+            }
             .launchIn(viewModelScope)
+    }
 
-        bookmarkStorage.onChange {
-            store.state.selectedTab?.let {
-                isUrlBookmarked = bookmarkStorage.contains(it.content.url)
+    fun addBookmark() {
+        store.state.selectedTab?.let { tab ->
+            viewModelScope.launch(Dispatchers.IO) {
+                bookmarksRepository.addItem(
+                    parentGuid = bookmarksRepository.root.guid,
+                    url = tab.content.url,
+                    title = tab.content.title,
+                    position = null
+                )
             }
         }
     }
 
-    fun addBookmark() {
-        bookmarkStorage.addBookmark(store.state.selectedTab)
-    }
-
     fun removeBookmark() {
-        bookmarkStorage.deleteBookmark(store.state.selectedTab)
+        store.state.selectedTab?.content?.url?.let { url ->
+            viewModelScope.launch(Dispatchers.IO) {
+                bookmarksRepository.deleteBookmarksByUrl(url)
+            }
+        }
     }
 
     val canGoBack = store.flow()
@@ -124,15 +166,6 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
-
-    val currentEngineSession = store.flow()
-        .map { state -> state.selectedTab?.engineState?.engineSession }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
 
     var showFindInPage by mutableStateOf(false)
         private set
@@ -185,9 +218,11 @@ class BrowserScreenViewModel @Inject constructor(
     }
 
     fun closeCurrentTab() {
-        val lastTab = store.state.normalTabs.count() == 1 && store.state.selectedTab?.content?.private == false
+        val private = store.state.selectedTab?.content?.private ?: false
+        val lastTab = store.state.normalTabs.count() == 1 && !private
         store.state.selectedTabId?.let {
             tabsUseCases.removeTab(it, selectParentIfExists = true)
+            piwik.event("Tab", "Tap", "Close current tab - ${if (private) "Private" else "Normal"}")
             if (lastTab) {
                 qwantUseCases.openQwantPage()
             }

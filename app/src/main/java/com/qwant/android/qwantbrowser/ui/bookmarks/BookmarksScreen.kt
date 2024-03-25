@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,41 +19,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
-import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
-import com.qwant.android.qwantbrowser.ui.widgets.EmptyPagePlaceholder
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
 
 @Composable
 fun BookmarksScreen(
     onBrowse: () -> Unit,
-    appViewModel: QwantApplicationViewModel = hiltViewModel(),
     viewModel: BookmarksScreenViewModel = hiltViewModel()
 ) {
     val lazyListState = rememberLazyListState()
+    val isRootFolder by viewModel.isRootFolder.collectAsState()
+    val folder by viewModel.folder.collectAsState()
 
-    BackHandler(viewModel.currentFolder != null) {
-        viewModel.visitFolder(viewModel.currentFolder?.parent)
+    BackHandler(!isRootFolder) {
+        folder.parentGuid?.let { viewModel.visitFolder(it) }
     }
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background)) {
         ScreenHeader(
-            title = viewModel.currentFolder?.title ?: stringResource(id = R.string.bookmarks),
+            title = folder.title ?: stringResource(id = R.string.bookmarks),
             scrollableState = lazyListState,
             actions = { NewFolderAction(viewModel) }
         )
-        if (viewModel.currentBookmarks.isNotEmpty()) {
-            BookmarksList(viewModel = viewModel, lazyListState = lazyListState, onBrowse = onBrowse)
-        } else {
-            EmptyPagePlaceholder(
-                icon = R.drawable.icons_bookmark,
-                title = stringResource(id = R.string.bookmarks_empty_title,
-                    viewModel.currentFolder?.title ?: stringResource(R.string.bookmarks_empty_default_folder_name)
-                ),
-                subtitle = stringResource(id = R.string.bookmarks_empty_message)
-            )
-        }
+        BookmarksList(viewModel = viewModel, lazyListState = lazyListState, onBrowse = onBrowse)
     }
 }
 
@@ -66,7 +56,7 @@ fun NewFolderAction(viewModel: BookmarksScreenViewModel) {
     if (showCreateFolderDialog) {
         BookmarkEditDialog(
             onSubmit = { title, _ ->
-                viewModel.addFolder(title, viewModel.currentFolder)
+                viewModel.addFolder(title, viewModel.folderGuid)
             },
             onDismiss = { showCreateFolderDialog = false }
         )

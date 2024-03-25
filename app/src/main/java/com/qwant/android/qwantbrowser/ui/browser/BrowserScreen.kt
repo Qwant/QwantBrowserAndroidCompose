@@ -327,7 +327,10 @@ fun TabsButton(
             .width(40.dp)
             .fillMaxHeight()
             .combinedClickable(
-                onClick = { navigateTo(NavDestination.Tabs) },
+                onClick = {
+                    viewModel.piwik.event("Tab", "Tap", "Open tray")
+                    navigateTo(NavDestination.Tabs)
+                },
                 onLongClick = { showTabsDropdown = true },
                 enabled = true,
                 role = Role.Button,
@@ -410,7 +413,10 @@ fun BrowserMenuButton(
     Box {
         var showMenu by remember { mutableStateOf(false) }
 
-        ToolbarAction(onClick = { showMenu = true }) {
+        ToolbarAction(onClick = {
+            viewModel.piwik.event("Menu", "Tap", "Omnibar")
+            showMenu = true
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.icons_more_vertical),
                 contentDescription = "menu",

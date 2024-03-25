@@ -20,6 +20,7 @@
 
     <string name="browser_toolbar_hint">Rechercher ou saisir une adresse</string>
 
+    <string name="browser_suggest_clipboard_text">Texte copié</string>
     <string name="browser_brand_suggest_ad">Annonce</string>
     <string name="browser_brand_suggest_information">Cette suggestion de recherche est une publicité pour %1$s, vous serez redirigé(e) vers le site de l’annonceur : %2$s</string>
 </resources>
