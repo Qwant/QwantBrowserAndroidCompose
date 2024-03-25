@@ -11,6 +11,7 @@ import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
+import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.base.log.Log
@@ -33,6 +34,7 @@ class QwantApplication : Application() {
     @Inject lateinit var qwantUseCases: dagger.Lazy<QwantUseCases>
     @Inject lateinit var piwik: dagger.Lazy<Piwik>
     @Inject lateinit var migrationUtility: dagger.Lazy<MigrationUtility>
+    @Inject lateinit var mediaFeature: dagger.Lazy<MediaSessionFeature>
 
     override fun onCreate() {
         super.onCreate()
@@ -61,6 +63,8 @@ class QwantApplication : Application() {
             this.trackApplicationDownload()
             this.event("App", "Open")
         }
+
+        mediaFeature.get().start()
 
         // TODO
         //  Should be removed in futur version, once mozilla has fully migrated

@@ -3,6 +3,7 @@ package com.qwant.android.qwantbrowser.mozac.hilt
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import com.qwant.android.qwantbrowser.mozac.downloads.DownloadService
+import com.qwant.android.qwantbrowser.mozac.media.MediaSessionService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +21,8 @@ import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
+import mozilla.components.feature.media.MediaSessionFeature
+import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
@@ -36,13 +39,15 @@ object MozacComponentHiltModule {
         @ApplicationContext context: Context,
         engine: Engine,
         downloadStorage: DownloadStorage,
-        thumbnailStorage: ThumbnailStorage
+        thumbnailStorage: ThumbnailStorage,
+        notificationsDelegate: NotificationsDelegate
     ) : BrowserStore {
         return BrowserStore(
             middleware = listOf(
                 DownloadMiddleware(context, DownloadService::class.java, downloadStorage = downloadStorage),
                 ThumbnailsMiddleware(thumbnailStorage),
                 PromptMiddleware(),
+                RecordingDevicesMiddleware(context, notificationsDelegate)
             ) + EngineMiddleware.create(engine)
         )
     }
@@ -112,5 +117,14 @@ object MozacComponentHiltModule {
         @ApplicationContext context: Context
     ) : NotificationsDelegate {
         return NotificationsDelegate(NotificationManagerCompat.from(context))
+    }
+
+    @Singleton
+    @Provides
+    fun provideMediaSessionFeature(
+        @ApplicationContext context: Context,
+        store: BrowserStore,
+    ) : MediaSessionFeature {
+        return MediaSessionFeature(context, MediaSessionService::class.java, store)
     }
 }

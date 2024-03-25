@@ -89,6 +89,7 @@ mozac-feature-prompts = { group = "org.mozilla.components", name = "feature-prom
 mozac-feature-pwa = { group = "org.mozilla.components", name = "feature-pwa", version.ref = "mozac" }
 mozac-feature-intent = { group = "org.mozilla.components", name = "feature-intent", version.ref = "mozac" }
 mozac-feature-webcompat = { group = "org.mozilla.components", name = "feature-webcompat", version.ref = "mozac" }
+mozac-feature-media = { group = "org.mozilla.components", name = "feature-media", version.ref = "mozac" }
 mozac-support-utils = { group = "org.mozilla.components", name = "support-utils", version.ref = "mozac" }
 mozac-support-ktx = { group = "org.mozilla.components", name = "support-ktx", version.ref = "mozac" }
 mozac-support-rusthttp = { group = "org.mozilla.components", name = "support-rusthttp", version.ref = "mozac" }
