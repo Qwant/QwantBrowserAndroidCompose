@@ -1,0 +1,112 @@
+[versions]
+# Legacy
+constraintlayout = "2.1.4"
+preference-ktx = "1.2.1"
+material = "1.11.0"
+# AndroidX
+core-ktx = "1.12.0"
+lifecycle = "2.7.0"
+datastore = "1.0.0"
+localbroadcastmanager = "1.1.0"
+paging-runtime-ktx = "3.2.1"
+# Hilt
+hilt = "2.50"
+androidx-hilt = "1.2.0"
+# Compose
+compose-bom = "2024.02.01"
+compose-material3 = "1.2.0"
+compose-android-activity = "1.8.2"
+compose-android-navigation = "2.7.7"
+compose-android-paging = "3.2.1"
+# Testing
+junit = "4.13.2"
+junit-androidx = "1.1.5"
+espresso = "3.5.1"
+# Others
+protobuf = "3.21.10"
+room = "2.6.1"
+piwik = "1.2.0"
+mozac = "117.+"
+
+# Plugins
+android-gradle-plugin = "8.3.0"
+kotlin-plugin = "1.9.22"
+hilt-plugin = "2.50"
+protobuf-plugin = "0.9.4"
+ksp = "1.9.22-1.0.17"
+
+[libraries]
+# Legacy
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-preference = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference-ktx" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+# AndroidX
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
+androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "localbroadcastmanager" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging-runtime-ktx" }
+# Hilt
+hilt-main = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler-dagger = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-compiler-android = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "androidx-hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidx-hilt" }
+# Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-ui-main = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-animation = { group = "androidx.compose.animation", name = "animation-graphics" }
+compose-android-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-android-activity" }
+compose-android-navigation-main = { group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-android-navigation" }
+compose-android-navigation-test = { group = "androidx.navigation", name = "navigation-testing", version.ref = "compose-android-navigation" }
+compose-android-paging = { group = "androidx.paging", name = "paging-compose", version.ref = "compose-android-paging" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
+# Room
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+# Mozilla android components
+mozac-concept-engine = { group = "org.mozilla.components", name = "concept-engine", version.ref = "mozac" }
+mozac-browser-engine-gecko = { group = "org.mozilla.components", name = "browser-engine-gecko", version.ref = "mozac" }
+mozac-browser-state = { group = "org.mozilla.components", name = "browser-state", version.ref = "mozac" }
+mozac-browser-session-storage = { group = "org.mozilla.components", name = "browser-session-storage", version.ref = "mozac" }
+mozac-browser-thumbnails = { group = "org.mozilla.components", name = "browser-thumbnails", version.ref = "mozac" }
+mozac-browser-icons = { group = "org.mozilla.components", name = "browser-icons", version.ref = "mozac" }
+mozac-feature-session = { group = "org.mozilla.components", name = "feature-session", version.ref = "mozac" }
+mozac-feature-tabs = { group = "org.mozilla.components", name = "feature-tabs", version.ref = "mozac" }
+mozac-feature-contextmenu = { group = "org.mozilla.components", name = "feature-contextmenu", version.ref = "mozac" }
+mozac-feature-sitepermissions = { group = "org.mozilla.components", name = "feature-sitepermissions", version.ref = "mozac" }
+mozac-feature-downloads = { group = "org.mozilla.components", name = "feature-downloads", version.ref = "mozac" }
+mozac-feature-applinks = { group = "org.mozilla.components", name = "feature-app-links", version.ref = "mozac" }
+mozac-feature-prompts = { group = "org.mozilla.components", name = "feature-prompts", version.ref = "mozac" }
+mozac-feature-pwa = { group = "org.mozilla.components", name = "feature-pwa", version.ref = "mozac" }
+mozac-feature-intent = { group = "org.mozilla.components", name = "feature-intent", version.ref = "mozac" }
+mozac-feature-webcompat = { group = "org.mozilla.components", name = "feature-webcompat", version.ref = "mozac" }
+mozac-support-utils = { group = "org.mozilla.components", name = "support-utils", version.ref = "mozac" }
+mozac-support-ktx = { group = "org.mozilla.components", name = "support-ktx", version.ref = "mozac" }
+mozac-support-rusthttp = { group = "org.mozilla.components", name = "support-rusthttp", version.ref = "mozac" }
+mozac-support-webextensions = { group = "org.mozilla.components", name = "support-webextensions", version.ref = "mozac" }
+mozac-ui-widgets = { group = "org.mozilla.components", name = "ui-widgets", version.ref = "mozac" }
+mozac-ui-icons = { group = "org.mozilla.components", name = "ui-icons", version.ref = "mozac" }
+# Testing
+junit-main = { group = "junit", name = "junit", version.ref = "junit" }
+junit-androidx = { group = "androidx.test.ext", name = "junit", version.ref = "junit-androidx" }
+espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+# Others
+protobuf = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
+piwik = { group = "pro.piwik", name = "sdk-framework-android", version.ref = "piwik" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-plugin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

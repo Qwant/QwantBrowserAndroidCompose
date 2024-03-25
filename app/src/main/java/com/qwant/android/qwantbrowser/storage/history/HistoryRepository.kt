@@ -91,6 +91,8 @@ class HistoryRepository @Inject constructor(
     }
 
     override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
+        // TODO use levenshtein distance to match and rank suggestions
+        //  https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/components/support/utils/src/main/java/mozilla/components/support/utils/StorageUtils.kt
         dao.getSuggestions(query = text, limit = 2) // TODO History suggestions limit should be a parameter
             .map { Suggestion.OpenTabSuggestion(
                 provider = this@HistoryRepository,

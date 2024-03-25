@@ -1,13 +1,10 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'dagger.hilt.android.plugin'
-    id "com.google.protobuf" version "0.9.1"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.protobuf)
+    alias(libs.plugins.ksp)
     id 'kotlin-kapt'
-}
-
-hilt {
-    enableAggregatingTask = true
 }
 
 // TODO make piwik optional for build
@@ -35,10 +32,8 @@ android {
             useSupportLibrary true
         }
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
 
         resourceConfigurations += ["en", "fr", "de", "es", "it"]
@@ -66,6 +61,7 @@ android {
 
     buildTypes {
         debug {
+            getIsDefault().set(true)
             applicationIdSuffix ".debug"
             buildConfigField("String", "PIWIK_URL", piwikDevSettings['PIWIK_URL'])
             buildConfigField("String", "PIWIK_SITE_ID", piwikDevSettings['PIWIK_SITE_ID'])
@@ -87,6 +83,7 @@ android {
     flavorDimensions += "target"
     productFlavors {
         playstore {
+            getIsDefault().set(true)
             dimension "target"
         }
         sfr {
@@ -116,7 +113,10 @@ android {
         jvmToolchain(17)
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.0'
+        kotlinCompilerExtensionVersion '1.5.10'
+    }
+    hilt {
+        enableAggregatingTask = true
     }
     packagingOptions {
         resources {
@@ -131,98 +131,88 @@ android {
 
 dependencies {
     // Legacy Onboarding
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation libs.androidx.constraintlayout
     // Legacy assistant
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation libs.material
     // Old preferences for migration. Remove after migration is complete
-    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation libs.androidx.preference
 
-    // Android
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
-    implementation 'androidx.datastore:datastore:1.0.0'
-    implementation 'androidx.paging:paging-runtime-ktx:3.2.1'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-
-    // Protobuf
-    implementation  "com.google.protobuf:protobuf-javalite:3.21.10"
+    // AndroidX
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.lifecycle.process
+    implementation libs.androidx.datastore
+    implementation libs.androidx.paging.runtime.ktx
+    implementation libs.androidx.localbroadcastmanager
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt 'androidx.hilt:hilt-compiler:1.1.0'
+    implementation libs.hilt.main
+    implementation libs.hilt.navigation.compose
+    kapt libs.hilt.compiler.dagger
+    kapt libs.hilt.compiler.android
 
-    // Compose
-    implementation 'androidx.activity:activity-compose:1.8.2'
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-viewbinding:1.6.1"
-    implementation "androidx.navigation:navigation-compose:$compose_nav_version"
-    implementation "androidx.compose.animation:animation-graphics:$compose_version"
-    implementation "androidx.paging:paging-compose:3.2.1"
-
-    // Compose debug
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_tooling_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_tooling_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.1"
-
-    // Material
-    implementation "androidx.compose.material3:material3:1.2.0"
+    // Compose BOM
+    implementation(platform(libs.compose.bom))
+    androidTestImplementation(platform(libs.compose.bom))
+    implementation libs.compose.ui.main
+    implementation libs.compose.ui.viewbinding
+    implementation libs.compose.ui.preview
+    implementation libs.compose.animation
+    debugImplementation libs.compose.ui.tooling
+    debugImplementation libs.compose.ui.test.manifest
+    androidTestImplementation libs.compose.ui.test.junit4
+    // Other compose libs
+    implementation libs.compose.material3
+    implementation libs.compose.android.activity
+    implementation libs.compose.android.paging
+    implementation libs.compose.android.navigation.main
+    androidTestImplementation libs.compose.android.navigation.test
 
     // Room
-    implementation "androidx.room:room-ktx:$room_version"
-    implementation "androidx.room:room-runtime:$room_version"
-    // implementation("androidx.room:room-paging:$room_version")
-    kapt "androidx.room:room-compiler:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation libs.room.ktx
+    implementation libs.room.runtime
+    // implementation libs.room.paging
+    ksp libs.room.compiler
+    annotationProcessor libs.room.compiler
+    testImplementation libs.room.testing
 
     // Mozac
-    implementation "org.mozilla.components:concept-engine:$mozac_version"
-    implementation "org.mozilla.components:browser-engine-gecko:$mozac_version"
-    implementation "org.mozilla.components:browser-state:$mozac_version"
-    implementation "org.mozilla.components:browser-session-storage:$mozac_version"
-    implementation "org.mozilla.components:browser-thumbnails:$mozac_version"
-    implementation "org.mozilla.components:browser-icons:$mozac_version"
-    implementation "org.mozilla.components:feature-session:$mozac_version"
-    implementation "org.mozilla.components:feature-tabs:$mozac_version"
-    implementation "org.mozilla.components:feature-contextmenu:$mozac_version"
-    implementation "org.mozilla.components:feature-sitepermissions:$mozac_version"
-    implementation "org.mozilla.components:feature-downloads:$mozac_version"
-    implementation "org.mozilla.components:feature-app-links:$mozac_version"
-    implementation "org.mozilla.components:feature-prompts:$mozac_version"
-    implementation "org.mozilla.components:feature-pwa:$mozac_version"
-    implementation "org.mozilla.components:feature-intent:$mozac_version"
-    implementation "org.mozilla.components:feature-webcompat:$mozac_version"
-    implementation "org.mozilla.components:support-utils:$mozac_version"
-    implementation "org.mozilla.components:support-ktx:$mozac_version"
-    implementation "org.mozilla.components:support-rusthttp:$mozac_version"
-    implementation "org.mozilla.components:support-webextensions:$mozac_version"
-    implementation "org.mozilla.components:ui-widgets:$mozac_version" // SnackbarDelegate
+    implementation libs.mozac.concept.engine
+    implementation libs.mozac.browser.engine.gecko
+    implementation libs.mozac.browser.state
+    implementation libs.mozac.browser.session.storage
+    implementation libs.mozac.browser.thumbnails
+    implementation libs.mozac.browser.icons
+    implementation libs.mozac.feature.session
+    implementation libs.mozac.feature.tabs
+    implementation libs.mozac.feature.contextmenu
+    implementation libs.mozac.feature.sitepermissions
+    implementation libs.mozac.feature.downloads
+    implementation libs.mozac.feature.applinks
+    implementation libs.mozac.feature.prompts
+    implementation libs.mozac.feature.pwa
+    implementation libs.mozac.feature.intent
+    implementation libs.mozac.feature.webcompat
+    implementation libs.mozac.support.utils
+    implementation libs.mozac.support.ktx
+    implementation libs.mozac.support.rusthttp
+    implementation libs.mozac.support.webextensions
+    implementation libs.mozac.ui.widgets // SnackbarDelegate
+    implementation libs.mozac.ui.icons // Permission feature icons // TODO remove this dependency after replacing with our icons
 
-    implementation "org.mozilla.components:ui-icons:$mozac_version" // Permission feature icons // TODO remove this dependency after replacing with our icons
-
-    // implementation "org.mozilla.components:concept-awesomebar:$mozac_version" // Suggest
-    // implementation "org.mozilla.components:feature-awesomebar:$mozac_version" // Suggest
-    // implementation "org.mozilla.telemetry:glean-native:52.2.0"
-    // implementation "org.mozilla.geckoview:geckoview-beta-omni:$mozac_version" // feature-awesomebar deps
-    // implementation "org.mozilla.telemetry:glean-native:$mozac_version" // feature-awesomebar deps
-
-    // Piwik
-    implementation 'pro.piwik:sdk-framework-android:1.2.0'
+    // Others
+    implementation libs.protobuf
+    implementation libs.piwik
 
     // Tests
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation("androidx.room:room-testing:$room_version")
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_tooling_version"
-    androidTestImplementation "androidx.navigation:navigation-testing:$compose_nav_version"
+    testImplementation libs.junit.main
+    androidTestImplementation libs.junit.androidx
+    androidTestImplementation libs.espresso
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.9.2"
+        artifact = "com.google.protobuf:protoc:3.21.10" // TODO find a way to use version catalog here
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
