@@ -31,6 +31,7 @@ import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.*
+import com.qwant.android.qwantbrowser.ui.browser.pullToRefresh.PullToRefreshBox
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.*
 import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
@@ -57,18 +58,7 @@ fun BrowserScreen(
     val tabCount by viewModel.tabCount.collectAsState()
     val private by appViewModel.isPrivate.collectAsState()
 
-    var engineViewHolder: EngineView? = null
-
-    /* // TODO Pull To Refresh
-    var refreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
-    fun refresh() = refreshScope.launch {
-        Log.d("QWANT_PULLREFRESH", "refresh")
-        refreshing = true
-        delay(1500)
-        refreshing = false
-    }
-    val pullRefreshState = rememberPullRefreshState(refreshing, ::refresh) */
+    var engineViewHolder: EngineView? by remember { mutableStateOf(null) }
 
     LaunchedEffect(true) {
         when (openNewTab) {
@@ -119,17 +109,19 @@ fun BrowserScreen(
             } else {
                 GlobalFeatures(appViewModel, viewModel)
 
-                // Box(modifier.pullRefresh(pullRefreshState, enabled = true)) {
+                PullToRefreshBox(
+                    onRefresh = { viewModel.reloadUrl() },
+                    enabled = { engineViewHolder?.canScrollVerticallyUp() == false },
+                    modifier = modifier
+                ) {
                     EngineView(
                         engine = viewModel.engine,
-                        modifier = modifier
+                        modifier = Modifier.fillMaxSize()
                     ) { engineView ->
                         engineViewHolder = engineView
                         EngineViewFeatures(engineView, viewModel)
                     }
-
-                //    PullRefreshIndicator(false, pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
-                // }
+                }
             }
         } else {
             Box(contentAlignment = Alignment.Center,
@@ -148,6 +140,7 @@ fun BrowserScreen(
         }
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -180,7 +173,6 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
 
 
 // TODO Clean up and separate code for Qwant VIP UI
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QwantVIPAction(
     viewModel: BrowserScreenViewModel//  = hiltViewModel(),
@@ -301,7 +293,7 @@ fun AfterActions(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabsButton(
     navigateTo: (NavDestination) -> Unit,

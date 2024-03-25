@@ -86,6 +86,14 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = null
         )
 
+    val currentEngineSession = store.flow()
+        .map { state -> state.selectedTab?.engineState?.engineSession }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
     var isUrlBookmarked = urlFlow
         .filterNotNull()
         .flatMapLatest { bookmarksRepository.isUrlBookmarkedFlow(it) }
