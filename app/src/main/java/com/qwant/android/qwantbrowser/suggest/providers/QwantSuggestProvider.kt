@@ -7,9 +7,11 @@ import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRe
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.fetch.Request
 import mozilla.components.support.ktx.android.org.json.toList
@@ -38,7 +40,7 @@ class QwantSuggestProvider @Inject constructor(
         }
     }
 
-    override suspend fun getSuggestions(text: String): List<Suggestion> {
+    override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
         if (text.isNotEmpty()) {
             try {
                 val request = Request(SuggestFormatUrl.format(qwantClientProvider.clientState.value, locale, text))
@@ -50,7 +52,7 @@ class QwantSuggestProvider @Inject constructor(
                             val standardSuggestions = data.getJSONArray("items")
                             val brandSuggestions = data.getJSONArray("special")
 
-                            return brandSuggestions
+                            return@withContext brandSuggestions
                                 .toList<JSONObject>()
                                 .filter { it.getString("type") == "brand_suggest" }
                                 .take(2) // TODO make this suggestion limit a parameter
@@ -72,7 +74,7 @@ class QwantSuggestProvider @Inject constructor(
                                     }
 
                                     Suggestion.BrandSuggestion(
-                                        provider = this,
+                                        provider = this@QwantSuggestProvider,
                                         search = text,
                                         title = jsonObject.getString("name"),
                                         url = jsonObject.getString("url"),
@@ -87,7 +89,7 @@ class QwantSuggestProvider @Inject constructor(
                                     standardSuggestions.toList<JSONObject>()
                                         .take(6) // TODO make this suggestion limit a parameter
                                         .map { Suggestion.SearchSuggestion(
-                                            provider = this,
+                                            provider = this@QwantSuggestProvider,
                                             search = text,
                                             text = it.getString("value")
                                         ) }
@@ -95,19 +97,20 @@ class QwantSuggestProvider @Inject constructor(
                         }
                     } else {
                         Log.e(LOGTAG, "Error requesting opensearch results: status not 200 (${response.status})")
-                        return listOf()
+                        return@withContext listOf()
                     }
                 }
             } catch (e: JSONException) {
                 Log.e(LOGTAG, "Error decoding JSON of opensearch results")
-                return listOf()
+                return@withContext listOf()
             } catch (e: IOException) {
                 Log.e(LOGTAG, "Error decoding JSON of opensearch results: No internet ?", e)
-                return listOf()
+                return@withContext listOf()
             }
         }
-        return listOf()
+        return@withContext listOf<Suggestion>()
     }
+
 
     companion object {
         private const val LOGTAG = "QB_SEARCH_PROVIDER"
