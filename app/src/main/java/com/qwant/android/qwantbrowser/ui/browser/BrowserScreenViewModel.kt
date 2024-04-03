@@ -7,9 +7,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
-import com.qwant.android.qwantbrowser.ext.isQwantUrl
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
@@ -45,7 +42,6 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BrowserScreenViewModel @Inject constructor(
-    frontEndPreferencesRepository: FrontEndPreferencesRepository,
     private val bookmarksRepository: BookmarksRepository,
     private val webAppUseCases: WebAppUseCases,
     val sessionUseCases: SessionUseCases,
@@ -102,23 +98,6 @@ class BrowserScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
-
-    val isQwantUrlValid = urlFlow.combine(frontEndPreferencesRepository.homeUrl) { currentUrl, homeUrl ->
-        if (currentUrl?.isQwantUrl() == true) {
-            val newUrl = currentUrl.getQwantSERPSearch()?.let { "$homeUrl&q=$it" } ?: homeUrl
-            if (currentUrl.startsWith(newUrl)) {
-                true
-            } else {
-                // Check all parameters, one by one
-                frontEndPreferencesRepository.checkUrlParameters(currentUrl)
-            }
-        }
-        else true
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = true
-    )
 
     init {
         urlFlow

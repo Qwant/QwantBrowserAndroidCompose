@@ -8,7 +8,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-private const val LOGTAG: String = "FrontEndPreferencesRepo"
+private const val LOGTAG: String = "AppPreferencesRepo"
 
 data class ClearDataPreferences(
     val browsingData: Engine.BrowsingData,
@@ -82,6 +82,12 @@ class AppPreferencesRepository @Inject constructor(
     suspend fun updatePiwikOptout(optout: Boolean) {
         datastore.updateData { prefs ->
             prefs.toBuilder().setPiwikOptout(optout).build()
+        }
+    }
+
+    suspend fun updateAppearance(appearance: Appearance) {
+        datastore.updateData { prefs ->
+            prefs.toBuilder().setAppearance(appearance).build()
         }
     }
 }

@@ -4,16 +4,12 @@ import android.content.Context
 import android.util.Log
 import com.qwant.android.qwantbrowser.migration.datastore.MigrationData
 import com.qwant.android.qwantbrowser.migration.datastore.MigrationDataRepository
-import com.qwant.android.qwantbrowser.preferences.frontend.CustomPageCharacter
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.storage.history.HistoryRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.PageObservation
@@ -32,43 +28,26 @@ import javax.inject.Singleton
 class MigrationUtility @Inject constructor(
     @ApplicationContext private val context: Context,
     private val migrationDataRepository: MigrationDataRepository,
-    private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
     private val historyRepository: HistoryRepository,
     private val bookmarksRepository: BookmarksRepository
 ) {
     fun checkMigrations() {
         MainScope().launch {
             val migrationData = migrationDataRepository.flow.first()
-            migration503(migrationData)
             migration504(migrationData)
         }
     }
 
-    private suspend fun migration503(migrationData: MigrationData) {
-        if (migrationData.migration503) {
-            frontEndPreferencesRepository.updateShowNews(false)
-            frontEndPreferencesRepository.updateCustomPageCharacter(CustomPageCharacter.NO_CHARACTER)
-            val interfaceLanguage = frontEndPreferencesRepository.flow
-                .map { it.interfaceLanguage }.first()
-            if (interfaceLanguage == "fr") {
-                frontEndPreferencesRepository.updateSearchResultRegion("fr_FR")
-            }
-            migrationDataRepository.migration503Done()
-        }
-    }
-
     private suspend fun migration504(migrationData: MigrationData) {
-        withContext(Dispatchers.IO + Job()) {
-            if (!migrationData.migration504History) {
-                migrateHistoryV4()
-            }
-            if (!migrationData.migration504Bookmarks) {
-                migrateBookmarksV4()
-            }
+        if (!migrationData.migration504History) {
+            migrateHistoryV4()
+        }
+        if (!migrationData.migration504Bookmarks) {
+            migrateBookmarksV4()
         }
     }
 
-    private suspend fun migrateHistoryV4() {
+    private suspend fun migrateHistoryV4() = withContext(Dispatchers.IO) {
         val historyV4Filename = "qwant_history"
         var file: File? = null
         var fileInputStream: FileInputStream? = null
@@ -116,7 +95,7 @@ class MigrationUtility @Inject constructor(
         }
     }
 
-    private suspend fun migrateBookmarksV4() {
+    private suspend fun migrateBookmarksV4() = withContext(Dispatchers.IO) {
         val bookmarksV4Filename = "qwant_bookmarks"
         var file: File? = null
         var fileInputStream: FileInputStream? = null
@@ -130,7 +109,7 @@ class MigrationUtility @Inject constructor(
                 objectInputStream = ObjectInputStream(fileInputStream)
                 val bookmarksList = objectInputStream.readObject() as ArrayList<*>
                 bookmarksList.forEach {
-                    this.restoreBookmarkV4Recursive(it as BookmarkItemV2, bookmarksRepository.root.guid)
+                    this@MigrationUtility.restoreBookmarkV4Recursive(it as BookmarkItemV2, bookmarksRepository.root.guid)
                 }
                 migrationDataRepository.migration504BookmarksDone()
                 shouldDeleteFile = true
@@ -164,7 +143,8 @@ class MigrationUtility @Inject constructor(
             }
             BookmarkItemV2.BookmarkType.FOLDER -> {
                 val folderGuid = bookmarksRepository.addFolder(parentGuid, bookmark.title, position = null)
-                bookmark.children?.forEach { // null exception needed for very old bookmarks
+                @Suppress("UNNECESSARY_SAFE_CALL") // null exception needed for very old bookmarks deserialization
+                bookmark.children?.forEach {
                     this.restoreBookmarkV4Recursive(it, folderGuid)
                 }
             }

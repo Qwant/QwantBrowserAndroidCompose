@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Module
 object AppPreferencesHiltModule {
     @Singleton
-    @Provides fun provideFrontEndPreferencesDataStore(@ApplicationContext appContext: Context)
+    @Provides fun provideAppPreferencesDataStore(@ApplicationContext appContext: Context)
     : DataStore<AppPreferences> {
         return AppPreferencesFactory.create(appContext)
     }

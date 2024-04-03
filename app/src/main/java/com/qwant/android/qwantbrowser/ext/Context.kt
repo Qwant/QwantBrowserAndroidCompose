@@ -15,6 +15,7 @@ import com.qwant.android.qwantbrowser.MainActivity
 import com.qwant.android.qwantbrowser.QwantApplication
 import com.qwant.android.qwantbrowser.R
 import org.mozilla.geckoview.BuildConfig
+import java.util.Locale
 import mozilla.components.feature.downloads.R as downloadsR
 
 
@@ -82,4 +83,11 @@ fun Context.isPackageInstalled(packageToFind: String) = try {
     true
 } catch (e: PackageManager.NameNotFoundException) {
     false
+}
+
+fun Context.selectedLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    this.resources.configuration.locales.get(0)
+} else {
+    @Suppress("DEPRECATION")
+    this.resources.configuration.locale
 }

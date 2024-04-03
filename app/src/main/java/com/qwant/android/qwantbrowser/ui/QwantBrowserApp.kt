@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
 import com.qwant.android.qwantbrowser.ui.nav.QwantNavHost
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.qwant.android.qwantbrowser.preferences.app.Appearance
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.zap.ZapFeature
 

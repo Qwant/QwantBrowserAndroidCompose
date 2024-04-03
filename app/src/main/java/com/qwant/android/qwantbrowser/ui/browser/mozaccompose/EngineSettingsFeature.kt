@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
+import com.qwant.android.qwantbrowser.preferences.app.Appearance
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme

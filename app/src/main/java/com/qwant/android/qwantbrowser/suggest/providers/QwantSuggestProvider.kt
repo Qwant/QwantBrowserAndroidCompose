@@ -1,16 +1,15 @@
 package com.qwant.android.qwantbrowser.suggest.providers
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.ext.selectedLocale
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.fetch.Request
@@ -23,27 +22,18 @@ import javax.inject.Singleton
 
 @Singleton
 class QwantSuggestProvider @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val client: Client,
-    private val frontEndPreferencesRepository: FrontEndPreferencesRepository,
     private val qwantClientProvider: QwantClientProvider
 ): SuggestionProvider {
-    private val scope = MainScope()
-    private var locale: String? = null
-
-    init {
-        scope.launch {
-            frontEndPreferencesRepository.flow
-                .map { it.searchResultRegion } // TODO use this or interfaceLanguage ?
-                .collect {
-                    locale = it
-                }
-        }
-    }
-
     override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
         if (text.isNotEmpty()) {
             try {
-                val request = Request(SuggestFormatUrl.format(qwantClientProvider.clientState.value, locale, text))
+                val request = Request(SuggestFormatUrl.format(
+                    qwantClientProvider.clientState.value,
+                    context.selectedLocale().toString(),
+                    text
+                ))
                 client.fetch(request).use { response ->
                     if (response.status == 200) {
                         response.body.use { body ->
@@ -110,7 +100,6 @@ class QwantSuggestProvider @Inject constructor(
         }
         return@withContext listOf<Suggestion>()
     }
-
 
     companion object {
         private const val LOGTAG = "QB_SEARCH_PROVIDER"
