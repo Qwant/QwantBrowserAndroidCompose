@@ -26,7 +26,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
-import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -73,14 +72,14 @@ fun BrowserScreen(
         }
     }
 
-    val activity = LocalContext.current.activity
+    /* val activity = LocalContext.current.activity
     Onboarding { success ->
         if (success) {
             viewModel.toolbarState.updateFocus(true)
         } else {
             activity?.quit()
         }
-    }
+    } */
 
     KeyboardObserver(toolbarState = viewModel.toolbarState)
 
