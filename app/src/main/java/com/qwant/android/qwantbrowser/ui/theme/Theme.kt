@@ -35,7 +35,7 @@ private val darkAndPrivateIcons = QwantIcons(
 data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantIcons)
 val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
-private val lightColorScheme = lightColorScheme(
+val lightColorScheme = lightColorScheme(
     primary = ActionBlue400,
     onPrimary = Color.White,
     primaryContainer = Color.White,
@@ -51,7 +51,7 @@ private val lightColorScheme = lightColorScheme(
     error = Red
 )
 
-private val darkColorScheme = darkColorScheme(
+val darkColorScheme = darkColorScheme(
     primary = ActionBlue200,
     onPrimary = Grey900,
     primaryContainer = Grey750,

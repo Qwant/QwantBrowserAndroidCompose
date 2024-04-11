@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/photonWhite" />
+            <corners android:radius="24dp" />
+            <size android:width="300dp" android:height="40dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="6dp"
+        android:right="266dp"
+        android:top="6dp"
+        android:bottom="6dp"
+        android:gravity="center_vertical" >
+        <shape >
+            <solid android:color="@color/photonBlue80" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -201,6 +201,11 @@ dependencies {
     implementation libs.mozac.ui.widgets // SnackbarDelegate
     implementation libs.mozac.ui.icons // Permission feature icons // TODO remove this dependency after replacing with our icons
 
+    // Glance (appwidget)
+    implementation libs.glance.main
+    implementation libs.glance.appwidget
+    implementation libs.glance.material3
+
     // Others
     implementation libs.protobuf
     implementation libs.piwik

@@ -97,15 +97,15 @@
             </intent-filter>
         </activity>
 
-        <activity
+        <!-- <activity
             android:name="com.qwant.android.qwantbrowser.legacy.onboarding.OnboardingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity" /> -->
 
         <!-- Assist -->
         <activity
-            android:name=".legacy.assist.Assist"
+            android:name=".widget.WidgetActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysVisible"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
@@ -126,6 +126,17 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/assist_config" />
         </receiver>
+
+        <!-- Widget -->
+        <!-- <receiver android:name=".widget.WidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver> -->
 
         <!-- Downloads -->
         <service
@@ -155,16 +166,6 @@
         <service android:name=".mozac.media.MediaSessionService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
-
-        <!-- Keeps locales storage compatibility for android 12 and lower -->
-        <service
-            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
-            android:enabled="false"
-            android:exported="false">
-            <meta-data
-                android:name="autoStoreLocales"
-                android:value="true" />
-        </service>
     </application>
 
 </manifest>
