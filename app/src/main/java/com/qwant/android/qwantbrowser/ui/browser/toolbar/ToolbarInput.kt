@@ -1,7 +1,9 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,9 +26,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.activity
+import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
 
 @Composable
-fun ToolbarTextField(
+fun ToolbarInput(
     toolbarState: ToolbarState,
     onCommit: (String) -> Unit,
     modifier: Modifier = Modifier

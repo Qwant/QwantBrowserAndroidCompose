@@ -31,8 +31,6 @@ fun ToolbarDecorator(
     trailingIcons: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentUrl by state.currentUrl.collectAsState()
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -40,22 +38,18 @@ fun ToolbarDecorator(
             .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(50))
             .padding(4.dp)
     ) {
-        val shouldShowQwantIcon = state.hasFocus || state.onQwant || state.text.text.isEmpty()
-        AnimatedVisibility(visible = shouldShowQwantIcon) {
-            QwantIconOnBackground(shape = CircleShape)
+        when (state) {
+            is BrowserToolbarState -> {
+                val shouldShowQwantIcon = state.hasFocus || state.onQwant || state.text.text.isEmpty()
+                AnimatedVisibility(visible = shouldShowQwantIcon) {
+                    QwantIconOnBackground(shape = CircleShape)
+                }
+                AnimatedVisibility(visible = !shouldShowQwantIcon) {
+                    SiteSecurityIcon(state)
+                }
+            }
+            else -> QwantIconOnBackground(shape = CircleShape)
         }
-        AnimatedVisibility(visible = !shouldShowQwantIcon) {
-            SiteSecurityIcon(state)
-            /* siteSecurity?.let {
-                SiteSecurityIcon(securityInfo = it)
-            } ?: Box(modifier = Modifier.size(24.dp)) */
-        }
-
-        // TODO hide toolbar cursor cleverly.
-        /* val customTextSelectionColors = TextSelectionColors(
-            handleColor = Color.Unspecified,
-            backgroundColor = Color.Unspecified
-        ) */
 
         Box(modifier = Modifier
             .weight(2f)
@@ -63,29 +57,26 @@ fun ToolbarDecorator(
         ) {
             // { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() ?: false && !(currentUrl?.isQwantUrl() ?: false) }
             if (state.text.text.isEmpty()) {
-                if (currentUrl?.isNotBlank() == true && currentUrl?.startsWith("http://") == false && currentUrl?.startsWith("https://") == false) {
-                    // Intermediate status when loading pages ("about:blank" example) for which we don't want the hint to show
-                    Text(
-                        text = currentUrl ?: "",
-                        fontSize = 16.sp,
-                        color = hintColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.browser_toolbar_hint),
-                        fontSize = 16.sp,
-                        color = hintColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                Text(
+                    text = when (state) {
+                        is BrowserToolbarState -> {
+                            val currentUrl by state.currentUrl.collectAsState()
+                            if (currentUrl?.isNotBlank() == true && currentUrl?.startsWith("http://") == false && currentUrl?.startsWith("https://") == false) {
+                                currentUrl ?: ""
+                            } else stringResource(id = R.string.browser_toolbar_hint)
+                        }
+                        else -> stringResource(id = R.string.browser_toolbar_hint)
+                    },
+                    fontSize = 16.sp,
+                    color = hintColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-            // CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
-                innerTextField()
-            // }
+
+            innerTextField()
         }
+
         trailingIcons()
     }
 }

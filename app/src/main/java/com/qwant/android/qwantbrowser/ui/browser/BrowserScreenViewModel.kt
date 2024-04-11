@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
-import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
-import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarStateFactory
+import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarState
+import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarStateFactory
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,8 +57,8 @@ class BrowserScreenViewModel @Inject constructor(
     val qwantUseCases: QwantUseCases,
     val piwik: Piwik
 ): ViewModel() {
-    @Inject lateinit var toolbarStateFactory: ToolbarStateFactory
-    val toolbarState: ToolbarState by lazy {
+    @Inject lateinit var toolbarStateFactory: BrowserToolbarStateFactory
+    val toolbarState: BrowserToolbarState by lazy {
         toolbarStateFactory.create(viewModelScope)
     }
 
