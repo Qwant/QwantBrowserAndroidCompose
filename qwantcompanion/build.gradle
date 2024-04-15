@@ -39,6 +39,10 @@ android {
             dimension "target"
             buildConfigField("String", "PARTNER_CLIENT", "\"genymobile\"")
         }
+        logicom {
+            dimension "target"
+            buildConfigField("String", "PARTNER_CLIENT", "\"logicom\"")
+        }
     }
 
     compileOptions {
