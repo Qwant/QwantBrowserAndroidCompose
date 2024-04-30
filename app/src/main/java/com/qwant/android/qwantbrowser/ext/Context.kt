@@ -11,7 +11,7 @@ import android.provider.Settings
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.qwant.android.qwantbrowser.MainActivity
+import com.qwant.android.qwantbrowser.QwantActivity
 import com.qwant.android.qwantbrowser.QwantApplication
 import com.qwant.android.qwantbrowser.R
 import org.mozilla.geckoview.BuildConfig
@@ -22,9 +22,9 @@ import mozilla.components.feature.downloads.R as downloadsR
 /**
  * Get the current Activity object from a context.
  */
-val Context.activity: MainActivity?
+val Context.activity: QwantActivity?
     get() = when (this) {
-        is MainActivity -> this
+        is QwantActivity -> this
         is ContextWrapper -> baseContext.activity
         else -> null
     }

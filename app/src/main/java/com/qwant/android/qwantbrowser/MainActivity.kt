@@ -16,14 +16,9 @@ import javax.inject.Inject
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : QwantActivity() {
     @Inject lateinit var notificationsDelegate: NotificationsDelegate
     @Inject lateinit var clientProvider: QwantClientProvider
-
-    // TODO Create keyboard controller class
-    private var onKeyboardHiddenCallback: (() -> Unit)? = null
-    private lateinit var rootView: View
-    private var imm: InputMethodManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,32 +32,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setContentView(v)
-
-        rootView = v.rootView
-        imm = ContextCompat.getSystemService(this, InputMethodManager::class.java)
-
-        ViewCompat.setOnApplyWindowInsetsListener(v.rootView) { view, insets ->
-            if (!insets.isVisible(WindowInsetsCompat.Type.ime())) {
-                onKeyboardHiddenCallback?.invoke()
-            }
-            ViewCompat.onApplyWindowInsets(view, insets)
-        }
-    }
-
-    fun forceHideKeyboard() {
-        imm?.hideSoftInputFromWindow(rootView.windowToken, 0)
-    }
-
-    fun registerOnKeyboardHiddenCallback(callback: () -> Unit) {
-        onKeyboardHiddenCallback = callback
-    }
-
-    fun unregisterOnKeyboardHiddenCallback() {
-        onKeyboardHiddenCallback = null
-    }
-
-    fun quit() {
-        finishAffinity()
-        exitProcess(0)
+        this.bindRootView(v.rootView)
     }
 }
