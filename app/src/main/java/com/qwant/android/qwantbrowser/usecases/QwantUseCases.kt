@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,7 +29,7 @@ class QwantUseCases @Inject constructor(
     private val clKey = "pref_key_utm_campaign"
 
     private fun qwantUrl(search: String?, widget: Boolean = false): String = buildString {
-        append("https://www.qwant.com")
+        append(BuildConfig.QWANT_BASE_URL)
         append("?client=").append(clientProvider.clientState.value)
         search?.let {
             append("&q=").append(it)

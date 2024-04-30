@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.stats
 
 import android.content.Context
 import android.util.Log
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.selectedLocale
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
@@ -70,7 +71,7 @@ class Datahub @Inject constructor(
     }
 
     companion object {
-        private const val BASE_URL = "https://www.qwant.com/action/" // BuildConfig.DATAHUB_BASE_URL
+        private const val BASE_URL = "${BuildConfig.QWANT_BASE_URL}/action/"
         private const val BRAND_SUGGEST_PAYLOAD = "{" +
             "\"client\": \"%s\"," +                         // 0: client
             "\"interface_language\": \"%s\"," +             // 1: interface_language
