@@ -36,32 +36,32 @@ data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantI
 val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
 val lightColorScheme = lightColorScheme(
-    primary = ActionBlue400,
+    primary = PrimaryDarkGrey,
     onPrimary = Color.White,
     primaryContainer = Color.White,
     onPrimaryContainer = Grey900,
-    secondaryContainer = ActionBlue50,
-    onSecondaryContainer = Grey900,
+    secondaryContainer = BackgroundSecondaryLightGrey,
+    onSecondaryContainer = PrimaryDarkGrey,
     tertiary = ActionBlue300,
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
-    outline = Grey900Alpha12,
+    outline = BorderLightGrey,
     surfaceVariant = Grey100,
     onSurfaceVariant = Grey900,
     error = Red
 )
 
 val darkColorScheme = darkColorScheme(
-    primary = ActionBlue200,
-    onPrimary = Grey900,
+    primary = Color.White,
+    onPrimary = PrimaryDarkGrey,
     primaryContainer = Grey750,
     onPrimaryContainer = Color.White,
-    secondaryContainer = Grey650,
+    secondaryContainer = BackgroundSecondaryDarkGrey,
     onSecondaryContainer = Color.White,
     tertiary = ActionBlue200,
     tertiaryContainer = Grey700,
     onTertiaryContainer = Color.White,
-    outline = Grey000Alpha16,
+    outline = BorderDarkGrey,
     surfaceVariant = Grey600,
     onSurfaceVariant = Color.White,
     error = RedLight

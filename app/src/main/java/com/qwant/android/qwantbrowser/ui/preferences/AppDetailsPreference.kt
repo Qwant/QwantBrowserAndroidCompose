@@ -35,7 +35,6 @@ fun AppDetailsPreference() {
             BuildConfig.MOZ_APP_VERSION
         ),
         trailing = { QwantIconOnBackground(
-            bgColor = ActionBlue300,
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.size(28.dp))
         },

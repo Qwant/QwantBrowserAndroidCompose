@@ -31,3 +31,12 @@ val ZapYellow = Color(0xFFFFF35B)
 
 val Red = Color(0xFFFF1F23)
 val RedLight = Color(0xFFFF5C5F)
+
+// NQ
+
+val PrimaryDarkGrey = Color(0xFF212327)
+val BackgroundSecondaryLightGrey = Color(0xFFF2F4F7)
+val BorderLightGrey = Color(0xFFCED6E0)
+
+val BackgroundSecondaryDarkGrey = Color(0xFF2E3238)
+val BorderDarkGrey = Color(0xFF535B66)

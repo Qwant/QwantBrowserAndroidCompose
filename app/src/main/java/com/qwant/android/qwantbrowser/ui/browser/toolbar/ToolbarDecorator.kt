@@ -2,10 +2,12 @@ package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -36,19 +38,20 @@ fun ToolbarDecorator(
         modifier = modifier
             .height(40.dp)
             .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(50))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(50))
             .padding(4.dp)
     ) {
         when (state) {
             is BrowserToolbarState -> {
                 val shouldShowQwantIcon = state.hasFocus || state.onQwant || state.text.text.isEmpty()
                 AnimatedVisibility(visible = shouldShowQwantIcon) {
-                    QwantIconOnBackground(shape = CircleShape)
+                    QwantIconOnBackground(shape = CircleShape, Modifier.size(32.dp))
                 }
                 AnimatedVisibility(visible = !shouldShowQwantIcon) {
                     SiteSecurityIcon(state)
                 }
             }
-            else -> QwantIconOnBackground(shape = CircleShape)
+            else -> QwantIconOnBackground(shape = CircleShape, Modifier.size(32.dp))
         }
 
         Box(modifier = Modifier

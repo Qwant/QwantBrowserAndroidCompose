@@ -3,10 +3,13 @@ package com.qwant.android.qwantbrowser.ui.widgets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -19,10 +22,10 @@ import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 
 @Composable
 fun QwantIconOnBackground(
-    color: Color = Grey900,
-    bgColor: Color = MaterialTheme.colorScheme.tertiary,
     shape: Shape,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onPrimary,
+    bgColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Box(modifier = modifier
         .background(bgColor, shape)
@@ -31,7 +34,9 @@ fun QwantIconOnBackground(
             painterResource(id = R.drawable.qwant_logo),
             contentDescription = "Qwant",
             tint = color,
-            modifier = Modifier.padding(6.dp)
+            modifier = Modifier
+                .padding(bottom = 6.dp, start = 6.dp, top = 4.dp, end = 4.dp)
+                .align(Alignment.Center)
         )
     }
 }
@@ -39,7 +44,5 @@ fun QwantIconOnBackground(
 @Preview
 @Composable
 fun QwantIconOnBackgroundPreview() {
-    QwantBrowserTheme {
-        QwantIconOnBackground(shape = RoundedCornerShape(0.5f))
-    }
+    QwantIconOnBackground(shape = CircleShape, modifier = Modifier.size(32.dp))
 }

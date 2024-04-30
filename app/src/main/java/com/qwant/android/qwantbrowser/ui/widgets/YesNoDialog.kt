@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -31,8 +32,8 @@ fun YesNoDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        confirmButton = { Button(onClick = onYes) { Text(text = yesText) }},
-        dismissButton = { TextButton(onClick = onNo) { Text(text = noText) }},
+        confirmButton = { Button(onClick = onYes, shape = RoundedCornerShape(12.dp)) { Text(text = yesText) }},
+        dismissButton = { TextButton(onClick = onNo, shape = RoundedCornerShape(12.dp)) { Text(text = noText) }},
         icon = { icon?.let { Icon(painterResource(id = it), contentDescription = "icon") } },
         title = { title?.let { Text(text = it, modifier = Modifier.fillMaxWidth(), textAlign = if (icon != null) TextAlign.Center else TextAlign.Start) } },
         text = {

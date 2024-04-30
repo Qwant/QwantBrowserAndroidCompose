@@ -26,7 +26,7 @@ fun BigButton(
 ) {
     val title = stringResource(id = text)
     Button(
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(12.dp),
         modifier = modifier,
         onClick = { onClick() },
         enabled = enabled
