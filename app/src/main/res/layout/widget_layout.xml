@@ -5,28 +5,28 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/assist_search_bar_background">
+    android:background="@drawable/widget_background">
 
     <ImageView
-        android:src="@drawable/assist_qwant_logo_v2_round"
-        android:layout_marginStart="2dp"
+        android:src="@drawable/widget_logo"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:padding="8dp" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="@string/assist_qwant_widget_text"
-        android:textColor="#993c3c43"
+        android:text="@string/browser_toolbar_hint"
+        android:textColor="@color/widget_hint"
         android:textSize="17sp"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:paddingHorizontal="6dp"/>
 
     <ImageView
-        android:src="@drawable/assist_icons_regular_icon_search"
+        android:src="@drawable/icons_search"
         android:layout_height="match_parent"
         android:layout_width="28dp"
         android:layout_marginEnd="16dp"
-        app:tint="#5c97ff" />
+        app:tint="@color/widget_icon_background" />
 </LinearLayout>

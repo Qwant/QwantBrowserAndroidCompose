@@ -103,7 +103,7 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             tools:ignore="LockedOrientationActivity" /> -->
 
-        <!-- Assist -->
+        <!-- Widget -->
         <activity
             android:name=".widget.WidgetActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -117,26 +117,15 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".legacy.assist.WidgetProvider"
+            android:name=".widget.WidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/assist_config" />
+                android:resource="@xml/widget_config" />
         </receiver>
-
-        <!-- Widget -->
-        <!-- <receiver android:name=".widget.WidgetReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
-        </receiver> -->
 
         <!-- Downloads -->
         <service

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/widget_icon_background"/>
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/qwant_logo"
+        android:left="116dp"
+        android:right="76dp"
+        android:top="55dp"
+        android:bottom="95dp"
+    />
+</layer-list>

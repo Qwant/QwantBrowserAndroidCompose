@@ -27,7 +27,6 @@ protobuf = "4.26.0"
 room = "2.6.1"
 piwik = "1.2.0"
 mozac = "117.+"
-glance = "1.0.0"
 
 # Plugins
 android-gradle-plugin = "8.3.1"
@@ -101,10 +100,6 @@ mozac-ui-icons = { group = "org.mozilla.components", name = "ui-icons", version.
 junit-main = { group = "junit", name = "junit", version.ref = "junit" }
 junit-androidx = { group = "androidx.test.ext", name = "junit", version.ref = "junit-androidx" }
 espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
-# Glance
-glance-main = { group = "androidx.glance", name = "glance", version.ref = "glance" }
-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 # Others
 protobuf = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
 piwik = { group = "pro.piwik", name = "sdk-framework-android", version.ref = "piwik" }
