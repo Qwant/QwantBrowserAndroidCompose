@@ -128,13 +128,13 @@ fun BrowserScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
-                Icon(
+                /* Icon(
                     painter = painterResource(id = R.drawable.qwant_logo),
                     contentDescription = "logo qwant",
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                     modifier = Modifier
                         .size(64.dp)
-                )
+                ) */
             }
         }
     }
