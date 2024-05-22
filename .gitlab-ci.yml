@@ -1,98 +1,30 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Android.gitlab-ci.yml
-
-# Read more about this script on this blog post https://about.gitlab.com/2018/10/24/setting-up-gitlab-ci-for-android-projects/, by Jason Lenny
-# If you are interested in using Android with FastLane for publishing take a look at the Android-Fastlane template.
-
 stages:
   - build
   - test
   - deploy
   - release
 
-image: eclipse-temurin:17-jdk-jammy
+.android:
+  image: "$HARBOR_REGISTRY_SERVER/qwant/mobile/android-dev-env:e3a2b32c"
+  before_script:
+    - cat /usr/local/etc/ANDROID_SDK_VERSION
+    - export $(grep -v "^#" /usr/local/etc/ANDROID_SDK_VERSION | xargs)
 
 variables:
-
   # develop branch name
   CI_DEVELOP_BRANCH: "ci" # For testing only. Update to dev
-
   CI_BOT: "CI BOT"
-
   # Proxy - Not necessary on Gitlab OVH
-  # GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
-
-  # ANDROID_COMPILE_SDK is the version of Android you're compiling with.
-  # It should match compileSdkVersion.
-  ANDROID_COMPILE_SDK: "34"
-
-  # ANDROID_BUILD_TOOLS is the version of the Android build tools you are using.
-  # It should match buildToolsVersion.
-  ANDROID_BUILD_TOOLS: "33.0.2"
-
-  # It's what version of the command line tools we're going to download from the official site.
-  # Official Site-> https://developer.android.com/studio/index.html
-  # There, look down below at the cli tools only, sdk tools package is of format:
-  #        commandlinetools-os_type-ANDROID_SDK_TOOLS_latest.zip
-  # when the script was last modified for latest compileSdkVersion, it was which is written down below
-  ANDROID_SDK_TOOLS: "9477386"
-
+  #GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
   # Fastlane variables
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
 
-# Packages installation before running script
-before_script:
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes wget unzip
-
-  # Git config
-  - apt-get install -y git
-  - git config --global user.name "$CI_BOT"
-  - git config --global user.email "ci-mobile@qwant.com"
-  - git config --global http.sslVerify false
-  - git config receive.advertisePushOptions true
-  - git config --global credential.helper store
-  - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.com" > ~/.git-credentials
-
-  # Setup path as android_home for moving/exporting the downloaded sdk into it
-  - export ANDROID_HOME="${PWD}/android-sdk-root"
-  # Create a new directory at specified location
-  - install -d $ANDROID_HOME
-  # Here we are installing androidSDK tools from official source,
-  # (the key thing here is the url from where you are downloading these sdk tool for command line, so please do note this url pattern there and here as well)
-  # after that unzipping those tools and
-  # then running a series of SDK manager commands to install necessary android SDK packages that'll allow the app to build
-  - wget --no-verbose --output-document=$ANDROID_HOME/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip
-  - unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
-  - mv -T "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/tools"
-  - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/cmdline-tools/tools/bin
-
-  # Download gradle
-  #- wget --output-document=gradle.zip https://services.gradle.org/distributions/gradle-8.2-bin.zip
-  #- unzip -q gradle.zip -d ./gradle
-  # export GRADLE_HOME=$PWD/.gradle/gradle-8.2
-  # export PATH=$GRADLE_HOME/bin:$PATH
-  
-  # Nothing fancy here, just checking sdkManager version
-  - sdkmanager --version
-
-  # use yes to accept all licenses
-  - yes | sdkmanager --licenses > /dev/null || true
-  - sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
-  - sdkmanager "platform-tools"
-  - sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
-
-  # Not necessary, but just for surity
-  - chmod +x ./gradlew
-   
 # build project for all features branches (except main and dev) without artifacts to speed up
 build:
-  interruptible: true
   stage: build
+  extends: .android
+  interruptible: true
   script:
     - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
   rules:
@@ -102,31 +34,31 @@ build:
 
 # Run unit tests on all branches, if any fails, interrupt the pipeline
 unit_test:
-  interruptible: true
   stage: test
+  extends: .android
+  interruptible: true
   script:
     - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
-  allow_failure: false # Fail the pipeline if this job fails
+  allow_failure: false
 
 # build project for dev branch and upload to internal play store
+# see: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html#bot-users-for-projects
 deploy_internal_app_bundle:
   stage: deploy
+  extends: .android
+  variables:
+    GIT_STRATEGY: none
   script:
-    - echo "Setup fastlane"
-    - apt-get --quiet update --yes
-    - apt-get --quiet install --yes wget unzip
+    - git config --global user.name "ci-bot-mobile"
+    - git config --global user.email "ci-bot-mobile@qwant.com"
+    - git config --global http.sslCAInfo "/workspace/ca/ca.crt"
 
-    # Install Ruby and Fastlane
-    - apt-get install -qqy --no-install-recommends build-essential ruby-full
-    - gem install bundler fastlane
-    - bundle install
+    - git clone "https://ci-bot-mobile:${CI_BOT_MOBILE_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}"
+    - cd $CI_PROJECT_NAME
+    - git checkout $CI_COMMIT_BRANCH
 
-    # Install and configure Git
-    # TODO: Update with DevOps insight
-    - apt-get install -y git
-    - git config --global user.name "CI BOT"
-    - git config --global user.email "ci-mobile@qwant.com"
-    - echo "https://oauth2:${ACCESS_TOKEN}@gitlab.tooling.ovh.kube.qwant.ninja/qwant/mobile/QwantBrowserAndroid" > ~/.git-credentials
+    - cp -f /usr/local/src/Gemfile* .
+    - cp -rf /usr/local/src/fastlane .
 
     # Copy keystore file to the current directory and export path for signing
     - echo -n "$keystore_playstore" | base64 -d > keystore_playstore.jks
@@ -134,9 +66,10 @@ deploy_internal_app_bundle:
 
     # Copy PlayStore json file to the fastlane directory in order to push to PlayStore
     - echo -n "$playstore_json_base64" | base64 -d > fastlane/playstore.json
-    
     - bundle exec fastlane upload_to_internal
   rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == $CI_DEVELOP_BRANCH'
       when: always
   artifacts:
