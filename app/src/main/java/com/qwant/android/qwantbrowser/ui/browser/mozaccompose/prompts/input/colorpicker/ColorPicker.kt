@@ -73,7 +73,10 @@ fun ColorPicker(
                 TextButton(onClick = onDismiss) {
                     Text(text = stringResource(R.string.cancel))
                 }
-                Button(onClick = { onConfirm(colorPickerState.color) }) {
+                Button(
+                    onClick = { onConfirm(colorPickerState.color) },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
                     Text(text = stringResource(R.string.ok))
                 }
             }

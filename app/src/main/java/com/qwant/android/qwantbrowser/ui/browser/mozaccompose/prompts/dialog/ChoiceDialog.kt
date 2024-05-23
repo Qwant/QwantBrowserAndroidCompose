@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -76,7 +77,10 @@ fun ChoiceDialog(
                     TextButton(onClick = onDismissRequest) {
                         Text(text = stringResource(R.string.cancel))
                     }
-                    Button(onClick = { onSelected(selection?.toTypedArray() ?: arrayOf()) }) {
+                    Button(
+                        onClick = { onSelected(selection?.toTypedArray() ?: arrayOf()) },
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
                         Text(text = stringResource(R.string.ok))
                     }
                 }

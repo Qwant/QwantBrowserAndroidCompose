@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -99,22 +100,25 @@ fun DateTimePicker(
                 TextButton(onClick = onDismiss) {
                     Text(text = stringResource(R.string.mozac_feature_prompts_cancel))
                 }
-                Button(onClick = {
-                    request.onConfirm(Calendar.getInstance().apply {
-                        if (showMonth) {
-                            // TODO month picker result
-                        } else {
-                            if (showDate) {
-                                datePickerState.selectedDateMillis?.let { timeInMillis = it }
+                Button(
+                    onClick = {
+                        request.onConfirm(Calendar.getInstance().apply {
+                            if (showMonth) {
+                                // TODO month picker result
+                            } else {
+                                if (showDate) {
+                                    datePickerState.selectedDateMillis?.let { timeInMillis = it }
+                                }
+                                if (showTime) {
+                                    set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+                                    set(Calendar.MINUTE, timePickerState.minute)
+                                }
                             }
-                            if (showTime) {
-                                set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-                                set(Calendar.MINUTE, timePickerState.minute)
-                            }
-                        }
-                    }.time)
-                    consume()
-                }) {
+                        }.time)
+                        consume()
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
                     Text(text = stringResource(R.string.mozac_feature_prompts_set_date))
                 }
             }
