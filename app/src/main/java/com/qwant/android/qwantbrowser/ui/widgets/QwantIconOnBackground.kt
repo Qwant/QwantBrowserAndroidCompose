@@ -24,8 +24,8 @@ import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme
 fun QwantIconOnBackground(
     shape: Shape,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onPrimary,
-    bgColor: Color = MaterialTheme.colorScheme.primary,
+    color: Color = MaterialTheme.colorScheme.onTertiary,
+    bgColor: Color = MaterialTheme.colorScheme.tertiary,
 ) {
     Box(modifier = modifier
         .background(bgColor, shape)

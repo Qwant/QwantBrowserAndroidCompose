@@ -36,13 +36,14 @@ data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantI
 val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
 val lightColorScheme = lightColorScheme(
-    primary = PrimaryDarkGrey,
+    primary = ActionBlue400,
     onPrimary = Color.White,
+    tertiary = PrimaryDarkGrey,
+    onTertiary = Color.White,
     primaryContainer = Color.White,
     onPrimaryContainer = Grey900,
     secondaryContainer = BackgroundSecondaryLightGrey,
     onSecondaryContainer = PrimaryDarkGrey,
-    tertiary = ActionBlue300,
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
     outline = BorderLightGrey,
@@ -52,13 +53,14 @@ val lightColorScheme = lightColorScheme(
 )
 
 val darkColorScheme = darkColorScheme(
-    primary = Color.White,
-    onPrimary = PrimaryDarkGrey,
+    primary = ActionBlue200,
+    onPrimary = Grey900,
+    tertiary = Color.White,
+    onTertiary = PrimaryDarkGrey,
     primaryContainer = Grey750,
     onPrimaryContainer = Color.White,
     secondaryContainer = BackgroundSecondaryDarkGrey,
     onSecondaryContainer = Color.White,
-    tertiary = ActionBlue200,
     tertiaryContainer = Grey700,
     onTertiaryContainer = Color.White,
     outline = BorderDarkGrey,
@@ -70,11 +72,12 @@ val darkColorScheme = darkColorScheme(
 private val privateColorScheme = darkColorScheme.copy(
     primary = Purple200,
     onPrimary = Grey900,
+    tertiary = Color.White,
+    onTertiary = PrimaryDarkGrey,
     primaryContainer = Purple700,
     onPrimaryContainer = Color.White,
     secondaryContainer = Grey000Alpha16,
     onSecondaryContainer = Color.White,
-    tertiary = Purple200,
     tertiaryContainer = PurpleTertiary,
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,

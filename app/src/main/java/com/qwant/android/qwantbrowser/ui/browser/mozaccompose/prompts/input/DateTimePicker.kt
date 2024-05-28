@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,7 +99,10 @@ fun DateTimePicker(
                 modifier = Modifier.align(Alignment.BottomEnd)
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(R.string.mozac_feature_prompts_cancel))
+                    Text(
+                        text = stringResource(R.string.mozac_feature_prompts_cancel),
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
                 }
                 Button(
                     onClick = {
@@ -117,7 +121,11 @@ fun DateTimePicker(
                         }.time)
                         consume()
                     },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
+                    )
                 ) {
                     Text(text = stringResource(R.string.mozac_feature_prompts_set_date))
                 }

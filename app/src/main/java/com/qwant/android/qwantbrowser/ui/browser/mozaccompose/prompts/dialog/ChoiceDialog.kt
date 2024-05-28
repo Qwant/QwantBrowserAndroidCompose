@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
@@ -75,11 +76,18 @@ fun ChoiceDialog(
                         .padding(top = 16.dp)
                 ) {
                     TextButton(onClick = onDismissRequest) {
-                        Text(text = stringResource(R.string.cancel))
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
                     }
                     Button(
                         onClick = { onSelected(selection?.toTypedArray() ?: arrayOf()) },
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary
+                        )
                     ) {
                         Text(text = stringResource(R.string.ok))
                     }
