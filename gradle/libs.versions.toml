@@ -2,22 +2,22 @@
 # Legacy
 constraintlayout = "2.1.4"
 preference-ktx = "1.2.1"
-material = "1.11.0"
+material = "1.12.0"
 # AndroidX
-core-ktx = "1.12.0"
-lifecycle = "2.7.0"
-datastore = "1.0.0"
+core-ktx = "1.13.1"
+lifecycle = "2.8.0"
+datastore = "1.1.1"
 localbroadcastmanager = "1.1.0"
-paging-runtime-ktx = "3.2.1"
+paging-runtime-ktx = "3.3.0"
 # Hilt
 hilt = "2.51"
 androidx-hilt = "1.2.0"
 # Compose
-compose-bom = "2024.03.00"
+compose-bom = "2024.05.00"
 compose-material3 = "1.2.1"
-compose-android-activity = "1.8.2"
+compose-android-activity = "1.9.0"
 compose-android-navigation = "2.7.7"
-compose-android-paging = "3.2.1"
+compose-android-paging = "3.3.0"
 # Testing
 junit = "4.13.2"
 junit-androidx = "1.1.5"
@@ -25,11 +25,11 @@ espresso = "3.5.1"
 # Others
 protobuf = "4.26.0"
 room = "2.6.1"
-piwik = "1.2.0"
+piwik = "1.2.2"
 mozac = "117.+"
 
 # Plugins
-android-gradle-plugin = "8.3.1"
+android-gradle-plugin = "8.3.2"
 kotlin-plugin = "1.9.23"
 hilt-plugin = "2.51"
 protobuf-plugin = "0.9.4"

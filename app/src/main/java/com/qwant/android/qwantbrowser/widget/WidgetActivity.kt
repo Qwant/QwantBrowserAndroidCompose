@@ -28,7 +28,7 @@ class WidgetActivity: QwantActivity() {
         this.bindRootView(v.rootView)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         viewModel.resetSearch()
     }
