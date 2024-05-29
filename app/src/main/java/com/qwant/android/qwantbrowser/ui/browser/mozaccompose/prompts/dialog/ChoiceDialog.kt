@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.qwant.android.qwantbrowser.R
@@ -111,8 +112,7 @@ private fun ChoicesRec(
             choice.isGroupType -> {
                 Text(
                     text = choice.label,
-                    color = if (!newDisabled) MaterialTheme.colorScheme.primary
-                            else LocalContentColor.current.copy(0.6f)
+                    fontWeight = FontWeight.Bold
                 )
                 choice.children?.let { ChoicesRec(it, onChoiceClicked, selection, newDisabled) }
             }
