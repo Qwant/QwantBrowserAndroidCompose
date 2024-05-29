@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -71,9 +72,19 @@ fun ColorPicker(
                     .padding(top = 16.dp)
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(R.string.cancel))
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
                 }
-                Button(onClick = { onConfirm(colorPickerState.color) }) {
+                Button(
+                    onClick = { onConfirm(colorPickerState.color) },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
+                    )
+                ) {
                     Text(text = stringResource(R.string.ok))
                 }
             }

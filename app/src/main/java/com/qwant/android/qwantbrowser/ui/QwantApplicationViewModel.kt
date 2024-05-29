@@ -7,14 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
+import com.qwant.android.qwantbrowser.preferences.app.Appearance
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
-import com.qwant.android.qwantbrowser.preferences.frontend.Appearance
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
 import com.qwant.android.qwantbrowser.storage.history.HistoryRepository
 import com.qwant.android.qwantbrowser.ui.zap.ZapState
 import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.selectedTab
@@ -32,7 +30,6 @@ enum class PrivacyMode {
 class QwantApplicationViewModel @Inject constructor(
     store: BrowserStore,
     historyRepository: HistoryRepository,
-    frontEndPreferencesRepository: FrontEndPreferencesRepository,
     appPreferencesRepository: AppPreferencesRepository,
     clearDataUseCase: ClearDataUseCase,
     private val piwik: Piwik
@@ -86,7 +83,7 @@ class QwantApplicationViewModel @Inject constructor(
             initialValue = false
         )
 
-    val appearance = frontEndPreferencesRepository.flow
+    val appearance = appPreferencesRepository.flow
         .map { it.appearance }
         .stateIn(
             scope = viewModelScope,

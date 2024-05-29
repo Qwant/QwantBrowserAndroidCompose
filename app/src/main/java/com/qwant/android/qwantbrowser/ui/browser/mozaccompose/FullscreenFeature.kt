@@ -5,7 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.qwant.android.qwantbrowser.ext.activity
-import com.qwant.android.qwantbrowser.ui.browser.toolbar.ToolbarState
+import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarState
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.FullScreenFeature
@@ -16,7 +16,7 @@ import mozilla.components.support.ktx.android.view.exitImmersiveMode
 @Composable
 fun FullScreenFeature(
     store: BrowserStore,
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     sessionUseCases: SessionUseCases
 ) {
     val activity = LocalContext.current.activity

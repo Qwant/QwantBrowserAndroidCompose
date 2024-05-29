@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
@@ -34,33 +35,35 @@ private val darkAndPrivateIcons = QwantIcons(
 data class QwantTheme(val dark: Boolean, val private: Boolean, val icons: QwantIcons)
 val LocalQwantTheme = compositionLocalOf { QwantTheme(dark = false, private = false, icons = lightIcons) }
 
-private val lightColorScheme = lightColorScheme(
+val lightColorScheme = lightColorScheme(
     primary = ActionBlue400,
     onPrimary = Color.White,
+    tertiary = PrimaryDarkGrey,
+    onTertiary = Color.White,
     primaryContainer = Color.White,
     onPrimaryContainer = Grey900,
-    secondaryContainer = ActionBlue50,
-    onSecondaryContainer = Grey900,
-    tertiary = ActionBlue300,
+    secondaryContainer = BackgroundSecondaryLightGrey,
+    onSecondaryContainer = PrimaryDarkGrey,
     tertiaryContainer = Color.White,
     onTertiaryContainer = Grey900,
-    outline = Grey900Alpha12,
+    outline = BorderLightGrey,
     surfaceVariant = Grey100,
     onSurfaceVariant = Grey900,
     error = Red
 )
 
-private val darkColorScheme = darkColorScheme(
+val darkColorScheme = darkColorScheme(
     primary = ActionBlue200,
     onPrimary = Grey900,
+    tertiary = Color.White,
+    onTertiary = PrimaryDarkGrey,
     primaryContainer = Grey750,
     onPrimaryContainer = Color.White,
-    secondaryContainer = Grey650,
+    secondaryContainer = BackgroundSecondaryDarkGrey,
     onSecondaryContainer = Color.White,
-    tertiary = ActionBlue200,
     tertiaryContainer = Grey700,
     onTertiaryContainer = Color.White,
-    outline = Grey000Alpha16,
+    outline = BorderDarkGrey,
     surfaceVariant = Grey600,
     onSurfaceVariant = Color.White,
     error = RedLight
@@ -69,11 +72,12 @@ private val darkColorScheme = darkColorScheme(
 private val privateColorScheme = darkColorScheme.copy(
     primary = Purple200,
     onPrimary = Grey900,
+    tertiary = Color.White,
+    onTertiary = PrimaryDarkGrey,
     primaryContainer = Purple700,
     onPrimaryContainer = Color.White,
     secondaryContainer = Grey000Alpha16,
     onSecondaryContainer = Color.White,
-    tertiary = Purple200,
     tertiaryContainer = PurpleTertiary,
     onTertiaryContainer = Grey900,
     outline = Grey000Alpha16,
@@ -130,7 +134,10 @@ fun QwantBrowserTheme(
     if (!view.isInEditMode) {
         SideEffect {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                @Suppress("DEPRECATION")
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            }
             window.statusBarColor = colorScheme.surface.toArgb()
             window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)

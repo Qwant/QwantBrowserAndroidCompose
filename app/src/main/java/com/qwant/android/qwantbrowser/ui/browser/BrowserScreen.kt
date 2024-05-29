@@ -26,7 +26,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
-import com.qwant.android.qwantbrowser.legacy.onboarding.Onboarding
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -73,14 +72,14 @@ fun BrowserScreen(
         }
     }
 
-    val activity = LocalContext.current.activity
+    /* val activity = LocalContext.current.activity
     Onboarding { success ->
         if (success) {
             viewModel.toolbarState.updateFocus(true)
         } else {
             activity?.quit()
         }
-    }
+    } */
 
     KeyboardObserver(toolbarState = viewModel.toolbarState)
 
@@ -93,7 +92,7 @@ fun BrowserScreen(
                 toolbarState = viewModel.toolbarState,
                 browserIcons = viewModel.browserIcons,
                 beforeTextField = { QwantVIPAction(viewModel) },
-                beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() ?: false && !(currentUrl?.isQwantUrl() ?: false) },
+                beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() == true && currentUrl?.isQwantUrl() == false && currentUrl != "about:blank" },
                 afterTextField = { AfterActions(navigateTo, viewModel, appViewModel) },
                 afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
             )
@@ -129,13 +128,13 @@ fun BrowserScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
-                Icon(
+                /* Icon(
                     painter = painterResource(id = R.drawable.qwant_logo),
                     contentDescription = "logo qwant",
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                     modifier = Modifier
                         .size(64.dp)
-                )
+                ) */
             }
         }
     }

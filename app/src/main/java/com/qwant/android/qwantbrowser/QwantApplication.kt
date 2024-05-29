@@ -52,7 +52,7 @@ class QwantApplication : Application() {
 
         engine.get().apply {
             warmUp()
-            speculativeConnect("https://www.qwant.com/")
+            speculativeConnect(BuildConfig.QWANT_BASE_URL)
         }
 
         restoreBrowserState()

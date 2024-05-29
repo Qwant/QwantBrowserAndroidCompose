@@ -7,7 +7,7 @@ import mozilla.components.concept.engine.EngineView
 @Composable
 fun DynamicToolbarFeature(
     engineView: EngineView,
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     enabled: Boolean = true
 ) {
     LaunchedEffect(enabled, engineView, toolbarState.trueHeightPx) {

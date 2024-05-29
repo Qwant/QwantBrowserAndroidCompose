@@ -40,7 +40,7 @@ import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ui.widgets.UrlIcon
 
 @Composable
-fun SiteSecurityIcon(toolbarState: ToolbarState) {
+fun SiteSecurityIcon(toolbarState: BrowserToolbarState) {
     val siteSecurity by toolbarState.siteSecurity.collectAsState()
 
     siteSecurity?.let { securityInfo ->

@@ -2,15 +2,15 @@ package com.qwant.android.qwantbrowser.stats
 
 import android.content.Context
 import android.util.Log
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.ext.UAQwant
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.ext.selectedLocale
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.fetch.MutableHeaders
@@ -23,31 +23,14 @@ class Datahub @Inject constructor(
     @ApplicationContext private val context: Context,
     private val client: Client,
     private val clientProvider: QwantClientProvider,
-    frontEndPreferencesRepository: FrontEndPreferencesRepository,
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + Job())
-
-    private var interfaceLanguage: String = ""
-    private var searchRegion: String = ""
-
-    init {
-        scope.launch {
-            frontEndPreferencesRepository.flow
-                .map { it.interfaceLanguage }
-                .collect { interfaceLanguage = it }
-        }
-        scope.launch {
-            frontEndPreferencesRepository.flow
-                .map { it.searchResultRegion }
-                .collect { searchRegion = it }
-        }
-    }
 
     fun brandSuggestClicked(suggestion: Suggestion.BrandSuggestion) {
         call("suggest", BRAND_SUGGEST_PAYLOAD.format(
             clientProvider.clientState.value,
-            interfaceLanguage,
-            searchRegion,
+            context.selectedLocale().language,
+            context.selectedLocale().toString(),
             suggestion.brand,
             suggestion.search.length,
             suggestion.rank,
@@ -88,7 +71,7 @@ class Datahub @Inject constructor(
     }
 
     companion object {
-        private const val BASE_URL = "https://www.qwant.com/action/" // BuildConfig.DATAHUB_BASE_URL
+        private const val BASE_URL = "${BuildConfig.QWANT_BASE_URL}/action/"
         private const val BRAND_SUGGEST_PAYLOAD = "{" +
             "\"client\": \"%s\"," +                         // 0: client
             "\"interface_language\": \"%s\"," +             // 1: interface_language

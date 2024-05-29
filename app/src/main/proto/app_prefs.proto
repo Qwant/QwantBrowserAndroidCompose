@@ -13,6 +13,12 @@ enum TabsViewOption {
   LIST = 1;
 }
 
+enum Appearance {
+  SYSTEM_SETTINGS = 0;
+  LIGHT = 1;
+  DARK = 2;
+}
+
 message AppPreferences {
   bool hide_toolbar_on_scroll = 1;
   ToolbarPosition toolbar_position = 2;
@@ -23,4 +29,5 @@ message AppPreferences {
   bool clear_data_tabs = 7;
   int32 clear_data_browsingdata = 8;
   bool piwik_optout = 9;
+  Appearance appearance = 10;
 }

@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,8 +36,9 @@ fun HomePrivateBrowsing(
     }) {
         Column(modifier = Modifier.padding(24.dp)) {
             Image(
-                painter = painterResource(id = R.drawable.private_browsing_image),
+                painter = painterResource(id = R.drawable.icons_privacy_mask_small),
                 contentDescription = "private browsing image",
+                colorFilter = ColorFilter.tint(color = LocalContentColor.current),
                 modifier = Modifier
                     .size(width = 80.dp, height = 100.dp)
                     .padding(bottom = 20.dp)

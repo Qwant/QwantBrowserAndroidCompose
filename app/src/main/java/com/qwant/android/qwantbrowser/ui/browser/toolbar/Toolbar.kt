@@ -28,7 +28,7 @@ import mozilla.components.browser.icons.BrowserIcons
 fun Toolbar(
     onTextCommit: (String) -> Unit,
     modifier: Modifier = Modifier,
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     browserIcons: BrowserIcons,
     beforeTextField: @Composable () -> Unit = {},
     beforeTextFieldVisible: () -> Boolean = { true },
@@ -105,7 +105,7 @@ fun Toolbar(
                     beforeTextField()
                 }
 
-                ToolbarTextField(
+                ToolbarInput(
                     toolbarState = toolbarState,
                     onCommit = onTextCommit,
                     modifier = Modifier
@@ -145,7 +145,7 @@ fun Toolbar(
 
 @Composable
 private fun ToolbarProgressBar(
-    toolbarState: ToolbarState
+    toolbarState: BrowserToolbarState
 ) {
     val loadingProgress by toolbarState.loadingProgress.collectAsState()
 
@@ -159,7 +159,7 @@ private fun ToolbarProgressBar(
 
 @Composable
 private fun ToolbarSuggest(
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     browserIcons: BrowserIcons,
     commitSuggestion: (Suggestion) -> Unit,
     modifier: Modifier = Modifier

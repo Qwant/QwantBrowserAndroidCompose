@@ -5,15 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import com.qwant.android.qwantbrowser.BuildConfig
 import java.net.URI
 import java.net.URLDecoder
 
 fun String.isQwantUrl(): Boolean {
     // TODO use regex
-    return (this.startsWith("https://www.qwant.com")
-            || this.startsWith("http://www.qwant.com"))
-            && !this.startsWith("https://www.qwant.com/maps")
-            && !this.startsWith("https://www.qwant.com/flight")
+    return (this.startsWith(BuildConfig.QWANT_BASE_URL)
+            && !this.startsWith("${BuildConfig.QWANT_BASE_URL}/maps")
+            && !this.startsWith("${BuildConfig.QWANT_BASE_URL}/flight"))
 }
 
 fun String.isQwantUrlValid(): Boolean {
@@ -55,6 +55,17 @@ fun String.toCleanHost(): String {
         Log.w("QB", "Could not normalize url and get the host. Fallback to empty string for security concerns")
         ""
     }
+}
+
+fun String.isValidUrl(): Boolean {
+    return if (this.startsWith("http://") || this.startsWith("https://")) {
+        try {
+            URI(this).normalize()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    } else false
 }
 
 @Composable

@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.qwant.android.qwantbrowser.preferences.frontend.FrontEndPreferencesRepository
+import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import javax.inject.Inject
@@ -18,38 +17,43 @@ import javax.inject.Singleton
 @Singleton
 class QwantUseCases @Inject constructor(
     @ApplicationContext val context: Context,
-    frontEndPreferencesRepository: FrontEndPreferencesRepository
+    private val clientProvider: QwantClientProvider,
 ) {
+    // TODO Use constructor injection for those. lazy init the usecase itself if needed
     @Inject lateinit var sessionUseCases: Lazy<SessionUseCases>
     @Inject lateinit var tabsUseCases: Lazy<TabsUseCases>
 
-    private val coroutineScope = MainScope()
+    // TODO find a different way of handling fs=1 one time parameter
+    val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val firstRequestKey = "pref_key_first_request"
+    private val clKey = "pref_key_utm_campaign"
 
-    var baseUrl = ""
-    init {
-        coroutineScope.launch {
-            frontEndPreferencesRepository.homeUrl
-                .collect { baseUrl = it }
+    private fun qwantUrl(search: String?, widget: Boolean = false): String = buildString {
+        append(BuildConfig.QWANT_BASE_URL)
+        append("?client=").append(clientProvider.clientState.value)
+        search?.let {
+            append("&q=").append(it)
+        }
+        // TODO check if fs & cl are still used at Qwant. Else remove them
+        if (prefs.getBoolean(firstRequestKey, true)) {
+            append("&fs=1")
+            prefs.edit().putBoolean(firstRequestKey, false).apply()
+        }
+        prefs.getString(clKey, null)?.let {
+            append("&cl=").append(it)
+        }
+        if (widget) {
+            append("&widget=1")
         }
     }
 
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
     ) {
-        private val firstRequestKey = "pref_key_first_request"
 
         @SuppressLint("ApplySharedPref")
         operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
-            var url = search?.let { "$baseUrl&q=${it}" } ?: baseUrl
-
-            // TODO find a different way of handling fs=1 one time parameter
-            val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val firstRequest = prefs.getBoolean(firstRequestKey, true)
-            if (firstRequest) {
-                prefs.edit().putBoolean(firstRequestKey, false).commit()
-                url += "&fs=1"
-            }
-
+            val url = qwantUrl(search)
             if (selectIfExists) {
                 tabsUseCases.selectOrAddTab.invoke(url, private = private)
             } else {
@@ -63,17 +67,14 @@ class QwantUseCases @Inject constructor(
     }
 
     inner class GetQwantUrlUseCase internal constructor() {
-        operator fun invoke(search: String? = null, widget: Boolean = false): String {
-            val withSearch = search?.let { "$baseUrl&q=${it}" } ?: baseUrl
-            return if (widget) "$withSearch + &widget=1" else withSearch
-        }
+        operator fun invoke(search: String? = null, widget: Boolean = false) = qwantUrl(search, widget)
     }
 
     inner class LoadSERPPageUseCase internal constructor(
         private val sessionUseCases: SessionUseCases
     ) {
         operator fun invoke(search: String) {
-            sessionUseCases.loadUrl(url = "$baseUrl&q=${search}")
+            sessionUseCases.loadUrl(url = qwantUrl(search))
         }
     }
 

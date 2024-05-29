@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -31,8 +32,20 @@ fun YesNoDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        confirmButton = { Button(onClick = onYes) { Text(text = yesText) }},
-        dismissButton = { TextButton(onClick = onNo) { Text(text = noText) }},
+        confirmButton = { Button(
+            onClick = onYes,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary
+            )
+        ) { Text(text = yesText) }},
+        dismissButton = { TextButton(onClick = onNo) {
+            Text(
+                text = noText,
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        }},
         icon = { icon?.let { Icon(painterResource(id = it), contentDescription = "icon") } },
         title = { title?.let { Text(text = it, modifier = Modifier.fillMaxWidth(), textAlign = if (icon != null) TextAlign.Center else TextAlign.Start) } },
         text = {
@@ -56,6 +69,7 @@ fun YesNoDialog(
         },
         shape = MaterialTheme.shapes.extraSmall,
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        tonalElevation = 0.dp,
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraSmall)
             .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)

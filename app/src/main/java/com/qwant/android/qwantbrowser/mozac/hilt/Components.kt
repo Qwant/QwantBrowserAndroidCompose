@@ -22,10 +22,12 @@ import mozilla.components.feature.downloads.DownloadStorage
 import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.media.MediaSessionFeature
+import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
 import mozilla.components.feature.pwa.WebAppShortcutManager
+import mozilla.components.feature.session.middleware.LastAccessMiddleware
 import mozilla.components.support.base.android.NotificationsDelegate
 import javax.inject.Singleton
 
@@ -47,6 +49,8 @@ object MozacComponentHiltModule {
                 DownloadMiddleware(context, DownloadService::class.java, downloadStorage = downloadStorage),
                 ThumbnailsMiddleware(thumbnailStorage),
                 PromptMiddleware(),
+                LastAccessMiddleware(),
+                LastMediaAccessMiddleware(),
                 RecordingDevicesMiddleware(context, notificationsDelegate)
             ) + EngineMiddleware.create(engine)
         )

@@ -24,7 +24,7 @@ enum class HideOnScrollPosition {
 
 @Composable
 fun HideOnScrollToolbar(
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     toolbar: @Composable (Modifier) -> Unit,
     engineView: EngineView?,
     height: Dp,
@@ -78,7 +78,7 @@ fun HideOnScrollToolbar(
 
 @Composable
 private fun HideOnScrollToolbarImpl(
-    toolbarState: ToolbarState,
+    toolbarState: BrowserToolbarState,
     toolbar: @Composable (Modifier) -> Unit,
     engineView: EngineView?,
     height: Dp,
