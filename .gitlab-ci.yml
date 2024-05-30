@@ -72,10 +72,6 @@ deploy_internal_app_bundle:
       when: never
     - if: '$CI_COMMIT_BRANCH == $CI_DEVELOP_BRANCH'
       when: always
-  artifacts:
-    paths:
-      - app/build/outputs/bundle/playstoreRelease/app-playstore-release.aab
-    expire_in: 10 days
 
 # Create a release when a merge happens in main branch
 release_job:
