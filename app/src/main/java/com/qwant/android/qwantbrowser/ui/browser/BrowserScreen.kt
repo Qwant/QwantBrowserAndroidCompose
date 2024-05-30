@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -110,7 +109,7 @@ fun BrowserScreen(
 
                 PullToRefreshBox(
                     onRefresh = { viewModel.reloadUrl() },
-                    enabled = { engineViewHolder?.canScrollVerticallyUp() == false },
+                    enabled = { engineViewHolder?.getInputResultDetail()?.canOverscrollTop() == true },
                     modifier = modifier
                 ) {
                     EngineView(
@@ -123,19 +122,10 @@ fun BrowserScreen(
                 }
             }
         } else {
-            Box(contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                /* Icon(
-                    painter = painterResource(id = R.drawable.qwant_logo),
-                    contentDescription = "logo qwant",
-                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                    modifier = Modifier
-                        .size(64.dp)
-                ) */
-            }
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+            )
         }
     }
 }
