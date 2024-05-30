@@ -38,7 +38,7 @@ fun HomePrivateBrowsing(
             Image(
                 painter = painterResource(id = R.drawable.icons_privacy_mask_small),
                 contentDescription = "private browsing image",
-                colorFilter = ColorFilter.tint(color = LocalContentColor.current),
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .size(width = 80.dp, height = 100.dp)
                     .padding(bottom = 20.dp)

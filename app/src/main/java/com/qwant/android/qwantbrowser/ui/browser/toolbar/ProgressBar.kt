@@ -13,7 +13,7 @@ fun ProgressBar(
     if (loadingProgress < 1 && loadingProgress > 0) {
         LinearProgressIndicator(
             progress = { loadingProgress },
-            color = MaterialTheme.colorScheme.tertiary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = modifier
         )
     }
