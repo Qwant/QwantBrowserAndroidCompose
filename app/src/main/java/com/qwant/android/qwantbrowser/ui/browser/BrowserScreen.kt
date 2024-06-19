@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,7 +40,6 @@ import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
 import kotlinx.coroutines.delay
 import mozilla.components.concept.engine.EngineView
-import mozilla.components.concept.engine.INPUT_UNHANDLED
 
 enum class TabOpening {
     NONE, NORMAL, PRIVATE
