@@ -101,6 +101,7 @@ class QwantSuggestProvider @Inject constructor(
         return@withContext listOf<Suggestion>()
     }
 
+
     companion object {
         private const val LOGTAG = "QB_SEARCH_PROVIDER"
         private const val SuggestFormatUrl = "https://api.qwant.com/v3/suggest?client=%s&locale=%s&version=2&q=%s"

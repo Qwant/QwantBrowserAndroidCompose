@@ -89,6 +89,9 @@ android {
         genymobile {
             dimension "target"
         }
+        logicom {
+            dimension "target"
+        }
         orange {
             dimension "target"
         }
