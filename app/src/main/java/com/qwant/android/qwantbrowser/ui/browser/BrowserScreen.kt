@@ -109,7 +109,14 @@ fun BrowserScreen(
 
                 PullToRefreshBox(
                     onRefresh = { viewModel.reloadUrl() },
-                    enabled = { engineViewHolder?.getInputResultDetail()?.canOverscrollTop() == true },
+                    enabled = {
+                        engineViewHolder?.canScrollVerticallyUp() == false &&
+                        engineViewHolder?.getInputResultDetail()?.let {
+                            it.canOverscrollTop() &&
+                            it.canOverscrollLeft() &&
+                            it.canOverscrollRight()
+                        } == true
+                    },
                     modifier = modifier
                 ) {
                     EngineView(
