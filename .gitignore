@@ -6,6 +6,8 @@
 /piwik.dev.properties
 /app/playstore/
 /app/genymobile/
+/app/logicom/
 /.idea
 /qwantcompanion/genymobile/
 /local.properties
+/qwantcompanion/logicom/

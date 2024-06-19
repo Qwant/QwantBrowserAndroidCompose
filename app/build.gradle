@@ -24,8 +24,8 @@ android {
         applicationId "com.qwant.liberty"
         minSdk 21
         targetSdk 34
-        versionCode 50101020
-        versionName "5.1.1.2"
+        versionCode 50101050
+        versionName "5.1.1.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -97,6 +97,9 @@ android {
             versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
         }
         genymobile {
+            dimension "target"
+        }
+        orange {
             dimension "target"
         }
     }
