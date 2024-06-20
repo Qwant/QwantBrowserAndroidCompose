@@ -33,7 +33,7 @@ build:
     KUBERNETES_MEMORY_LIMIT: 8Gi
     KUBERNETES_MEMORY_REQUEST: 6Gi
   script:
-    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
+    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assemblePlaystoreDebug
   rules:
     - if: '$CI_COMMIT_BRANCH != $CI_DEVELOP_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       when: always
