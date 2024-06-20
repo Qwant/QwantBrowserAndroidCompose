@@ -25,6 +25,9 @@ build:
   stage: build
   extends: .android
   interruptible: true
+  variables:
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+    KUBERNETES_MEMORY_REQUEST: 4Gi
   script:
     - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
   rules:
