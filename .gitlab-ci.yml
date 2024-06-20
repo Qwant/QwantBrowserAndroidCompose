@@ -12,7 +12,7 @@ stages:
 
 variables:
   # develop branch name
-  CI_DEVELOP_BRANCH: "ci" # For testing only. Update to dev
+  CI_DEVELOP_BRANCH: "dev" # For testing only. Update to dev
   CI_BOT: "CI BOT"
   # Proxy - Not necessary on Gitlab OVH
   #GRADLE_OPTS: "-Dhttp.proxyHost=10.100.9.1 -Dhttp.proxyPort=2001 -Dhttps.proxyHost=10.100.9.1 -Dhttps.proxyPort=2001"
