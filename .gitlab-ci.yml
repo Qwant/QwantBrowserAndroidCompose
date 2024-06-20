@@ -26,7 +26,11 @@ build:
   extends: .android
   interruptible: true
   variables:
-    KUBERNETES_MEMORY_LIMIT: 6Gi
+    KUBERNETES_CPU_REQUEST: 2
+    KUBERNETES_HELPER_CPU_REQUEST: 1
+    KUBERNETES_HELPER_MEMORY_LIMIT: 6Gi
+    KUBERNETES_HELPER_MEMORY_REQUEST: 5Gi
+    KUBERNETES_MEMORY_LIMIT: 8Gi
     KUBERNETES_MEMORY_REQUEST: 6Gi
   script:
     - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleDebug
