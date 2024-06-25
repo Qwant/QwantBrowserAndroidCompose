@@ -32,6 +32,16 @@ fun String.getQwantSERPSearch(): String? {
     return null
 }
 
+fun String.getQwantSERPCategory(): String? {
+    if (this.isQwantSERPUrl()) {
+        val firstSplit = this.split("?t=", "&t=")
+        if (firstSplit.size > 1) {
+            return firstSplit[1].split("&")[0]
+        }
+    }
+    return null
+}
+
 fun String.urlDecode(): String {
     return URLDecoder.decode(this, Charsets.UTF_8.name())
 }

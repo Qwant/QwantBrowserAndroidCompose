@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.ext.getQwantSERPCategory
 import com.qwant.android.qwantbrowser.stats.Datahub
 import com.qwant.android.qwantbrowser.suggest.providers.ClipboardProvider
 import com.qwant.android.qwantbrowser.suggest.providers.DomainProvider
@@ -20,6 +21,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.permission.PermissionRequest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +39,17 @@ class WidgetViewModel @Inject constructor(
         browserIcons, datahub, listOf(clipboardProvider, qwantSuggestProvider, domainProvider), viewModelScope
     )
 
-    val session = engine.createSession()
+    var currentCategory: String? by mutableStateOf(null)
+
+    val session = engine.createSession().also {
+        it.register(object: EngineSession.Observer {
+            override fun onLocationChange(url: String) {
+                currentCategory = url.getQwantSERPCategory()
+            }
+            override fun onAppPermissionRequest(permissionRequest: PermissionRequest) = Unit
+            override fun onContentPermissionRequest(permissionRequest: PermissionRequest) = Unit
+        })
+    }
 
     var currentSearch: String? by mutableStateOf(null)
         private set
@@ -47,7 +60,7 @@ class WidgetViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .filterNotNull()
                 .onEach { search ->
-                    session.loadUrl(qwantUseCases.getQwantUrl(search, true))
+                    session.loadUrl(qwantUseCases.getQwantUrl(search, currentCategory, true))
                 }
                 .collect()
         }
@@ -61,5 +74,6 @@ class WidgetViewModel @Inject constructor(
         toolbarState.updateText("")
         toolbarState.updateFocus(true)
         currentSearch = null
+        currentCategory = null
     }
 }

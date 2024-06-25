@@ -171,12 +171,12 @@ class BrowserScreenViewModel @Inject constructor(
     val goForward = sessionUseCases.goForward
     val requestDesktopSite = sessionUseCases.requestDesktopSite
 
-    fun commitSearch(searchText: String) {
+    fun commitSearch(searchText: String, category: String? = null) {
         if (searchText.isUrl()) {
             // useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
             sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
-            qwantUseCases.loadSERPPage(searchText)
+            qwantUseCases.loadSERPPage(searchText, category)
         }
     }
 
@@ -216,7 +216,7 @@ class BrowserScreenViewModel @Inject constructor(
         }
     }
 
-    // TODO Move to dedicated VIPExtensionState with browser action and icon
+    // TODO Move to dedicated VIPExtensionState with browser action, icon and counter
     val vipExtensionState = store.flow()
         .mapNotNull { state -> state.extensions[QwantVIPFeature.ID] }
         .stateIn(

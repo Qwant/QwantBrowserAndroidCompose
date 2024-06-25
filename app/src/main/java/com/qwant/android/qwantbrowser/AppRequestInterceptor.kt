@@ -3,12 +3,12 @@ package com.qwant.android.qwantbrowser
 import android.content.Context
 import com.qwant.android.qwantbrowser.ext.UA
 import com.qwant.android.qwantbrowser.ext.UAQwant
+import com.qwant.android.qwantbrowser.ext.getQwantSERPCategory
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.ext.isQwantUrlValid
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
-import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
@@ -67,7 +67,7 @@ class AppRequestInterceptor @Inject constructor(
             engineSession.settings.userAgentString = uaQwant
             if (!uri.isQwantUrlValid()) {
                 return RequestInterceptor.InterceptionResponse.Url(
-                    qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch())
+                    qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch(), category = uri.getQwantSERPCategory())
                 )
             }
         } else {

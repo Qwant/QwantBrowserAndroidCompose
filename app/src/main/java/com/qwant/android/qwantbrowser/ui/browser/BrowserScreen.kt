@@ -86,7 +86,7 @@ fun BrowserScreen(
         toolbarState = viewModel.toolbarState,
         toolbar = { modifier ->
             Toolbar(
-                onTextCommit = { text -> viewModel.commitSearch(text) },
+                onTextCommit = { text -> viewModel.commitSearch(text, currentUrl?.getQwantSERPCategory()) },
                 modifier = modifier,
                 toolbarState = viewModel.toolbarState,
                 browserIcons = viewModel.browserIcons,

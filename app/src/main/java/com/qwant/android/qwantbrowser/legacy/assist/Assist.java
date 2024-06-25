@@ -363,7 +363,7 @@ public class Assist extends AppCompatActivity {
 
             // Get search url and load
             if (qwantUseCases != null) {
-                webview.loadUrl(qwantUseCases.getGetQwantUrl().invoke(query, true));
+                webview.loadUrl(qwantUseCases.getGetQwantUrl().invoke(query, null, true));
             }
 
             // Force hide keyboard

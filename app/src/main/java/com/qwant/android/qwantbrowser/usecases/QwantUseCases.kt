@@ -28,11 +28,14 @@ class QwantUseCases @Inject constructor(
     private val firstRequestKey = "pref_key_first_request"
     private val clKey = "pref_key_utm_campaign"
 
-    private fun qwantUrl(search: String?, widget: Boolean = false): String = buildString {
+    private fun qwantUrl(search: String?, category: String? = null, widget: Boolean = false): String = buildString {
         append(BuildConfig.QWANT_BASE_URL)
         append("?client=").append(clientProvider.clientState.value)
         search?.let {
             append("&q=").append(it)
+        }
+        category?.let {
+            append("&t=").append(it)
         }
         // TODO check if fs & cl are still used at Qwant. Else remove them
         if (prefs.getBoolean(firstRequestKey, true)) {
@@ -45,12 +48,12 @@ class QwantUseCases @Inject constructor(
         if (widget) {
             append("&widget=1")
         }
+        append("&qbc=1")
     }
 
     inner class OpenQwantPageUseCase internal constructor(
         private val tabsUseCases: TabsUseCases,
     ) {
-
         @SuppressLint("ApplySharedPref")
         operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
             val url = qwantUrl(search)
@@ -67,14 +70,14 @@ class QwantUseCases @Inject constructor(
     }
 
     inner class GetQwantUrlUseCase internal constructor() {
-        operator fun invoke(search: String? = null, widget: Boolean = false) = qwantUrl(search, widget)
+        operator fun invoke(search: String? = null, category: String? = null, widget: Boolean = false) = qwantUrl(search, category, widget)
     }
 
     inner class LoadSERPPageUseCase internal constructor(
         private val sessionUseCases: SessionUseCases
     ) {
-        operator fun invoke(search: String) {
-            sessionUseCases.loadUrl(url = qwantUrl(search))
+        operator fun invoke(search: String, category: String? = null) {
+            sessionUseCases.loadUrl(qwantUrl(search, category))
         }
     }
 
