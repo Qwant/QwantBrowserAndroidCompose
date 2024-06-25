@@ -27,7 +27,8 @@ class Piwik @Inject constructor(
         BuildConfig.PIWIK_SITE_ID,
         "default"
     )).also {
-        it.setAnonymizationState(true)
+        it.setAnonymizationState(false)
+        it.visitorIDLifetime = 5 * 60 * 1000 // 5 minutes in milliseconds // ((365.25 / 12) * 13) * (24 * 60 * 60.0) * 1000 // 13 months in milliseconds
         it.dispatchInterval = 0
         it.isPrefixing = false
     }
