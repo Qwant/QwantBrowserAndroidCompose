@@ -32,7 +32,8 @@ import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
 fun ToolbarInput(
     toolbarState: ToolbarState,
     onCommit: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onQwantIconClicked: () -> Unit = {}
 ) {
     val localStyle = LocalTextStyle.current
     val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current))
@@ -91,7 +92,8 @@ fun ToolbarInput(
                         }
                     }
                 }
-            }
+            },
+            onQwantIconClicked = onQwantIconClicked
         )
     }
 }

@@ -93,7 +93,8 @@ fun BrowserScreen(
                 beforeTextField = { QwantVIPAction(viewModel) },
                 beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() == true && currentUrl?.isQwantUrl() == false && currentUrl != "about:blank" },
                 afterTextField = { AfterActions(navigateTo, viewModel, appViewModel) },
-                afterTextFieldVisible = { !viewModel.toolbarState.hasFocus }
+                afterTextFieldVisible = { !viewModel.toolbarState.hasFocus },
+                onQwantIconClicked = { viewModel.goToHomepage() }
             )
         },
         engineView = engineViewHolder,

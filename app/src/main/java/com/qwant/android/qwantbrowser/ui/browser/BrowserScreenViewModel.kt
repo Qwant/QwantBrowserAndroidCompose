@@ -194,6 +194,10 @@ class BrowserScreenViewModel @Inject constructor(
         }
     }
 
+    fun goToHomepage() {
+        sessionUseCases.loadUrl(url = qwantUseCases.getQwantUrl())
+    }
+
     fun openSafetyTabIfNeeded() {
         if (tabCount.value == 0) {
             viewModelScope.launch {

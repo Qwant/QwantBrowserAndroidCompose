@@ -35,7 +35,8 @@ fun Toolbar(
     afterTextField: @Composable () -> Unit = {},
     afterTextFieldVisible: () -> Boolean = { true },
     animationDurationMs: Int = 400,
-    animationEasing: Easing = FastOutSlowInEasing
+    animationEasing: Easing = FastOutSlowInEasing,
+    onQwantIconClicked: () -> Unit = {}
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
     val loadingProgress by toolbarState.loadingProgress.collectAsState()
@@ -115,7 +116,8 @@ fun Toolbar(
                             end = 8.dp, // toolbarTextFieldPaddingEnd,
                             top = 8.dp,
                             bottom = 8.dp
-                        )
+                        ),
+                    onQwantIconClicked = onQwantIconClicked
                 )
 
                 AnimatedVisibility(

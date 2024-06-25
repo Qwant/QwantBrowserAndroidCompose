@@ -3,6 +3,7 @@ package com.qwant.android.qwantbrowser.ui.browser.toolbar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -31,7 +32,8 @@ fun ToolbarDecorator(
     hintColor: Color,
     innerTextField: @Composable () -> Unit,
     trailingIcons: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onQwantIconClicked: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -45,13 +47,23 @@ fun ToolbarDecorator(
             is BrowserToolbarState -> {
                 val shouldShowQwantIcon = state.hasFocus || state.onQwant || state.text.text.isEmpty()
                 AnimatedVisibility(visible = shouldShowQwantIcon) {
-                    QwantIconOnBackground(shape = CircleShape, Modifier.size(32.dp))
+                    QwantIconOnBackground(
+                        shape = CircleShape,
+                        Modifier
+                            .size(32.dp)
+                            .clickable { onQwantIconClicked() }
+                    )
                 }
                 AnimatedVisibility(visible = !shouldShowQwantIcon) {
                     SiteSecurityIcon(state)
                 }
             }
-            else -> QwantIconOnBackground(shape = CircleShape, Modifier.size(32.dp))
+            else -> QwantIconOnBackground(
+                shape = CircleShape,
+                Modifier
+                    .size(32.dp)
+                    .clickable { onQwantIconClicked() }
+            )
         }
 
         Box(modifier = Modifier
