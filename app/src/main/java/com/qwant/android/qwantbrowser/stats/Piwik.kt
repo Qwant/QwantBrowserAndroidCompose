@@ -28,7 +28,7 @@ class Piwik @Inject constructor(
         "default"
     )).also {
         it.setAnonymizationState(false)
-        it.visitorIDLifetime = 5 * 60 * 1000 // 5 minutes in milliseconds // ((365.25 / 12) * 13) * (24 * 60 * 60.0) * 1000 // 13 months in milliseconds
+        it.visitorIDLifetime = (((365.25 / 12) * 13) * (24 * 60 * 60.0 * 1000)).toLong() // 13 months in milliseconds // 5 * 60 * 1000 // 5 minutes in milliseconds //
         it.dispatchInterval = 0
         it.isPrefixing = false
     }
