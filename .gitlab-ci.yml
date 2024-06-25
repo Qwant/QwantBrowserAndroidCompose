@@ -28,6 +28,8 @@ build:
   script:
     - ./gradlew --console=plain --no-configuration-cache --no-build-cache assemblePlaystoreDebug
   rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
     - if: '$CI_COMMIT_BRANCH != $CI_DEVELOP_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       when: always
   # no artifacts needed
@@ -40,6 +42,9 @@ unit_test:
   script:
     - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
   allow_failure: false
+  rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
 
 # build project for dev branch and upload to internal play store
 # see: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html#bot-users-for-projects
