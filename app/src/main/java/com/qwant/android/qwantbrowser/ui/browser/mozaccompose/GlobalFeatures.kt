@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.legacy.ClFeature
 import com.qwant.android.qwantbrowser.mozac.downloads.openDownloadedFile
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerObserver
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.downloads.DownloadFeature
@@ -85,6 +86,11 @@ fun GlobalFeatures(
     val session by viewModel.currentEngineSession.collectAsState()
     ToolbarAlwaysVisibleWhenScrolledToTopFeature(
         toolbarState = viewModel.toolbarState,
+        session = session
+    )
+
+    ContentBlockerObserver(
+        contentBlockerState = viewModel.contentBlockerState,
         session = session
     )
 }

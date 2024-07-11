@@ -25,6 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerOverlay
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -120,12 +121,16 @@ fun BrowserScreen(
                     },
                     modifier = modifier
                 ) {
-                    EngineView(
-                        engine = viewModel.engine,
-                        modifier = Modifier.fillMaxSize()
-                    ) { engineView ->
-                        engineViewHolder = engineView
-                        EngineViewFeatures(engineView, viewModel)
+                    if (viewModel.contentBlockerState.isTabBlocked()) {
+                        ContentBlockerOverlay(viewModel.contentBlockerState.status)
+                    } else {
+                        EngineView(
+                            engine = viewModel.engine,
+                            modifier = Modifier.fillMaxSize()
+                        ) { engineView ->
+                            engineViewHolder = engineView
+                            EngineViewFeatures(engineView, viewModel)
+                        }
                     }
                 }
             }

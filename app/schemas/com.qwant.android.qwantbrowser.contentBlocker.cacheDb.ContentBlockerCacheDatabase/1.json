@@ -1,0 +1,116 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "a1a568ce1f289430caa5f1db5379143f",
+    "entities": [
+      {
+        "tableName": "domains",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`hash` TEXT NOT NULL, `blocked` INTEGER NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`hash`))",
+        "fields": [
+          {
+            "fieldPath": "hash",
+            "columnName": "hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blocked",
+            "columnName": "blocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "hash"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "urls",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`hash` TEXT NOT NULL, `blocked` INTEGER NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY(`hash`))",
+        "fields": [
+          {
+            "fieldPath": "hash",
+            "columnName": "hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blocked",
+            "columnName": "blocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "hash"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "tab_ids",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tabId` TEXT NOT NULL, `blocked` INTEGER NOT NULL, `reason` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`tabId`))",
+        "fields": [
+          {
+            "fieldPath": "tabId",
+            "columnName": "tabId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blocked",
+            "columnName": "blocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "tabId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a1a568ce1f289430caa5f1db5379143f')"
+    ]
+  }
+}

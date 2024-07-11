@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.compose.Loader
@@ -39,6 +40,7 @@ fun TabGrid(
     browserIcons: BrowserIcons,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -57,6 +59,7 @@ fun TabGrid(
                 browserIcons = browserIcons,
                 onSelected = onTabSelected,
                 onDeleted = onTabDeleted,
+                contentBlockerState = contentBlockerState,
                 modifier = Modifier.animateItemPlacement()
             )
         }
@@ -71,6 +74,7 @@ fun TabCard(
     browserIcons: BrowserIcons,
     onSelected: (tab: TabSessionState) -> Unit,
     onDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     var deleting by remember { mutableStateOf(false) }
@@ -127,7 +131,12 @@ fun TabCard(
                 propagateMinConstraints = true
             ) {
                 // TODO size equal to calculated size ?
-                TabThumbnail(tabId = tab.id, size = 200.dp, thumbnailStorage = thumbnailStorage)
+                TabThumbnail(
+                    tabId = tab.id,
+                    size = 200.dp,
+                    thumbnailStorage = thumbnailStorage,
+                    contentBlockerState = contentBlockerState
+                )
             }
         }
     }

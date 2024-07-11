@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.ui.tabs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.TabsViewOption
 import com.qwant.android.qwantbrowser.stats.Piwik
@@ -23,6 +24,7 @@ class TabsScreenViewModel @Inject constructor(
     private val piwik: Piwik,
     val thumbnailStorage: ThumbnailStorage,
     val browserIcons: BrowserIcons,
+    val contentBlockerState: ContentBlockerState
 ): ViewModel() {
     val tabs = store.flow()
         .map { state -> state.tabs }

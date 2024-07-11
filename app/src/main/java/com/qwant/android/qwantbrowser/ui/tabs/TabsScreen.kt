@@ -223,6 +223,7 @@ fun AnimatedTabList(
                 modifier = Modifier.fillMaxHeight(),
                 onTabSelected = onTabSelected,
                 onTabDeleted = onTabDeleted,
+                contentBlockerState = tabsViewModel.contentBlockerState,
                 tabsViewOption = tabsViewOption
             )
         }
@@ -241,6 +242,7 @@ fun AnimatedTabList(
                 modifier = Modifier.fillMaxHeight(),
                 onTabSelected = onTabSelected,
                 onTabDeleted = onTabDeleted,
+                contentBlockerState = tabsViewModel.contentBlockerState,
                 tabsViewOption = tabsViewOption
             )
         }

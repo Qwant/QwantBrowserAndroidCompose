@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 
 
 @Composable
@@ -26,6 +27,7 @@ fun TabList(
     thumbnailStorage: ThumbnailStorage,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -37,7 +39,8 @@ fun TabList(
                 selected = tab.id == selectedTabId,
                 thumbnailStorage = thumbnailStorage,
                 onSelected = onTabSelected,
-                onDeleted = onTabDeleted
+                onDeleted = onTabDeleted,
+                contentBlockerState = contentBlockerState
             )
 
             /*

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ext.toCleanHost
 
 @Composable
@@ -28,6 +29,7 @@ fun TabRow(
     thumbnailStorage: ThumbnailStorage,
     onSelected: (tab: TabSessionState) -> Unit,
     onDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -44,7 +46,7 @@ fun TabRow(
                 .height(70.dp)
                 .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
         ) {
-            TabThumbnail(tab.id, 90.dp, thumbnailStorage)
+            TabThumbnail(tab.id, 90.dp, thumbnailStorage, contentBlockerState)
         }
 
         Column(modifier = Modifier
