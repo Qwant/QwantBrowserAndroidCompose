@@ -55,30 +55,39 @@ android {
             getIsDefault().set(true)
             applicationIdSuffix ".debug"
             buildConfigField("String", "PIWIK_URL", "\"https://k.qwant.com\"")
-            buildConfigField("String", "PIWIK_SITE_ID", "\"9d3ebf38-ba38-4d72-9847-d412b59ebcd6\"")
             buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
-            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwant.com"')
-            buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3"')
         }
-        internal {
+        /* internal {
             initWith(debug)
             applicationIdSuffix ".internal"
             buildConfigField("String", "QWANT_BASE_URL", '"https://front-qwant20.int-front.int.ovh.kube.qwant.ninja"')
             buildConfigField("String", "QWANT_API_BASE_URL", '"https://api-qwant2024.int-api.int.ovh.kube.qwant.ninja/v3"')
-        }
+        } */
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "PIWIK_URL", "\"https://k.qwant.com\"")
-            buildConfigField("String", "PIWIK_SITE_ID", "\"8904633f-a958-45ca-b540-df5248159519\"")
             buildConfigField("String", "COMPANION_ID", '"' + rootProject.ext.companion_id + '"')
-            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwant.com"')
-            buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3"')
         }
     }
 
-    flavorDimensions += "target"
+    flavorDimensions += ["version", "target"]
     productFlavors {
+        original {
+            dimension "version"
+            getIsDefault().set(true)
+            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwant.com"')
+            buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3"')
+            buildConfigField("boolean", "PIWIK_ANONYMISATION", "false")
+        }
+        junior {
+            dimension "version"
+            applicationId "com.qwantjunior.mobile"
+            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwantjunior.com/"')
+            buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3/egp/search"')
+            buildConfigField("boolean", "PIWIK_ANONYMISATION", "true")
+        }
+
         playstore {
             getIsDefault().set(true)
             dimension "target"
@@ -130,7 +139,24 @@ android {
     aaptOptions {
         ignoreAssetsPattern  '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+
+    applicationVariants.configureEach { variant ->
+        if (variant.productFlavors[0].name == "junior") {
+            if (variant.buildType.name == "debug") {
+                variant.buildConfigField("String", "PIWIK_SITE_ID", '"c3460f4f-3ac3-4155-b879-3933f63e733c"')
+            } else {
+                variant.buildConfigField("String", "PIWIK_SITE_ID", '"88e1f87c-f37d-4eb9-abb6-7c2954cfe4d2"')
+            }
+        } else {
+            if (variant.buildType.name == "debug") {
+                variant.buildConfigField("String", "PIWIK_SITE_ID", '"9d3ebf38-ba38-4d72-9847-d412b59ebcd6"')
+            } else {
+                variant.buildConfigField("String", "PIWIK_SITE_ID", '"8904633f-a958-45ca-b540-df5248159519"')
+            }
+        }
+    }
 }
+
 
 dependencies {
     // Legacy Onboarding
