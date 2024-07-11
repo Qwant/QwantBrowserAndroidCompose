@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.storage.history
 
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
 import com.qwant.android.qwantbrowser.suggest.Suggestion
 import com.qwant.android.qwantbrowser.suggest.SuggestionProvider
@@ -21,14 +22,16 @@ import javax.inject.Singleton
 
 @Singleton
 class HistoryRepository @Inject constructor(
-    private val db: HistoryDatabase
+    private val db: HistoryDatabase,
+    private val contentBlockerState: ContentBlockerState
 ): HistoryStorage, SuggestionProvider {
     private val dao = db.historyDao()
 
     val hasHistoryFlow = dao.hasHistoryFlow().flowOn(Dispatchers.IO)
 
     override fun canAddUri(uri: String): Boolean =
-        !uri.isQwantUrl() && !uri.startsWith("moz-extension://")
+        !uri.isQwantUrl() && !uri.startsWith("moz-extension://") && uri != "about:blank"
+                && contentBlockerState.status == ContentBlockerState.Status.ALLOWED
 
     override suspend fun recordVisit(uri: String, visit: PageVisit) = withContext(Dispatchers.IO) {
         dao.insertIfNeeded(Page(uri))
