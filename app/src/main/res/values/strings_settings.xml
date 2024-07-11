@@ -138,7 +138,6 @@
 
     <string name="privacy_policy_url" translatable="false">https://about.qwant.com/legal/privacy/</string>  <!-- TODO use url from BuildConfig -->
     <!-- <string name="privacy_policy_url" translatable="false">https://about.qwant.com/privacy-happ/</string> -->
-    <string name="qwant_details_label" translatable="false">Qwant App</string> <!-- TODO use appname from BuildConfig -->
     <string name="qwant_details_description" translatable="false">%1$s\nBuild %2$s - Gecko %3$s</string>
     <string name="settings_tests_label" translatable="false">Tests</string>
     <string name="settings_tests_prompts_label" translatable="false">Prompts</string>

@@ -27,7 +27,7 @@ fun AppDetailsPreference() {
     }
 
     PreferenceRow(
-        label = R.string.qwant_details_label,
+        label = R.string.app_name,
         description = stringResource(
             R.string.qwant_details_description,
             packageInfo.versionName,
