@@ -26,7 +26,21 @@ build:
   extends: .android
   interruptible: true
   script:
-    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assemblePlaystoreDebug
+    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleOriginalPlaystoreDebug
+  rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH != $CI_DEVELOP_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+      when: always
+  # no artifacts needed
+
+  # build project for all features branches (except main and dev) without artifacts to speed up
+build_junior:
+  stage: build
+  extends: .android
+  interruptible: true
+  script:
+    - ./gradlew --console=plain --no-configuration-cache --no-build-cache assembleJuniorPlaystoreDebug
   rules:
     - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
       when: never
@@ -40,7 +54,7 @@ unit_test:
   extends: .android
   interruptible: true
   script:
-    - ./gradlew -Pci --console=plain :app:testPlaystoreDebug
+    - ./gradlew -Pci --console=plain :app:testOriginalPlaystoreDebug
   allow_failure: false
   rules:
     - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
