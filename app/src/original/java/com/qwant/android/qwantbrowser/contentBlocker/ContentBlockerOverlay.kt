@@ -6,5 +6,8 @@ import androidx.compose.runtime.Composable
 @Composable
 fun ContentBlockerOverlay(
     status: ContentBlockerState.Status,
-    blockReason: ContentBlockerState.BlockReason
+    blockReason: ContentBlockerState.BlockReason,
+    imageModifier: Modifier = Modifier,
+    imageScale: ContentScale = ContentScale.Fit,
+    alignment: Alignment = Alignment.Center
 ) {}
