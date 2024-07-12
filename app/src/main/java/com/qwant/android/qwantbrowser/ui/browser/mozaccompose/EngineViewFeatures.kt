@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.DynamicToolbarFeature
 import mozilla.components.concept.engine.EngineView
@@ -27,10 +28,12 @@ fun BoxScope.EngineViewFeatures(
         backEnabled = { !viewModel.toolbarState.hasFocus }
     )
 
-    ThumbnailFeature(
-        engineView = engineView,
-        store = viewModel.store
-    )
+    if (viewModel.contentBlockerState.getStatus() == ContentBlockerState.Status.ALLOWED) {
+        ThumbnailFeature(
+            engineView = engineView,
+            store = viewModel.store
+        )
+    }
 
     val shouldHideToolbarOnScroll by viewModel.toolbarState.shouldHideOnScroll.collectAsState()
     DynamicToolbarFeature(

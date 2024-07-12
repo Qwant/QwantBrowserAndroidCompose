@@ -18,13 +18,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
+import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.compose.Loader
 import mozilla.components.browser.icons.compose.Placeholder
@@ -39,6 +42,7 @@ fun TabGrid(
     browserIcons: BrowserIcons,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -57,6 +61,7 @@ fun TabGrid(
                 browserIcons = browserIcons,
                 onSelected = onTabSelected,
                 onDeleted = onTabDeleted,
+                contentBlockerState = contentBlockerState,
                 modifier = Modifier.animateItemPlacement()
             )
         }
@@ -71,6 +76,7 @@ fun TabCard(
     browserIcons: BrowserIcons,
     onSelected: (tab: TabSessionState) -> Unit,
     onDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
     var deleting by remember { mutableStateOf(false) }
@@ -80,6 +86,8 @@ fun TabCard(
             deleting = false
         }
     }, label = "tabSwipeScale")
+
+    val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
 
     Column(modifier = modifier
         .scale(scale)
@@ -94,21 +102,28 @@ fun TabCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.padding(start = 10.dp).size(18.dp)) {
-                    tab.content.icon?.let {
-                        Image(bitmap = it.asImageBitmap(), contentDescription = "icon")
-                    } ?: browserIcons.Loader(url = tab.content.url, isPrivate = tab.content.private) {
-                        WithIcon {
-                            Image(painter = it.painter, contentDescription = "icon")
-                        }
-                        Placeholder {
-                            Image(painter = painterResource(id = R.drawable.icons_internet), contentDescription = "icon")
+                Box(modifier = Modifier
+                    .padding(start = 10.dp)
+                    .size(18.dp)
+                ) {
+                    if (isTabBlocked) {
+                        QwantIconOnBackground(shape = RoundedCornerShape(4.dp))
+                    } else {
+                        tab.content.icon?.let {
+                            Image(bitmap = it.asImageBitmap(), contentDescription = "icon")
+                        } ?: browserIcons.Loader(url = tab.content.url, isPrivate = tab.content.private) {
+                            WithIcon {
+                                Image(painter = it.painter, contentDescription = "icon")
+                            }
+                            Placeholder {
+                                Image(painter = painterResource(id = R.drawable.icons_internet), contentDescription = "icon")
+                            }
                         }
                     }
                 }
 
                 Text(
-                    text = tab.content.title,
+                    text = if (isTabBlocked) stringResource(id = R.string.blocked_website) else tab.content.title,
                     fontSize = 14.sp,
                     lineHeight = 18.sp,
                     maxLines = 1,
@@ -123,11 +138,23 @@ fun TabCard(
                 .defaultMinSize(150.dp, 175.dp)
                 .padding(top = 0.dp, bottom = 4.dp, start = 4.dp, end = 4.dp)
                 .height(175.dp)
-                .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 12.dp)),
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 4.dp,
+                        topEnd = 4.dp,
+                        bottomStart = 12.dp,
+                        bottomEnd = 12.dp
+                    )
+                ),
                 propagateMinConstraints = true
             ) {
                 // TODO size equal to calculated size ?
-                TabThumbnail(tabId = tab.id, size = 200.dp, thumbnailStorage = thumbnailStorage)
+                TabThumbnail(
+                    tabId = tab.id,
+                    size = 200.dp,
+                    thumbnailStorage = thumbnailStorage,
+                    contentBlockerState = contentBlockerState
+                )
             }
         }
     }

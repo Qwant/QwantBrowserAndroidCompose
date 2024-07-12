@@ -13,12 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ext.toCleanHost
 
 @Composable
@@ -28,8 +30,11 @@ fun TabRow(
     thumbnailStorage: ThumbnailStorage,
     onSelected: (tab: TabSessionState) -> Unit,
     onDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
+    val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -44,14 +49,14 @@ fun TabRow(
                 .height(70.dp)
                 .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
         ) {
-            TabThumbnail(tab.id, 90.dp, thumbnailStorage)
+            TabThumbnail(tab.id, 90.dp, thumbnailStorage, contentBlockerState)
         }
 
         Column(modifier = Modifier
             .weight(2f)
             .padding(start = 12.dp)) {
             Text(
-                tab.content.title,
+                if (isTabBlocked) stringResource(id = R.string.blocked_website) else tab.content.title,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 16.sp,

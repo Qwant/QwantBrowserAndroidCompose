@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.ext.selectedLocale
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -104,7 +105,7 @@ class QwantSuggestProvider @Inject constructor(
 
     companion object {
         private const val LOGTAG = "QB_SEARCH_PROVIDER"
-        private const val SuggestFormatUrl = "https://api.qwant.com/v3/suggest?client=%s&locale=%s&version=2&q=%s"
+        private const val SuggestFormatUrl = "${BuildConfig.QWANT_API_BASE_URL}/suggest?client=%s&locale=%s&version=2&q=%s"
     }
 }
 

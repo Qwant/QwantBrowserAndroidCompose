@@ -15,7 +15,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerOverlay
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.images.ImageLoadRequest
 
@@ -24,24 +25,30 @@ fun TabThumbnail(
     tabId: String,
     size: Dp,
     thumbnailStorage: ThumbnailStorage,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
-    val pixelSize = with(LocalDensity.current) { size.roundToPx() }
-    var loadedImage: Bitmap? by remember { mutableStateOf(null) }
+    val contentBlockerStatus = contentBlockerState.getStatus(tabId)
+    if (contentBlockerStatus != ContentBlockerState.Status.ALLOWED) {
+        ContentBlockerOverlay(status = contentBlockerStatus, blockReason = contentBlockerState.getBlockReason(tabId))
+    } else {
+        val pixelSize = with(LocalDensity.current) { size.roundToPx() }
+        var loadedImage: Bitmap? by remember { mutableStateOf(null) }
 
-    // val private = LocalQwantTheme.current.private
+        // val private = LocalQwantTheme.current.private
 
-    LaunchedEffect(tabId) {
-        loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize/* , private */)).await()
-    }
+        LaunchedEffect(tabId) {
+            loadedImage = thumbnailStorage.loadThumbnail(ImageLoadRequest(id = tabId, pixelSize/* , private */)).await()
+        }
 
-    loadedImage?.let {
-        Image(
-            bitmap = it.asImageBitmap(),
-            contentDescription = "Tab Thumbnail",
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.TopCenter,
-            modifier = modifier.fillMaxWidth()
-        )
+        loadedImage?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = "Tab Thumbnail",
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.TopCenter,
+                modifier = modifier.fillMaxWidth()
+            )
+        }
     }
 }

@@ -15,4 +15,6 @@
     <string name="try_again">Inténtalo de nuevo</string>
     <string name="permission_permanently_refused">"Ha rechazado permanentemente los permisos. Ahora debe habilitarlos a través de la configuración del sistema. "</string>
     <string name="take_me_there">Llévame allí</string>
+
+    <string name="blocked_website">Sitio web bloqueado</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarState
@@ -55,7 +56,8 @@ class BrowserScreenViewModel @Inject constructor(
     val engine: Engine,
     val client: Client,
     val qwantUseCases: QwantUseCases,
-    val piwik: Piwik
+    val piwik: Piwik,
+    val contentBlockerState: ContentBlockerState
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: BrowserToolbarStateFactory
     val toolbarState: BrowserToolbarState by lazy {

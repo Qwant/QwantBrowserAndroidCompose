@@ -9,6 +9,7 @@ import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 
 @Composable
 fun TabView(
@@ -19,6 +20,7 @@ fun TabView(
     browserIcons: BrowserIcons,
     onTabSelected: (tab: TabSessionState) -> Unit,
     onTabDeleted: (tab: TabSessionState) -> Unit,
+    contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier,
     tabsViewOption: TabsViewOption = TabsViewOption.LIST
 ) {
@@ -30,6 +32,7 @@ fun TabView(
                 thumbnailStorage = thumbnailStorage,
                 onTabSelected = onTabSelected,
                 onTabDeleted = onTabDeleted,
+                contentBlockerState = contentBlockerState,
                 modifier = modifier
             )
             TabsViewOption.GRID -> TabGrid(
@@ -39,6 +42,7 @@ fun TabView(
                 browserIcons = browserIcons,
                 onTabSelected = onTabSelected,
                 onTabDeleted = onTabDeleted,
+                contentBlockerState = contentBlockerState,
                 modifier = modifier
             )
             TabsViewOption.UNRECOGNIZED -> {}
