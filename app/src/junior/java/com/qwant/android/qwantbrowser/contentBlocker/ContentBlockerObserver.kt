@@ -10,7 +10,7 @@ import mozilla.components.concept.engine.permission.PermissionRequest
 class ContentBlockerObserver(
     private val contentBlockerState: ContentBlockerState
 ): EngineSession.Observer {
-    override fun onLocationChange(url: String) {
+    override fun onLocationChange(url: String, hasUserGesture: Boolean) {
         if (url.isQwantUrl()) {
             contentBlockerState.onQwant()
         } else {
