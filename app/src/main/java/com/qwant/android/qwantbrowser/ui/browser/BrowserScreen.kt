@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerOverlay
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsing
 import com.qwant.android.qwantbrowser.ui.browser.menu.BrowserMenu
@@ -121,8 +123,15 @@ fun BrowserScreen(
                     },
                     modifier = modifier
                 ) {
-                    if (viewModel.contentBlockerState.isTabBlocked()) {
-                        ContentBlockerOverlay(viewModel.contentBlockerState.status)
+                    val contentBlockerStatus = viewModel.contentBlockerState.getStatus()
+                    if (contentBlockerStatus != ContentBlockerState.Status.ALLOWED) {
+                        ContentBlockerOverlay(
+                            contentBlockerStatus,
+                            viewModel.contentBlockerState.getBlockReason(),
+                            imageModifier = Modifier.width(300.dp),
+                            imageScale = ContentScale.FillWidth,
+                            alignment = Alignment.TopCenter
+                        )
                     } else {
                         EngineView(
                             engine = viewModel.engine,

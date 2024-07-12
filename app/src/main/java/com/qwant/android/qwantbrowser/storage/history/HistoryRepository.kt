@@ -31,7 +31,7 @@ class HistoryRepository @Inject constructor(
 
     override fun canAddUri(uri: String): Boolean =
         !uri.isQwantUrl() && !uri.startsWith("moz-extension://") && uri != "about:blank"
-                && contentBlockerState.status == ContentBlockerState.Status.ALLOWED
+                && contentBlockerState.getStatus() == ContentBlockerState.Status.ALLOWED
 
     override suspend fun recordVisit(uri: String, visit: PageVisit) = withContext(Dispatchers.IO) {
         dao.insertIfNeeded(Page(uri))

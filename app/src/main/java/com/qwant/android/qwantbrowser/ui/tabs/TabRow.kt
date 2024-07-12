@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,8 @@ fun TabRow(
     contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
+    val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -53,7 +56,7 @@ fun TabRow(
             .weight(2f)
             .padding(start = 12.dp)) {
             Text(
-                tab.content.title,
+                if (isTabBlocked) stringResource(id = R.string.blocked_website) else tab.content.title,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 16.sp,

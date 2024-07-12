@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.contentBlocker
 import android.net.InetAddresses
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -26,48 +25,21 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import java.security.MessageDigest
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ContentBlockerState @Inject constructor(
+class JuniorContentBlockerState(
     private val store: BrowserStore,
     private val contentBlockerService: ContentBlockerService,
     private val contentBlockerCacheRepository: ContentBlockerCacheRepository
-) {
+) : ContentBlockerState() {
     private val scope = MainScope()
     private var job: Job? = null
 
-    enum class Status {
-        ALLOWED, BLOCKED, CHECKING
-    }
-
-    enum class BlockReason {
-        NONE, INVALID, ERROR, IP, DOMAIN, URL
-    }
-
+    private var status by mutableStateOf(Status.ALLOWED)
+    private var blockReason by mutableStateOf(BlockReason.NONE)
     private val statusMap = mutableStateMapOf<String, Pair<Status, BlockReason>>()
-
-    var status by mutableStateOf(Status.ALLOWED)
-        private set
-
-    var blockReason by mutableStateOf(BlockReason.NONE)
-        private set
 
     init {
         scope.launch {
-            /* store.state.tabs.forEach { tab ->
-                val cachedTabId = contentBlockerCacheRepository.getTabId(tab.id)
-                cachedTabId?.let { cachedTab ->
-                    if (cachedTab.url == tab.content.url) {
-                        val blockStatus = if (cachedTab.blocked) Status.BLOCKED else Status.ALLOWED
-                        statusMap[tab.id] = Pair(blockStatus, cachedTab.reason)
-                    } else {
-                        contentBlockerCacheRepository.deleteTabId(cachedTab)
-                    }
-                }
-            } */
-
             store.flow().map { it.restoreComplete }
                 .distinctUntilChanged()
                 .onEach {
@@ -100,13 +72,29 @@ class ContentBlockerState @Inject constructor(
         }
     }
 
-    fun isTabBlocked(tabId: String? = null) : Boolean {
+    override fun getStatus(tabId: String?): Status {
+        return if (tabId == null) {
+            status
+        } else {
+            statusMap[tabId]?.first ?: Status.ALLOWED
+        }
+    }
+
+    override fun getBlockReason(tabId: String?): BlockReason {
+        return if (tabId == null) {
+            blockReason
+        } else {
+            statusMap[tabId]?.second ?: BlockReason.NONE
+        }
+    }
+
+    /* override fun isTabBlocked(tabId: String?) : Boolean {
         return if (tabId == null) {
             status != Status.ALLOWED || statusMap[store.state.selectedTabId]?.first == Status.BLOCKED
         } else {
             statusMap[tabId]?.first == Status.BLOCKED
         }
-    }
+    } */
 
     private suspend fun block(reason: BlockReason) {
         status = Status.BLOCKED
@@ -126,7 +114,11 @@ class ContentBlockerState @Inject constructor(
         }
     }
 
-    fun check(url: String) = scope.launch {
+    override fun onQwant() = scope.launch {
+        allow()
+    }
+
+    override fun check(url: String) = scope.launch {
         val uri = Uri.parse(url)
         uri.hostWithoutCommonPrefixes?.let { host ->
             if (isIP(host)) {
@@ -141,7 +133,7 @@ class ContentBlockerState @Inject constructor(
         }
     }
 
-    fun cancel() {
+    override fun cancel() {
         job?.cancel()
         job = null
         if (status == Status.CHECKING) {

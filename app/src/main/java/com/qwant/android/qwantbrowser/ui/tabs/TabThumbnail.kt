@@ -2,9 +2,6 @@ package com.qwant.android.qwantbrowser.ui.tabs
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,13 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerOverlay
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
-import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.images.ImageLoadRequest
 
@@ -32,8 +28,9 @@ fun TabThumbnail(
     contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
-    if (contentBlockerState.isTabBlocked(tabId)) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Green))
+    val contentBlockerStatus = contentBlockerState.getStatus(tabId)
+    if (contentBlockerStatus != ContentBlockerState.Status.ALLOWED) {
+        ContentBlockerOverlay(status = contentBlockerStatus, blockReason = contentBlockerState.getBlockReason(tabId))
     } else {
         val pixelSize = with(LocalDensity.current) { size.roundToPx() }
         var loadedImage: Bitmap? by remember { mutableStateOf(null) }

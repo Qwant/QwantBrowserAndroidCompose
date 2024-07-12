@@ -1,23 +1,13 @@
 package com.qwant.android.qwantbrowser.ui.tabs
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
-import com.qwant.android.qwantbrowser.R
-import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 
 
 @Composable
