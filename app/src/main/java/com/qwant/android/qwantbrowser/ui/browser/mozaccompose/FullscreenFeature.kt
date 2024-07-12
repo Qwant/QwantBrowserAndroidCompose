@@ -10,7 +10,7 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.android.view.enterImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 
 @Composable
@@ -25,7 +25,7 @@ fun FullScreenFeature(
     val fullScreenChanged: (Boolean) -> Unit = { enabled ->
         fullScreenEnabled = enabled
         if (enabled) {
-            activity?.enterToImmersiveMode()
+            activity?.enterImmersiveMode()
             toolbarState.updateVisibility(false)
         } else {
             activity?.exitImmersiveMode()

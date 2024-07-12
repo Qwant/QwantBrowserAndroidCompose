@@ -105,6 +105,10 @@ class BookmarksRepository @Inject constructor(
         guid
     }
 
+    override suspend fun countBookmarksInTrees(guids: List<String>): UInt {
+        return 0u // TODO implement this method, however it is unused
+    }
+
     override suspend fun deleteNode(guid: String): Boolean = withContext(Dispatchers.IO) {
          val exists = dao.alreadyExists(guid)
          if (exists) dao.deleteByGuid(guid)

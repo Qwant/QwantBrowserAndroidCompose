@@ -5,6 +5,7 @@
 package com.qwant.android.qwantbrowser.vip
 
 import android.util.Log
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 
 /**
@@ -38,7 +39,7 @@ object QwantCookieFeature {
             }
             if (!extensionFound) {
                 runtime.installWebExtension(
-                    ID, URL,
+                    URL, InstallationMethod.FROM_FILE,
                     onSuccess = { ext ->
                         runtime.setAllowedInPrivateBrowsing(
                             ext,
@@ -48,7 +49,7 @@ object QwantCookieFeature {
                             }
                         )
                     },
-                    onError = { _, throwable ->
+                    onError = { throwable ->
                         Log.e("QWANT_BROWSER_EXTENSION","Error registering Qwant WebExtension", throwable)
                     }
                 )

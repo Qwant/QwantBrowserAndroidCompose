@@ -20,7 +20,6 @@ class HistoryPagingSource(
         val offset: Long = page * RESULT_PER_PAGE
         val data = withContext(Dispatchers.IO) {
             historyStorage.getVisitsPaginated(offset, RESULT_PER_PAGE, listOf(
-                VisitType.NOT_A_VISIT,
                 VisitType.REDIRECT_PERMANENT,
                 VisitType.REDIRECT_TEMPORARY,
                 VisitType.DOWNLOAD
