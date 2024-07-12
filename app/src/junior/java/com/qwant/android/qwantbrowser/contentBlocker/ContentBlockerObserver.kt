@@ -12,7 +12,7 @@ class ContentBlockerObserver(
 ): EngineSession.Observer {
     override fun onLocationChange(url: String) {
         if (url.isQwantUrl()) {
-            contentBlockerState.cancel()
+            contentBlockerState.onQwant()
         } else {
             contentBlockerState.check(url)
         }
