@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.contentBlocker
 
 import android.util.Log
+import com.qwant.android.qwantbrowser.contentBlocker.cacheDb.BlockListType
 import com.qwant.android.qwantbrowser.contentBlocker.cacheDb.ContentBlockerCacheRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,50 +24,64 @@ class ContentBlockerService @Inject constructor(
     }
 
     suspend fun isDomainBlocked(hash: String): Boolean {
-        return cacheRepository.getDomain(hash)?.blocked
-                ?: isDomainBlacklist(hash) || isDomainRedirect(hash)
+        return isDomainBlacklist(hash) || isDomainRedirect(hash)
     }
 
     suspend fun isUrlBLocked(hash: String): Boolean {
-        return cacheRepository.getUrl(hash)?.blocked
-                ?: isUrlBlacklist(hash) || isUrlRedirect(hash)
+        return isUrlBlacklist(hash) || isUrlRedirect(hash)
     }
 
     private suspend fun isDomainBlacklist(hash: String): Boolean {
+        cacheRepository.getDomain(hash, BlockListType.BLACKLIST)?.blocked?.let {
+            return it
+        }
+
         val result = executeRequest(getRequest(DOMAIN_BLACKLIST_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
-            cacheRepository.saveDomain(hash, isBlocked)
+            cacheRepository.saveDomain(hash, isBlocked, BlockListType.BLACKLIST)
             return isBlocked
         }
         return false
     }
 
     private suspend fun isDomainRedirect(hash: String): Boolean {
+        cacheRepository.getDomain(hash, BlockListType.REDIRECT)?.blocked?.let {
+            return it
+        }
+
         val result = this.executeRequest(this.getRequest(DOMAIN_REDIRECT_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
-            cacheRepository.saveDomain(hash, isBlocked)
+            cacheRepository.saveDomain(hash, isBlocked, BlockListType.REDIRECT)
             return isBlocked
         }
         return false
     }
 
     private suspend fun isUrlBlacklist(hash: String): Boolean {
+        cacheRepository.getUrl(hash, BlockListType.BLACKLIST)?.blocked?.let {
+            return it
+        }
+
         val result = executeRequest(getRequest(URL_BLACKLIST_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
-            cacheRepository.saveUrl(hash, isBlocked)
+            cacheRepository.saveUrl(hash, isBlocked, BlockListType.BLACKLIST)
             return isBlocked
         }
         return false
     }
 
     private suspend fun isUrlRedirect(hash: String): Boolean {
+        cacheRepository.getUrl(hash, BlockListType.REDIRECT)?.blocked?.let {
+            return it
+        }
+
         val result = this.executeRequest(this.getRequest(URL_REDIRECT_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
-            cacheRepository.saveUrl(hash, isBlocked)
+            cacheRepository.saveUrl(hash, isBlocked, BlockListType.REDIRECT)
             return isBlocked
         }
         return false

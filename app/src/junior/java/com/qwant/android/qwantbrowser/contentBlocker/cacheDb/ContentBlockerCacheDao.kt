@@ -12,10 +12,10 @@ interface ContentBlockerCacheDao {
     @Insert suspend fun insert(url: Url)
     @Upsert suspend fun upsert(tabId: TabId)
 
-    @Query("SELECT * from domains WHERE hash = :hash")
-    fun getDomain(hash: String): Domain?
-    @Query("SELECT * from urls WHERE hash = :hash")
-    fun getUrl(hash: String): Url?
+    @Query("SELECT * from domains WHERE hash = :hash AND type = :type")
+    fun getDomain(hash: String, type: BlockListType): Domain?
+    @Query("SELECT * from urls WHERE hash = :hash AND type = :type")
+    fun getUrl(hash: String, type: BlockListType): Url?
     @Query("SELECT * from tab_ids WHERE tabId = :tabId")
     fun getTabId(tabId: String): TabId?
 

@@ -12,12 +12,12 @@ class ContentBlockerCacheRepository @Inject constructor(
 ) {
     private val dao = db.contentBlockerCacheDao()
 
-    suspend fun getUrl(hash: String): Url? = withContext(Dispatchers.IO) {
-        return@withContext dao.getUrl(hash)
+    suspend fun getUrl(hash: String, type: BlockListType): Url? = withContext(Dispatchers.IO) {
+        return@withContext dao.getUrl(hash, type)
     }
 
-    suspend fun getDomain(hash: String): Domain? = withContext(Dispatchers.IO) {
-        return@withContext dao.getDomain(hash)
+    suspend fun getDomain(hash: String, type: BlockListType): Domain? = withContext(Dispatchers.IO) {
+        return@withContext dao.getDomain(hash, type)
     }
 
     suspend fun getTabId(tabId: String): TabId? = withContext(Dispatchers.IO) {
@@ -28,12 +28,12 @@ class ContentBlockerCacheRepository @Inject constructor(
         dao.deleteTabId(tabId)
     }
 
-    suspend fun saveUrl(hash: String, blocked: Boolean) = withContext(Dispatchers.IO) {
-        dao.insert(Url(hash, blocked, System.currentTimeMillis()))
+    suspend fun saveUrl(hash: String, blocked: Boolean, type: BlockListType) = withContext(Dispatchers.IO) {
+        dao.insert(Url(hash, type, blocked, System.currentTimeMillis()))
     }
 
-    suspend fun saveDomain(hash: String, blocked: Boolean) = withContext(Dispatchers.IO) {
-        dao.insert(Domain(hash, blocked, System.currentTimeMillis()))
+    suspend fun saveDomain(hash: String, blocked: Boolean, type: BlockListType) = withContext(Dispatchers.IO) {
+        dao.insert(Domain(hash, type, blocked, System.currentTimeMillis()))
     }
 
     suspend fun saveTabId(tabId: TabId) {

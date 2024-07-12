@@ -4,18 +4,28 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 
-@Entity(tableName = "domains")
+enum class BlockListType {
+    BLACKLIST, REDIRECT
+}
+
+@Entity(
+    tableName = "domains",
+    primaryKeys = ["hash", "type"]
+)
 data class Domain(
-    @PrimaryKey(autoGenerate = false)
     val hash: String,
+    val type: BlockListType,
     val blocked: Boolean,
     val time: Long
 )
 
-@Entity(tableName = "urls")
+@Entity(
+    tableName = "urls",
+    primaryKeys = ["hash", "type"]
+)
 data class Url(
-    @PrimaryKey(autoGenerate = false)
     val hash: String,
+    val type: BlockListType,
     val blocked: Boolean,
     val time: Long
 )
