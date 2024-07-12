@@ -20,7 +20,7 @@ class Piwik @Inject constructor(
     @ApplicationContext context: Context,
     appPreferencesRepository: AppPreferencesRepository,
 ) {
-    private val coroutineScope = MainScope()
+    /* private val coroutineScope = MainScope()
 
     private val tracker = Piwik.getInstance(context).newTracker(TrackerConfig(
         BuildConfig.PIWIK_URL,
@@ -41,10 +41,10 @@ class Piwik @Inject constructor(
                     tracker.isOptOut = it
                 }
         }
-    }
+    } */
 
     fun trackApplicationDownload() {
-        TrackHelper.track().sendApplicationDownload().with(tracker)
+        // TrackHelper.track().sendApplicationDownload().with(tracker)
     }
 
     fun event(
@@ -52,16 +52,16 @@ class Piwik @Inject constructor(
         action: String,
         name: String? = null
     ) {
-        val builder = TrackHelper.track().event(category, action)
+        /* val builder = TrackHelper.track().event(category, action)
         name?.let { builder.name(it) }
-        builder.with(tracker)
+        builder.with(tracker) */
     }
 
     fun screenView(url: String) {
-        val screen = if (url.isQwantUrl()) {
+        /* val screen = if (url.isQwantUrl()) {
             if (url.isQwantSERPUrl()) "SERP navigation"
             else "HP navigation"
         } else "Web navigation"
-        TrackHelper.track().screens(listOf(screen)).with(tracker);
+        TrackHelper.track().screens(listOf(screen)).with(tracker); */
     }
 }
