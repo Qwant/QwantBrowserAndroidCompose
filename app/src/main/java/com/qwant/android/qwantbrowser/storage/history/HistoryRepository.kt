@@ -153,6 +153,7 @@ class HistoryRepository @Inject constructor(
     /*
       Not applicable.
      */
+    override suspend fun prune() {}
     override suspend fun warmUp() {}
 
     companion object {

@@ -19,7 +19,6 @@ fun SessionFeature(
     store: BrowserStore,
     canGoBack: Boolean,
     goBackUseCase: SessionUseCases.GoBackUseCase,
-    goForwardUseCase: SessionUseCases.GoForwardUseCase,
     tabsUseCases: TabsUseCases,
     openQwantUseCase: QwantUseCases.OpenQwantPageUseCase,
     backEnabled: () -> Boolean = { true }
@@ -28,7 +27,6 @@ fun SessionFeature(
         SessionFeature(
             store = store,
             goBackUseCase = goBackUseCase,
-            goForwardUseCase = goForwardUseCase,
             engineView = engineView
         )
     }

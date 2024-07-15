@@ -72,6 +72,8 @@ class AppRequestInterceptor @Inject constructor(
             }
         } else {
             engineSession.settings.userAgentString = uaGlobal
+
+            // TODO junior: check is youtube to inject safesearch parameter if needed
         }
 
         return appLinksInterceptor.onLoadRequest(
