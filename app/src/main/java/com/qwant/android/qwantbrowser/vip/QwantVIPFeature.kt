@@ -5,7 +5,6 @@
 package com.qwant.android.qwantbrowser.vip
 
 import android.util.Log
-import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 
 /**
@@ -21,25 +20,9 @@ object QwantVIPFeature {
      */
     fun install(runtime: WebExtensionRuntime) {
         runtime.listInstalledWebExtensions({ list ->
-            var extensionFound = false
-            list.forEach { ext ->
-                if (ext.id == ID && ext.getMetadata()?.version == LAST_VERSION) {
-                    extensionFound = true
-                    // TODO update qwant vip at launch
-                    /* Log.d("QWANT_BROWSER_EXTENSION", "Qwant Extension found: should try updating")
-                    runtime.updateWebExtension(ext,
-                        onSuccess = {
-                            Log.d("QWANT_BROWSER_EXTENSION", "Qwant webextension updated: ${it?.getMetadata()}")
-                        },
-                        onError = { _, throwable ->
-                            Log.e("QWANT_BROWSER_EXTENSION", "Error updating Qwant webextension", throwable)
-                        }
-                    ) */
-                }
-            }
-            if (!extensionFound) {
-                runtime.installWebExtension(
-                    URL, InstallationMethod.FROM_FILE,
+            if (!list.any { it.id == ID && it.getMetadata()?.version == LAST_VERSION }) {
+                runtime.installBuiltInWebExtension(
+                    ID, URL,
                     onSuccess = { ext ->
                         runtime.setAllowedInPrivateBrowsing(
                             ext,
@@ -55,6 +38,5 @@ object QwantVIPFeature {
                 )
             }
         })
-
     }
 }
