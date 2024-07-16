@@ -5,7 +5,7 @@ stages:
   - release
 
 .android:
-  image: "$HARBOR_REGISTRY_SERVER/qwant/mobile/android-dev-env:e3a2b32c"
+  image: "$HARBOR_REGISTRY_SERVER/qwant/mobile/android-dev-env:27a7d985"
   before_script:
     - cat /usr/local/etc/ANDROID_SDK_VERSION
     - export $(grep -v "^#" /usr/local/etc/ANDROID_SDK_VERSION | xargs)
@@ -60,6 +60,30 @@ unit_test:
     - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
       when: never
 
+bump_version:
+  stage: deploy
+  extends: .android
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - git config --global user.name "ci-bot-mobile"
+    - git config --global user.email "ci-bot-mobile@qwant.com"
+    - git config --global http.sslCAInfo "/workspace/ca/ca.crt"
+
+    - git clone "https://ci-bot-mobile:${CI_BOT_MOBILE_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}"
+    - cd $CI_PROJECT_NAME
+    - git checkout $CI_COMMIT_BRANCH
+
+    - cp -f /usr/local/src/Gemfile* .
+    - cp -rf /usr/local/src/fastlane .
+
+    - bundle exec fastlane bump_version
+  rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEVELOP_BRANCH'
+      when: always
+
 # build project for dev branch and upload to internal play store
 # see: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html#bot-users-for-projects
 deploy_internal_app_bundle:
@@ -86,6 +110,42 @@ deploy_internal_app_bundle:
     # Copy PlayStore json file to the fastlane directory in order to push to PlayStore
     - echo -n "$playstore_json_base64" | base64 -d > fastlane/playstore.json
     - bundle exec fastlane upload_to_internal
+  needs:
+    - bump_version
+  rules:
+    - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEVELOP_BRANCH'
+      when: always
+
+# build project for dev branch and upload to internal play store
+# see: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html#bot-users-for-projects
+deploy_internal_app_bundle_junior:
+  stage: deploy
+  extends: .android
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - git config --global user.name "ci-bot-mobile"
+    - git config --global user.email "ci-bot-mobile@qwant.com"
+    - git config --global http.sslCAInfo "/workspace/ca/ca.crt"
+
+    - git clone "https://ci-bot-mobile:${CI_BOT_MOBILE_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}"
+    - cd $CI_PROJECT_NAME
+    - git checkout $CI_COMMIT_BRANCH
+
+    - cp -f /usr/local/src/Gemfile* .
+    - cp -rf /usr/local/src/fastlane .
+
+    # Copy keystore file to the current directory and export path for signing
+    - echo -n "$keystore_playstore_junior" | base64 -d > keystore_playstore_junior.jks
+    - export keystore_playstore_junior_path=$(realpath keystore_playstore_junior.jks)
+
+    # Copy PlayStore json file to the fastlane directory in order to push to PlayStore
+    - echo -n "$playstore_json_base64" | base64 -d > fastlane/playstore.json
+    - bundle exec fastlane upload_to_internal_junior
+  needs:
+    - bump_version
   rules:
     - if: '$GITLAB_USER_NAME == "ci-bot-mobile"'
       when: never
