@@ -3,6 +3,7 @@ package com.qwant.android.qwantbrowser.ui.zap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.qwant.android.qwantbrowser.cookies.QwantCookieState
 import com.qwant.android.qwantbrowser.usecases.ClearDataUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -12,7 +13,8 @@ import kotlinx.coroutines.launch
 // TODO zap state could old clear data config (and clean use case) ?
 class ZapState(
     private val clearDataUseCase: ClearDataUseCase,
-    private val coroutineScope: CoroutineScope = MainScope()
+    private val coroutineScope: CoroutineScope = MainScope(),
+    private val cookieState: QwantCookieState
 ) {
     internal enum class RequestStatus { Zapping, Confirm, Waiting, Error }
     internal enum class AnimationStatus { Idle, In, Wait, Out }
@@ -58,7 +60,11 @@ class ZapState(
             coroutineScope.launch {
                 delay(300) // Wait for animation to cover the whole screen
                 clearDataUseCase { success ->
-                    waitAnimationAndFinish(success)
+                    coroutineScope.launch {
+                        cookieState.restoreCookies {
+                            waitAnimationAndFinish(success)
+                        }
+                    }
                 }
             }
         } else {

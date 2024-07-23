@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qwant.android.qwantbrowser.cookies.QwantCookieState
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.preferences.app.AppPreferencesRepository
 import com.qwant.android.qwantbrowser.preferences.app.Appearance
@@ -32,6 +33,7 @@ class QwantApplicationViewModel @Inject constructor(
     historyRepository: HistoryRepository,
     appPreferencesRepository: AppPreferencesRepository,
     clearDataUseCase: ClearDataUseCase,
+    cookieState: QwantCookieState,
     private val piwik: Piwik
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
@@ -103,7 +105,7 @@ class QwantApplicationViewModel @Inject constructor(
             initialValue = false
         )
 
-    val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope)
+    val zapState: ZapState = ZapState(clearDataUseCase, viewModelScope, cookieState)
     fun zap(
         from: String = "Toolbar",
         skipConfirmation: Boolean = false,
