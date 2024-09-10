@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.contentBlocker.cacheDb
 
-import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
+import android.database.sqlite.SQLiteConstraintException
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,11 +30,19 @@ class ContentBlockerCacheRepository @Inject constructor(
     }
 
     suspend fun saveUrl(hash: String, blocked: Boolean, type: BlockListType) = withContext(Dispatchers.IO) {
-        dao.insert(Url(hash, type, blocked, System.currentTimeMillis()))
+        try {
+            dao.insert(Url(hash, type, blocked, System.currentTimeMillis()))
+        } catch (e: SQLiteConstraintException) {
+            Log.e("ContentBlockerCache", "Could not save URL to cache DB", e)
+        }
     }
 
     suspend fun saveDomain(hash: String, blocked: Boolean, type: BlockListType) = withContext(Dispatchers.IO) {
-        dao.insert(Domain(hash, type, blocked, System.currentTimeMillis()))
+        try {
+            dao.insert(Domain(hash, type, blocked, System.currentTimeMillis()))
+        } catch (e: SQLiteConstraintException) {
+            Log.e("ContentBlockerCache", "Could not save Domain to cache DB", e)
+        }
     }
 
     suspend fun saveTabId(tabId: TabId) {
