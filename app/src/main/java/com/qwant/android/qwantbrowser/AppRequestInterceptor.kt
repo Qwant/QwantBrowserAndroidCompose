@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser
 
 import android.content.Context
+import android.util.Log
 import com.qwant.android.qwantbrowser.ext.UA
 import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.getQwantSERPCategory
@@ -21,6 +22,8 @@ import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.feature.app.links.AppLinksInterceptor
+import java.lang.Exception
+import java.net.URI
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,9 +69,13 @@ class AppRequestInterceptor @Inject constructor(
         if (uri.isQwantUrl()) {
             engineSession.settings.userAgentString = uaQwant
             if (!uri.isQwantUrlValid()) {
-                return RequestInterceptor.InterceptionResponse.Url(
-                    qwantUseCases.getQwantUrl(search = uri.getQwantSERPSearch(), category = uri.getQwantSERPCategory())
-                )
+                val path = try {
+                    URI(uri).path
+                } catch (e: Exception) {
+                    null
+                }
+                val redirectUrl = qwantUseCases.getQwantUrl(path = path, search = uri.getQwantSERPSearch(), category = uri.getQwantSERPCategory())
+                return RequestInterceptor.InterceptionResponse.Url(redirectUrl)
             }
         } else {
             engineSession.settings.userAgentString = uaGlobal

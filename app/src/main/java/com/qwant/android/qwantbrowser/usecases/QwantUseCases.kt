@@ -28,8 +28,11 @@ class QwantUseCases @Inject constructor(
     private val firstRequestKey = "pref_key_first_request"
     private val clKey = "pref_key_utm_campaign"
 
-    private fun qwantUrl(search: String?, category: String? = null, widget: Boolean = false): String = buildString {
+    private fun qwantUrl(path: String? = null, search: String? = null, category: String? = null, widget: Boolean = false): String = buildString {
         append(BuildConfig.QWANT_BASE_URL)
+        path?.let {
+            append(path)
+        }
         append("?client=").append(clientProvider.clientState.value)
         search?.let {
             append("&q=").append(it)
@@ -56,7 +59,7 @@ class QwantUseCases @Inject constructor(
     ) {
         @SuppressLint("ApplySharedPref")
         operator fun invoke(search: String? = null, private: Boolean = false, selectIfExists: Boolean = false) {
-            val url = qwantUrl(search)
+            val url = qwantUrl(search = search)
             if (selectIfExists) {
                 tabsUseCases.selectOrAddTab.invoke(url, private = private)
             } else {
@@ -70,7 +73,7 @@ class QwantUseCases @Inject constructor(
     }
 
     inner class GetQwantUrlUseCase internal constructor() {
-        operator fun invoke(search: String? = null, category: String? = null, widget: Boolean = false) = qwantUrl(search, category, widget)
+        operator fun invoke(path: String? = null, search: String? = null, category: String? = null, widget: Boolean = false) = qwantUrl(path, search, category, widget)
     }
 
     inner class LoadSERPPageUseCase internal constructor(

@@ -51,6 +51,9 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+
+// TODO delete this file !
+
 @AndroidEntryPoint
 public class Assist extends AppCompatActivity {
     @Inject QwantUseCases qwantUseCases;
@@ -363,7 +366,7 @@ public class Assist extends AppCompatActivity {
 
             // Get search url and load
             if (qwantUseCases != null) {
-                webview.loadUrl(qwantUseCases.getGetQwantUrl().invoke(query, null, true));
+                webview.loadUrl(qwantUseCases.getGetQwantUrl().invoke(null, query, null, true));
             }
 
             // Force hide keyboard

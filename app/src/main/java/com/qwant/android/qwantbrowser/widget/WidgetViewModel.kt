@@ -60,7 +60,7 @@ class WidgetViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .filterNotNull()
                 .onEach { search ->
-                    session.loadUrl(qwantUseCases.getQwantUrl(search, currentCategory, true))
+                    session.loadUrl(qwantUseCases.getQwantUrl(null, search, currentCategory, true))
                 }
                 .collect()
         }
