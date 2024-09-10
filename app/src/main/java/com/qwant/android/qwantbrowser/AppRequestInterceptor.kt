@@ -91,5 +91,5 @@ class AppRequestInterceptor @Inject constructor(
         return RequestInterceptor.ErrorResponse(errorPage)
     }
 
-    override fun interceptsAppInitiatedRequests() = true
+    override fun interceptsAppInitiatedRequests() = false
 }
