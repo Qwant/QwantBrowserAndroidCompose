@@ -1,0 +1,35 @@
+{
+  "name": {
+    "message": "Qwant - Moteur de recherche et bloqueur de traqueurs"
+  },
+  "short_name": {
+    "message": "Qwant - Moteur de recherche et bloqueur de traqueurs"
+  },
+  "protectionEnabled": {
+    "message": "Protection activée sur ce site"
+  },
+  "protectionDisabled": {
+    "message": "Protection désactivée sur ce site"
+  },
+  "hintUnprotected": {
+    "message": "😕 Vous n'êtes pas protégé contre les traqueurs"
+  },
+  "hintProtected": {
+    "message": "😊 Vous êtes protégé contre les traqueurs"
+  },
+  "about": {
+    "message": "En savoir plus"
+  },
+  "about_link": {
+    "message": "https://about.qwant.com/"
+  },
+  "comment": {
+    "message": "Partager un commentaire"
+  },
+  "comment_link": {
+    "message": "https://fr.surveymonkey.com/r/XPK9KHJ"
+  },
+  "description": {
+    "message": "L’extension Qwant définit qwant.com comme moteur de recherche par défaut et bloque les traqueurs."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "__MSG_name__",
+  "short_name": "__MSG_short_name__",
+  "description": "__MSG_description__",
+  "default_locale": "en",
+  "version": "8.0.0",
+  "manifest_version": 3,
+  "permissions": [
+    "declarativeNetRequest",
+    "webNavigation",
+    "storage",
+    "tabs",
+    "cookies"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "qwant-vip-android@qwant.com"
+    }
+  },
+  "host_permissions": [
+    "https://www.qwant.com/"
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "19": "icon-19.png",
+    "38": "icon-38.png",
+    "128": "icon-128.png"
+  },
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": ["service_worker.js"]
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "adblock_warning_removal",
+        "enabled": true,
+        "path": "rules/adblock_warning_removal.json"
+      },
+      {
+        "id": "adguard_dns_filters",
+        "enabled": false,
+        "path": "rules/adguard_dns_filters.json"
+      },
+      {
+        "id": "fanboy_annoyance",
+        "enabled": true,
+        "path": "rules/fanboy_annoyance.json"
+      },
+      {
+        "id": "filter_unblocking_search_ads_and_self_promotion",
+        "enabled": true,
+        "path": "rules/filter_unblocking_search_ads_and_self_promotion.json"
+      },
+      {
+        "id": "easy_privacy",
+        "enabled": false,
+        "path": "rules/easy_privacy.json"
+      },
+      {
+        "id": "easy_privacy_optimized",
+        "enabled": true,
+        "path": "rules/easy_privacy_optimized.json"
+      },
+      {
+        "id": "online_malicious_url_blocklist",
+        "enabled": false,
+        "path": "rules/online_malicious_url_blocklist.json"
+      },
+      {
+        "id": "qwant_whitelist",
+        "enabled": true,
+        "path": "rules/qwant_whitelist.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,266 @@
+[
+  {
+    "id": 127716,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.com/impression/"
+    }
+  },
+  {
+    "id": 127717,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.com/action/"
+    }
+  },
+  {
+    "id": 127718,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.com/apm/"
+    }
+  },
+  {
+    "id": 127719,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||api.qwant.com"
+    }
+  },
+  {
+    "id": 127720,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||about.qwant.com/"
+    }
+  },
+  {
+    "id": 127721,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "about.qwant.com"
+      ],
+      "urlFilter": "||qwant.com^"
+    }
+  },
+  {
+    "id": 127722,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.ninja"
+    }
+  },
+  {
+    "id": 127723,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.plive"
+    }
+  },
+  {
+    "id": 127724,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||api.qwant.com/v2/api/"
+    }
+  },
+  {
+    "id": 127725,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||qwant.com/maps/"
+    }
+  },
+  {
+    "id": 127726,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||alpha.qwant.com"
+    }
+  },
+  {
+    "id": 127727,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||stats.qwant.com"
+    }
+  },
+  {
+    "id": 127728,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||p.qwant.com"
+    }
+  },
+  {
+    "id": 127729,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||k.qwant.com"
+    }
+  },
+  {
+    "id": 127730,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||f.qwant.com"
+    }
+  },
+  {
+    "id": 127731,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||apm.qwant.com"
+    }
+  },
+  {
+    "id": 127732,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||mn.qwant.com"
+    }
+  },
+  {
+    "id": 127733,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||sdk.privacy-center.org^"
+    }
+  },
+  {
+    "id": 127734,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||api.privacy-center.org^"
+    }
+  },
+  {
+    "id": 127735,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||clarity.ms^"
+    }
+  },
+  {
+    "id": 127736,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||c.bing.com^"
+    }
+  },
+  {
+    "id": 127737,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||msadsscale.azureedge.net^"
+    }
+  },
+  {
+    "id": 127738,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||microsoft.com^"
+    }
+  },
+  {
+    "id": 127739,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "initiatorDomains": [
+        "qwant.com"
+      ],
+      "urlFilter": "||int.ovh.kube.qwant.ninja^"
+    }
+  }
+]

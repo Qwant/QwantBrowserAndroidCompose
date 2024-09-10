@@ -1,0 +1,35 @@
+{
+  "name": {
+    "message": "Qwant - Search engine and tracker blocker"
+  },
+  "short_name": {
+    "message": "Qwant - Search engine and trackers blocker"
+  },
+  "protectionEnabled": {
+    "message": "Protection enabled on this website"
+  },
+  "protectionDisabled": {
+    "message": "Protection disabled on this website"
+  },
+  "hintUnprotected": {
+    "message": "😕 You are not protected from trackers"
+  },
+  "hintProtected": {
+    "message": "😊 You are protected from trackers"
+  },
+  "about": {
+    "message": "Find out more"
+  },
+  "about_link": {
+    "message": "https://about.qwant.com/en/extension"
+  },
+  "comment": {
+    "message": "Share a comment"
+  },
+  "comment_link": {
+    "message": "https://fr.surveymonkey.com/r/X6C38SF"
+  },
+  "description": {
+    "message": "Qwant extension sets qwant.com as your default search engine and blocks trackers for you."
+  }
+}

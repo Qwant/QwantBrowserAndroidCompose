@@ -12,8 +12,8 @@ import mozilla.components.concept.engine.webextension.WebExtensionRuntime
  */
 object QwantVIPFeature {
     const val ID = "qwant-vip-android@qwant.com"
-    private const val URL = "resource://android/assets/qwant_webext/"
-    private const val LAST_VERSION = "7.3.0.2"
+    private const val URL = "resource://android/assets/qwant_vip/"
+    private const val LAST_VERSION = "8.0.0"
 
     /**
      * Installs the web extension in the runtime through the WebExtensionRuntime install method
