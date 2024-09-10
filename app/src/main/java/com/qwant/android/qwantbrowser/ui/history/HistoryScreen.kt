@@ -52,14 +52,13 @@ fun HistoryScreen(
             }
         )
 
-
         if (!visitsEmpty) {
             HistoryList(
                 visits = visits,
                 historyViewModel = historyViewModel,
                 lazyListState = lazyListState,
                 onItemSelected = { visit, private ->
-                    historyViewModel.openNewTab(visit.url, selectTab = true, private = private)
+                    historyViewModel.openNewTab.invoke(url = visit.url, selectTab = true, private = private)
                     onClose()
                 }
             )
