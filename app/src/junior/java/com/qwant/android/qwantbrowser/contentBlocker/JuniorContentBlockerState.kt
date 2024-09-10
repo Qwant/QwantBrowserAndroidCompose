@@ -40,6 +40,10 @@ class JuniorContentBlockerState(
 
     init {
         scope.launch {
+            contentBlockerCacheRepository.runMaintenance()
+        }
+
+        scope.launch {
             store.flow().map { it.restoreComplete }
                 .distinctUntilChanged()
                 .onEach {
