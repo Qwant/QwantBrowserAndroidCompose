@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -43,6 +44,7 @@ import com.qwant.android.qwantbrowser.ui.zap.ZapButton
 import com.qwant.android.qwantbrowser.vip.VipSessionObserver
 import kotlinx.coroutines.delay
 import mozilla.components.concept.engine.EngineView
+import com.qwant.android.qwantbrowser.BuildConfig
 
 enum class TabOpening {
     NONE, NORMAL, PRIVATE
@@ -301,6 +303,37 @@ fun AfterActions(
         })
         TabsButton(navigateTo, viewModel)
         BrowserMenuButton(navigateTo, viewModel, appViewModel)
+        if (BuildConfig.FLAVOR_target == "canaltoys") {
+            ExitButton(appViewModel = appViewModel)
+        }
+    }
+}
+
+@Composable
+fun ExitButton(
+    appViewModel: QwantApplicationViewModel
+) {
+    val shouldZapOnQuit by appViewModel.zapOnQuit.collectAsState()
+    val activity = LocalContext.current.activity
+
+    ToolbarAction(onClick = {
+        if (shouldZapOnQuit) {
+            appViewModel.zap(skipConfirmation = true) { success ->
+                if (success) {
+                    activity?.quit()
+                } else {
+                    // TODO handle clear on quit fails
+                }
+            }
+        } else {
+            activity?.quit()
+        }
+    }) {
+        Icon(
+            painter = painterResource(id = R.drawable.icons_close),
+            contentDescription = "Close app",
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 

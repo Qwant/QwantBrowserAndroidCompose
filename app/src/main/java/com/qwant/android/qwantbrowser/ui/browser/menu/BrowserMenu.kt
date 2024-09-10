@@ -18,6 +18,10 @@ import com.qwant.android.qwantbrowser.ui.nav.NavDestination
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import mozilla.components.support.ktx.android.content.share
+import com.qwant.android.qwantbrowser.BuildConfig
+
+// TODO replace canaltoys exception with either specific source file
+//  or buildconfig field regarding android capabilities
 
 @Composable
 fun BrowserMenu(
@@ -51,7 +55,7 @@ fun BrowserMenu(
                 navigateTo(NavDestination.Preferences)
             }
         )
-        if (showQuitApp) {
+        if (showQuitApp && BuildConfig.FLAVOR_target != "canaltoys") {
             val activity = (LocalContext.current.activity)
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             DropdownItem(
@@ -154,11 +158,13 @@ fun AppNavigation(
                 navigateTo(NavDestination.Bookmarks)
             }
         )
-        DropdownItem(
-            text = stringResource(id = R.string.browser_downloads),
-            icon = R.drawable.icons_download,
-            onClick = { context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)) }
-        )
+        if (BuildConfig.FLAVOR_target != "canaltoys") {
+            DropdownItem(
+                text = stringResource(id = R.string.browser_downloads),
+                icon = R.drawable.icons_download,
+                onClick = { context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)) }
+            )
+        }
     }
 }
 
@@ -177,19 +183,21 @@ fun PageActions(
     }
 
     Column {
-        currentUrl?.let { url ->
-            DropdownItem(
-                text = stringResource(id = R.string.share),
-                icon = R.drawable.icons_share,
-                onClick = { context.share(url) }
-            )
-        }
-        if (viewModel.isShortcutSupported) {
-            DropdownItem(
-                text = stringResource(id = R.string.menu_add_to_homescreen),
-                icon = R.drawable.icons_add_screen,
-                onClick = { viewModel.addShortcutToHomeScreen() }
-            )
+        if (BuildConfig.FLAVOR_target != "canaltoys") {
+            currentUrl?.let { url ->
+                DropdownItem(
+                    text = stringResource(id = R.string.share),
+                    icon = R.drawable.icons_share,
+                    onClick = { context.share(url) }
+                )
+            }
+            if (viewModel.isShortcutSupported) {
+                DropdownItem(
+                    text = stringResource(id = R.string.menu_add_to_homescreen),
+                    icon = R.drawable.icons_add_screen,
+                    onClick = { viewModel.addShortcutToHomeScreen() }
+                )
+            }
         }
         DropdownItem(
             text = stringResource(id = R.string.menu_request_desktop_site),
@@ -197,13 +205,15 @@ fun PageActions(
             trailing = { Switch(checked = desktopSite, onCheckedChange = onDesktopSiteClicked) },
             onClick = { onDesktopSiteClicked(!desktopSite) }
         )
-        DropdownItem(
-            text = stringResource(id = R.string.menu_find_in_page),
-            icon = R.drawable.icons_search,
-            onClick = {
-                viewModel.updateShowFindInPage(true)
-                onDismissRequest()
-            }
-        )
+        if (currentUrl?.isNotEmpty() == true) {
+            DropdownItem(
+                text = stringResource(id = R.string.menu_find_in_page),
+                icon = R.drawable.icons_search,
+                onClick = {
+                    viewModel.updateShowFindInPage(true)
+                    onDismissRequest()
+                }
+            )
+        }
     }
 }
