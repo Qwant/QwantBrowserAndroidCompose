@@ -175,7 +175,6 @@ class BrowserScreenViewModel @Inject constructor(
 
     fun commitSearch(searchText: String, category: String? = null) {
         if (searchText.isUrl()) {
-            // useCases.tabsUseCases.selectOrAddTab(url = searchText.toNormalizedUrl())
             sessionUseCases.loadUrl(url = searchText.toNormalizedUrl())
         } else {
             qwantUseCases.loadSERPPage(searchText, category)

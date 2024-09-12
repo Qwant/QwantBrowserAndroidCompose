@@ -5,35 +5,35 @@ preference-ktx = "1.2.1"
 material = "1.12.0"
 # AndroidX
 core-ktx = "1.13.1"
-lifecycle = "2.8.3"
+lifecycle = "2.8.5"
 datastore = "1.1.1"
 localbroadcastmanager = "1.1.0"
-paging-runtime-ktx = "3.3.0"
+paging-runtime-ktx = "3.3.2"
 # Hilt
-hilt = "2.51"
+hilt = "2.52"
 androidx-hilt = "1.2.0"
 # Compose
-compose-bom = "2024.06.00"
-compose-material3 = "1.2.1"
-compose-android-activity = "1.9.0"
-compose-android-navigation = "2.7.7"
-compose-android-paging = "3.3.0"
+compose-bom = "2024.09.01"
+compose-material3 = "1.3.0"
+compose-android-activity = "1.9.2"
+compose-android-navigation = "2.8.0"
+compose-android-paging = "3.3.2"
 # Testing
 junit = "4.13.2"
 junit-androidx = "1.2.1"
 espresso = "3.6.1"
 # Others
-protobuf = "4.26.0"
+protobuf = "4.28.0"
 room = "2.6.1"
 piwik = "1.2.3"
 mozac = "117.+"
 
 # Plugins
-android-gradle-plugin = "8.3.2"
-kotlin-plugin = "1.9.23"
-hilt-plugin = "2.51"
+android-gradle-plugin = "8.4.2"
+kotlin-plugin = "2.0.20"
+hilt-plugin = "2.52"
 protobuf-plugin = "0.9.4"
-ksp = "1.9.23-1.0.19"
+ksp = "2.0.20-1.0.25"
 
 [libraries]
 # Legacy
@@ -108,6 +108,7 @@ piwik = { group = "pro.piwik", name = "sdk-framework-android", version.ref = "pi
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin-plugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-plugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

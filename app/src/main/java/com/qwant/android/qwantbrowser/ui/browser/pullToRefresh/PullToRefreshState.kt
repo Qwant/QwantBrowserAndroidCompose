@@ -2,22 +2,17 @@ package com.qwant.android.qwantbrowser.ui.browser.pullToRefresh
 
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FloatTweenSpec
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
-import kotlin.time.measureTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 interface CustomPullToRefreshState: PullToRefreshState {
@@ -32,13 +27,11 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
         object: CustomPullToRefreshState {
             private var coroutineScope = MainScope()
 
-            override val positionalThreshold: Float = 250f
-            override val progress get() = verticalOffset / positionalThreshold
-            override var verticalOffset: Float by mutableFloatStateOf(0f)
-            override var isRefreshing: Boolean by mutableStateOf(false)
+            val positionalThreshold: Float = 250f
+            var verticalOffset: Float by mutableFloatStateOf(0f)
 
-            override fun startRefresh() {}
-            override fun endRefresh() {}
+            override val distanceFraction: Float
+                get() = verticalOffset / positionalThreshold
 
             override fun addOffset(offset: Float) {
                 verticalOffset = (verticalOffset + offset).coerceIn(0f, positionalThreshold)
@@ -61,8 +54,9 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
                 }
             }
 
-            // Provide logic for the PullRefreshContainer to consume scrolls within a nested scroll
-            override var nestedScrollConnection: NestedScrollConnection = object : NestedScrollConnection {}
+            override suspend fun animateToHidden() {}
+            override suspend fun animateToThreshold() {}
+            override suspend fun snapTo(targetValue: Float) {}
         }
     }
 }
