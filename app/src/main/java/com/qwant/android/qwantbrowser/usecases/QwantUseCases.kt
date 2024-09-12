@@ -80,7 +80,7 @@ class QwantUseCases @Inject constructor(
         private val sessionUseCases: SessionUseCases
     ) {
         operator fun invoke(search: String, category: String? = null) {
-            sessionUseCases.loadUrl(qwantUrl(search, category))
+            sessionUseCases.loadUrl(qwantUrl(search = search, category = category))
         }
     }
 

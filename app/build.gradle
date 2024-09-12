@@ -85,7 +85,7 @@ android {
         junior {
             dimension "version"
             applicationId "com.qwantjunior.mobile"
-            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwantjunior.com/"')
+            buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwantjunior.com"')
             buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3/egp/search"')
             buildConfigField("boolean", "PIWIK_ANONYMISATION", "true")
         }
