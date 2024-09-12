@@ -1,6 +1,5 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose
 
-import android.util.Log
 import android.view.View
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -8,6 +7,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
@@ -94,7 +94,10 @@ fun ContextMenuFeature(
     val validCandidates: List<ContextMenuCandidate> by remember(tab, hitResult) { mutableStateOf(
         tab?.let { session ->
             hitResult?.let { hit ->
-                candidates.filter { candidate -> candidate.showFor(session, hit) }
+                val baseCandidates = candidates.filter { candidate -> candidate.showFor(session, hit) }
+                if (BuildConfig.FLAVOR_target == "canaltoys") {
+                    baseCandidates.filter { candidate -> !candidate.id.startsWith("mozac.feature.contextmenu.share") }
+                } else baseCandidates
             }
         } ?: listOf()
     )}
