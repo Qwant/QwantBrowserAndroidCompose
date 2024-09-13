@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +28,8 @@ import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.browser.ToolbarAction
+import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsingContent
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 import com.qwant.android.qwantbrowser.ui.widgets.QwantIconOnBackground
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.compose.Loader
@@ -88,6 +91,7 @@ fun TabCard(
     }, label = "tabSwipeScale")
 
     val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
+    val isPrivateBrowsingHome = LocalQwantTheme.current.private && tab.content.url == ""
 
     Column(modifier = modifier
         .scale(scale)
@@ -106,7 +110,7 @@ fun TabCard(
                     .padding(start = 10.dp)
                     .size(18.dp)
                 ) {
-                    if (isTabBlocked) {
+                    if (isTabBlocked || isPrivateBrowsingHome) {
                         QwantIconOnBackground(shape = RoundedCornerShape(4.dp))
                     } else {
                         tab.content.icon?.let {
@@ -123,7 +127,9 @@ fun TabCard(
                 }
 
                 Text(
-                    text = if (isTabBlocked) stringResource(id = R.string.blocked_website) else tab.content.title,
+                    text = if (isTabBlocked) stringResource(id = R.string.blocked_website)
+                            else if (isPrivateBrowsingHome) stringResource(id = R.string.browser_new_tab_private)
+                            else tab.content.title,
                     fontSize = 14.sp,
                     lineHeight = 18.sp,
                     maxLines = 1,
@@ -149,12 +155,25 @@ fun TabCard(
                 propagateMinConstraints = true
             ) {
                 // TODO size equal to calculated size ?
-                TabThumbnail(
-                    tabId = tab.id,
-                    size = 200.dp,
-                    thumbnailStorage = thumbnailStorage,
-                    contentBlockerState = contentBlockerState
-                )
+                if (isPrivateBrowsingHome) {
+                    HomePrivateBrowsingContent(
+                        iconColor = LocalContentColor.current,
+                        iconScale = 0.5f,
+                        iconPaddingBottom = 8.dp,
+                        titleFontSize = 16.sp,
+                        titleLineHeight = 16.sp,
+                        textFontSize = 10.sp,
+                        textLineHeight = 12.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                } else {
+                    TabThumbnail(
+                        tabId = tab.id,
+                        size = 200.dp,
+                        thumbnailStorage = thumbnailStorage,
+                        contentBlockerState = contentBlockerState
+                    )
+                }
             }
         }
     }

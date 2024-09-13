@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.tabs
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,6 +25,8 @@ import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ext.toCleanHost
+import com.qwant.android.qwantbrowser.ui.browser.home.HomePrivateBrowsingContent
+import com.qwant.android.qwantbrowser.ui.theme.LocalQwantTheme
 
 @Composable
 fun TabRow(
@@ -34,6 +39,7 @@ fun TabRow(
     modifier: Modifier = Modifier
 ) {
     val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
+    val isPrivateBrowsingHome = LocalQwantTheme.current.private && tab.content.url == ""
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -49,14 +55,39 @@ fun TabRow(
                 .height(70.dp)
                 .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
         ) {
-            TabThumbnail(tab.id, 90.dp, thumbnailStorage, contentBlockerState)
+            if (isPrivateBrowsingHome) {
+                /* HomePrivateBrowsingContent(
+                    iconScale = 0.5f,
+                    iconPaddingBottom = 8.dp,
+                    titleFontSize = 16.sp,
+                    titleLineHeight = 16.sp,
+                    textFontSize = 10.sp,
+                    textLineHeight = 12.sp,
+                    modifier = Modifier.padding(8.dp)
+                ) */
+                Image(
+                    painter = painterResource(R.drawable.icons_privacy_mask),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                    contentDescription = "privacy_mask",
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                )
+                /* Icon(
+                    painter = painterResource(R.drawable.icons_privacy_mask),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "privacy_mask"
+                ) */
+            } else {
+                TabThumbnail(tab.id, 90.dp, thumbnailStorage, contentBlockerState)
+            }
         }
 
         Column(modifier = Modifier
             .weight(2f)
             .padding(start = 12.dp)) {
             Text(
-                if (isTabBlocked) stringResource(id = R.string.blocked_website) else tab.content.title,
+                text = if (isTabBlocked) stringResource(id = R.string.blocked_website)
+                        else if (isPrivateBrowsingHome) stringResource(id = R.string.browser_new_tab_private)
+                        else tab.content.title,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 16.sp,
