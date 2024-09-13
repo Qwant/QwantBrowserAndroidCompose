@@ -75,12 +75,17 @@ android {
 
     flavorDimensions += ["version", "target"]
     productFlavors {
+        def addConstantTo = {target, constantName, constantValue ->
+            target.manifestPlaceholders += [ (constantName):constantValue ]
+            target.buildConfigField "String", "${constantName}", "\"${constantValue}\""
+        }
         original {
             dimension "version"
             getIsDefault().set(true)
             buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwant.com"')
             buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3"')
             buildConfigField("boolean", "PIWIK_ANONYMISATION", "false")
+            addConstantTo(owner, "WIDGET_ACTION", "com.qwant.android.intent.action.WIDGET")
         }
         junior {
             dimension "version"
@@ -88,6 +93,7 @@ android {
             buildConfigField("String", "QWANT_BASE_URL", '"https://www.qwantjunior.com"')
             buildConfigField("String", "QWANT_API_BASE_URL", '"https://api.qwant.com/v3/egp/search"')
             buildConfigField("boolean", "PIWIK_ANONYMISATION", "true")
+            addConstantTo(owner, "WIDGET_ACTION", "com.qwant.android.intent.action.WIDGET_JUNIOR")
         }
 
         playstore {

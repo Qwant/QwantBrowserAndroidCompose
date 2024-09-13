@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_icon_background">#FFD6D7</color>
+    <color name="widget_icon_foreground">#282B2F</color>
+</resources>

@@ -24,9 +24,9 @@
         android:paddingHorizontal="6dp"/>
 
     <ImageView
-        android:src="@drawable/icons_search"
-        android:layout_height="match_parent"
         android:layout_width="28dp"
+        android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        app:tint="@color/widget_icon_background" />
+        android:src="@drawable/icons_search"
+        app:tint="@color/widget_magnifier" />
 </LinearLayout>

@@ -7,7 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
-
+import com.qwant.android.qwantbrowser.BuildConfig;
 import com.qwant.android.qwantbrowser.R;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -18,7 +18,7 @@ public class WidgetProvider extends AppWidgetProvider {
         final int requestCode = 0;
         final int flags = PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
 
-        final Intent intent = new Intent("com.qwant.android.intent.action.WIDGET");
+        final Intent intent = new Intent(BuildConfig.WIDGET_ACTION);
         final PendingIntent pendingIntent = PendingIntent.getActivity(context, requestCode, intent, flags);
         views.setOnClickPendingIntent(R.id.custom_notification_widget_layout, pendingIntent);
 
