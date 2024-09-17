@@ -23,4 +23,7 @@
     <string name="browser_suggest_clipboard_text">Texte copié</string>
     <string name="browser_brand_suggest_ad">Annonce</string>
     <string name="browser_brand_suggest_information">Cette suggestion de recherche est une publicité pour %1$s, vous serez redirigé(e) vers le site de l’annonceur : %2$s</string>
+
+    <string name="browser_permission_geoloc_blocked">Qwant Junior protège ta vie privée et empêche le partage de ta position exacte automatiquement.</string>
+    <string name="browser_understood">J\'ai compris</string>
 </resources>

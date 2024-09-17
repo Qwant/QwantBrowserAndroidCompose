@@ -56,26 +56,12 @@ fun TabRow(
                 .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
         ) {
             if (isPrivateBrowsingHome) {
-                /* HomePrivateBrowsingContent(
-                    iconScale = 0.5f,
-                    iconPaddingBottom = 8.dp,
-                    titleFontSize = 16.sp,
-                    titleLineHeight = 16.sp,
-                    textFontSize = 10.sp,
-                    textLineHeight = 12.sp,
-                    modifier = Modifier.padding(8.dp)
-                ) */
                 Image(
                     painter = painterResource(R.drawable.icons_privacy_mask),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                     contentDescription = "privacy_mask",
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 )
-                /* Icon(
-                    painter = painterResource(R.drawable.icons_privacy_mask),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "privacy_mask"
-                ) */
             } else {
                 TabThumbnail(tab.id, 90.dp, thumbnailStorage, contentBlockerState)
             }
