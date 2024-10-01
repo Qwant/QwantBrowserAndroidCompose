@@ -5,7 +5,7 @@ stages:
   - release
 
 .android:
-  image: "$HARBOR_REGISTRY_SERVER/qwant/mobile/android-dev-env:27a7d985"
+  image: "$HARBOR_REGISTRY_SERVER/qwant/mobile/android-dev-env:67bc535a"
   before_script:
     - cat /usr/local/etc/ANDROID_SDK_VERSION
     - export $(grep -v "^#" /usr/local/etc/ANDROID_SDK_VERSION | xargs)
