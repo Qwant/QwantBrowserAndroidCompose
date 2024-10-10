@@ -3,8 +3,6 @@ package com.qwant.android.qwantbrowser.ui.browser
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
@@ -13,7 +11,7 @@ import com.qwant.android.qwantbrowser.storage.bookmarks.BookmarksRepository
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarState
 import com.qwant.android.qwantbrowser.ui.browser.toolbar.BrowserToolbarStateFactory
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
-import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
+import com.qwant.android.qwantbrowser.vip.VIPState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -57,7 +54,8 @@ class BrowserScreenViewModel @Inject constructor(
     val client: Client,
     val qwantUseCases: QwantUseCases,
     val piwik: Piwik,
-    val contentBlockerState: ContentBlockerState
+    val contentBlockerState: ContentBlockerState,
+    val vipState: VIPState
 ): ViewModel() {
     @Inject lateinit var toolbarStateFactory: BrowserToolbarStateFactory
     val toolbarState: BrowserToolbarState by lazy {
@@ -220,47 +218,6 @@ class BrowserScreenViewModel @Inject constructor(
                 qwantUseCases.openQwantPage()
             }
         }
-    }
-
-    // TODO Move to dedicated VIPExtensionState with browser action, icon and counter
-    val vipExtensionState = store.flow()
-        .mapNotNull { state -> state.extensions[QwantVIPFeature.ID] }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
-    private val vipBrowserActionFlow = store.flow()
-        .mapNotNull { state ->
-            state.selectedTab?.extensionState?.get(QwantVIPFeature.ID)?.browserAction
-                ?: state.extensions[QwantVIPFeature.ID]?.browserAction
-        }
-
-    val vipIcon = vipBrowserActionFlow
-        .mapNotNull { it.loadIcon }
-        .distinctUntilChanged()
-        .mapNotNull { it(92)?.asImageBitmap() }
-        .map { BitmapPainter(it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
-    val vipCounter = vipBrowserActionFlow
-        .mapNotNull { it.badgeText }
-        .distinctUntilChanged()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = null
-        )
-
-    fun closeQwantVIPPopup() {
-        store.dispatch(
-            WebExtensionAction.UpdatePopupSessionAction(QwantVIPFeature.ID, popupSession = null)
-        )
     }
 
     fun updateShowFindInPage(show: Boolean) {
