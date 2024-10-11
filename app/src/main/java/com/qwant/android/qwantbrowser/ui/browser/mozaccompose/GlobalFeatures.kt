@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.legacy.ClFeature
 import com.qwant.android.qwantbrowser.mozac.downloads.openDownloadedFile
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerObserver
@@ -60,8 +61,12 @@ fun GlobalFeatures(
             if (status == DownloadState.Status.COMPLETED) {
                 appViewModel.showSnackbar(
                     completedDownloadText,
-                    QwantApplicationViewModel.SnackbarAction("Open") {
-                        context.openDownloadedFile(state.filePath, state.contentType)
+                    if (BuildConfig.FLAVOR_target != "canaltoys") {
+                        QwantApplicationViewModel.SnackbarAction("Open") {
+                            context.openDownloadedFile(state.filePath, state.contentType)
+                        }
+                    } else {
+                        null
                     }
                 )
             } else if (status == DownloadState.Status.FAILED) {
