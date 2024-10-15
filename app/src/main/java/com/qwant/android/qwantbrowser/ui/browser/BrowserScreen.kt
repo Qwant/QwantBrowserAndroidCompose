@@ -295,6 +295,30 @@ fun AfterActions(
     val private = appViewModel.isPrivate.collectAsState()
     val privateBeforeClick = private.value
     Row {
+        if (BuildConfig.FLAVOR_target == "canaltoys") {
+            val canGoBack by viewModel.canGoBack.collectAsState()
+            val canGoForward by viewModel.canGoForward.collectAsState()
+            IconButton(
+                onClick = { viewModel.goBack() },
+                enabled = canGoBack,
+                modifier = Modifier
+                    .width(40.dp)
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            ) {
+                Icon(painter = painterResource(id = R.drawable.icons_arrow_backward), contentDescription = "back")
+            }
+            IconButton(
+                onClick = { viewModel.goForward() },
+                enabled = canGoForward,
+                modifier = Modifier
+                    .width(40.dp)
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            ) {
+                Icon(painter = painterResource(id = R.drawable.icons_arrow_forward), contentDescription = "forward")
+            }
+        }
         ZapButton(appViewModel, afterZap = { success ->
             if (success) {
                 viewModel.openNewQwantTab(privateBeforeClick)
