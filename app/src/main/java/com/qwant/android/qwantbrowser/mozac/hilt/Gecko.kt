@@ -3,6 +3,7 @@ package com.qwant.android.qwantbrowser.mozac.hilt
 import android.content.Context
 import com.qwant.android.qwantbrowser.cookies.QwantCookieFeature
 import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
+import com.qwant.android.qwantbrowser.youtubeRestrictedExtension.YoutubeRestrictedFeature
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +48,7 @@ object GeckoHiltModule {
         return GeckoEngine(context, settings, runtime).also {
             QwantVIPFeature.install(it)
             cookieFeature.install(runtime)
+            YoutubeRestrictedFeature.install(runtime)
             WebCompatFeature.install(it)
         }
     }
