@@ -113,6 +113,9 @@ android {
         logicom {
             dimension "target"
         }
+        unowhy {
+            dimension "target"
+        }
         orange {
             dimension "target"
             ndk.abiFilters.clear()
