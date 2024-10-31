@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vip_protection_enabled">Protection enabled on this website</string>
+    <string name="vip_protection_enabled_hint">😊 You are protected from trackers</string>
+    <string name="vip_protection_disabled">Protection disabled on this website</string>
+    <string name="vip_protection_disabled_hint">😕 You are not protected from trackers</string>
+    <string name="vip_about">Find out more</string>
+    <string name="vip_about_link">https://about.qwant.com/en/</string>
+    <string name="vip_comment">Share a comment</string>
+    <string name="vip_comment_link">https://fr.surveymonkey.com/r/X6C38SF</string>
+</resources>

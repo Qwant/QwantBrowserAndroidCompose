@@ -1,8 +1,8 @@
 {
-  "name": "__MSG_name__",
-  "short_name": "__MSG_short_name__",
-  "description": "__MSG_description__",
-  "version": "8.0.0",
+  "name": "Qwant VIP",
+  "short_name": "Qwant VIP",
+  "description": "Qwant VIP",
+  "version": "8.1.2",
   "manifest_version": 3,
   "permissions": [
     "declarativeNetRequest",
@@ -13,9 +13,7 @@
     "nativeMessaging",
     "geckoViewAddons"
   ],
-  "host_permissions": [
-    "https://www.qwant.com/"
-  ],
+  "host_permissions": [],
   "background": {
     "scripts": [
       "service_worker.js"
@@ -29,6 +27,11 @@
         "path": "rules/adblock_warning_removal.json"
       },
       {
+        "id": "filter_unblocking_search_ads_and_self_promotion",
+        "enabled": true,
+        "path": "rules/filter_unblocking_search_ads_and_self_promotion.json"
+      },
+      {
         "id": "fanboy_annoyance",
         "enabled": true,
         "path": "rules/fanboy_annoyance.json"
@@ -37,11 +40,6 @@
         "id": "easy_privacy_optimized",
         "enabled": true,
         "path": "rules/easy_privacy_optimized.json"
-      },
-      {
-        "id": "filter_unblocking_search_ads_and_self_promotion",
-        "enabled": true,
-        "path": "rules/filter_unblocking_search_ads_and_self_promotion.json"
       },
       {
         "id": "qwant_whitelist",

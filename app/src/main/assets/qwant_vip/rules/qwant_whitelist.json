@@ -1,6 +1,6 @@
 [
   {
-    "id": 15544,
+    "id": 17534,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -10,7 +10,7 @@
     }
   },
   {
-    "id": 15545,
+    "id": 17535,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -20,7 +20,7 @@
     }
   },
   {
-    "id": 15546,
+    "id": 17536,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -30,7 +30,7 @@
     }
   },
   {
-    "id": 15547,
+    "id": 17537,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -40,7 +40,7 @@
     }
   },
   {
-    "id": 15548,
+    "id": 17538,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -50,7 +50,7 @@
     }
   },
   {
-    "id": 15549,
+    "id": 17539,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -63,7 +63,7 @@
     }
   },
   {
-    "id": 15550,
+    "id": 17540,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -73,7 +73,7 @@
     }
   },
   {
-    "id": 15551,
+    "id": 17541,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -83,7 +83,7 @@
     }
   },
   {
-    "id": 15552,
+    "id": 17542,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -93,7 +93,7 @@
     }
   },
   {
-    "id": 15553,
+    "id": 17543,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -103,7 +103,7 @@
     }
   },
   {
-    "id": 15554,
+    "id": 17544,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -113,7 +113,7 @@
     }
   },
   {
-    "id": 15555,
+    "id": 17545,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -123,7 +123,7 @@
     }
   },
   {
-    "id": 15556,
+    "id": 17546,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -133,7 +133,7 @@
     }
   },
   {
-    "id": 15557,
+    "id": 17547,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -143,7 +143,7 @@
     }
   },
   {
-    "id": 15558,
+    "id": 17548,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -153,7 +153,7 @@
     }
   },
   {
-    "id": 15559,
+    "id": 17549,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -163,7 +163,7 @@
     }
   },
   {
-    "id": 15560,
+    "id": 17550,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -173,7 +173,7 @@
     }
   },
   {
-    "id": 15561,
+    "id": 17551,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -186,7 +186,7 @@
     }
   },
   {
-    "id": 15562,
+    "id": 17552,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -199,7 +199,7 @@
     }
   },
   {
-    "id": 15563,
+    "id": 17553,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -212,7 +212,7 @@
     }
   },
   {
-    "id": 15564,
+    "id": 17554,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -225,7 +225,7 @@
     }
   },
   {
-    "id": 15565,
+    "id": 17555,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -238,7 +238,7 @@
     }
   },
   {
-    "id": 15566,
+    "id": 17556,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -251,7 +251,7 @@
     }
   },
   {
-    "id": 15567,
+    "id": 17557,
     "priority": 1,
     "action": {
       "type": "allow"
@@ -261,6 +261,16 @@
         "qwant.com"
       ],
       "urlFilter": "||int.ovh.kube.qwant.ninja^"
+    }
+  },
+  {
+    "id": 17558,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||sdk.privacy-center.org"
     }
   }
 ]

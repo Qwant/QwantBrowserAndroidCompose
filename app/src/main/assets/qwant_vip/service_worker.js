@@ -7,43 +7,12 @@ const storageCache = {
 }
 
 const initStorageCache = chrome.storage.local.get().then((items) => {
-    console.log("QWANT_VIP - init storage")
     Object.assign(storageCache, items);
-    // onMessageReceived({action: "askTabStatus"}, nativePort);
 });
 
-// Before navigating on the main frame check either the current host is protected or not
-chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
-    try {
-        // For firefox and android, use details.frameId !== 0.
-        // Could be used also for chrome based browser I guess.
-        console.log("QWANT_VIP - onBeforeNavigate");
-        await initStorageCache;
-        console.log("QWANT_VIP - onBeforeNavigate init storage should be done");
-        if (details.frameId !== 0) {
-            console.log("QWANT_VIP - onBeforeNavigate returned: frameId=" + details.frameId);
-            return
-        }
-
-        const host = urlToHostname(details.url);
-        const hostDisabledIndex = storageCache.disabledHost.indexOf(host);
-        console.log("QWANT_VIP - onBeforeNavigate check " + host + " - " + details.url);
-
-        if (hostDisabledIndex > -1) {
-            console.log("QWANT_VIP - onBeforeNavigate disable");
-            await disableRuleSets();
-        } else {
-            console.log("QWANT_VIP - onBeforeNavigate enable");
-            await enableRuleSets();
-        }
-    } catch (err) {
-        // Ignore
-    }
-});
-
-// TODO Probably not needed on android
+// Never called on android
+// Not sure what it is supposed to do ...
 chrome.runtime.onConnect.addListener(async () => {
-    console.log("QWANT_VIP - on connect listener")
     try {
         await initStorageCache;
     } catch (e) {
@@ -51,16 +20,15 @@ chrome.runtime.onConnect.addListener(async () => {
     }
 });
 
-// TODO Differ set from firefox & android
 const ruleset_ids = [
     
     "adblock_warning_removal",
     
+    "filter_unblocking_search_ads_and_self_promotion",
+    
     "fanboy_annoyance",
     
     "easy_privacy_optimized",
-    
-    "filter_unblocking_search_ads_and_self_promotion",
     
 ];
 
@@ -75,26 +43,14 @@ function tabInfoToStatus(host, enabled) {
 // Activate or deactivate the extension whenever the active tab changes
 chrome.tabs.onActivated.addListener(async (details) => {
     try {
-        console.log("QWANT_VIP - tabs.onActivated");
-        await initStorageCache;
-        console.log("QWANT_VIP - tabs.onActivated init storage should be done");
-
         const tab = await chrome.tabs.get(details.tabId);
-        if (tab.url !== "about:blank") {
-            const host = urlToHostname(tab.url);
-            const hostDisabledIndex = storageCache.disabledHost.indexOf(host);
+        const host = urlToHostname(tab.url);
+        const hostDisabledIndex = storageCache.disabledHost.indexOf(host);
 
-            console.log("QWANT_VIP - tabs.onActivated check " + host + " - " + tab.url);
-
-            if (hostDisabledIndex > -1) {
-                console.log("QWANT_VIP - tabs.onActivated disable");
-                await disableRuleSets();
-            } else {
-                console.log("QWANT_VIP - tabs.onActivated enable");
-                await enableRuleSets();
-            }
+        if (hostDisabledIndex > -1) {
+            await disableRuleSets();
         } else {
-            console.log("QWANT_VIP - tabs.onActivated tab is about:blank");
+            await enableRuleSets();
         }
     } catch (err) {
         // Ignored
@@ -103,24 +59,38 @@ chrome.tabs.onActivated.addListener(async (details) => {
 
 
 nativePort.onMessage.addListener(function (msg) {
-    onMessageReceived(msg, nativePort);
+    // Only asked when the app starts, for the first tab
+    // as it may be cached and not go through 'onBeforeNavigate' event
+    // Also, the url is given by the app as the 'selected tab' is not set yet on the extension side
+    if (msg.action == 'askTabStatusForUrl') {
+        const host = urlToHostname(msg.selectedTabUrl);
+        const enabled = !storageCache.disabledHost.includes(host);
+        // Only run disable if the url should be disabled (as it is enabled by default)
+        if (!enabled) {
+            disableRuleSets().then(() => {
+                // Not sure this is needed, as the webpage is originally cached with already
+                // the right setting, but keeping it to be sure
+                chrome.tabs.reload(tab.id);
+            });
+        }
+    } else {
+        onMessageReceived(msg, nativePort);
+    }
 });
 
 
 // Activate or deactivate the extension whenever the popup toggle is clicked,
 // This will update the block list in chrome storage and reload the page if needed
 function onMessageReceived(msg, port) {
-    console.log("QWANT_VIP - onMessageReceived");
     getCurrentTab().then(tab => {
         const host = urlToHostname(tab.url);
         const hostDisabledIndex = storageCache.disabledHost.indexOf(host);
 
         if (!host) {
             // remove notify for android (as it is done within updateIcon)
-            console.log("QWANT_VIP - onMessageReceived no host");
+            
             updateIcon(true);
         } else if (msg.action === 'toggleProtection') {
-            console.log("QWANT_VIP - onMessageReceived toggleProtection");
             if (hostDisabledIndex > -1) {
                 storageCache.disabledHost.splice(hostDisabledIndex, 1)
                 enableRuleSets().then(() => {
@@ -137,7 +107,6 @@ function onMessageReceived(msg, port) {
                 });
             }
         } else if (msg.action === 'askTabStatus') {
-            console.log("QWANT_VIP - onMessageReceived askTabStatus");
             const enabled = !storageCache.disabledHost.includes(host);
             updateIcon(enabled)
             notifyToggled(tabInfoToStatus(host, enabled), port)
@@ -153,8 +122,32 @@ function notifyToggled(response, port) {
   port.postMessage(response);
 }
 
+// Before navigating on the main frame check either the current host is protected or not
+chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+    try {
+        // For firefox and android, use details.frameId !== 0. 
+        // Could be used also for chrome based browser I guess.
+        
+        if (details.frameId !== 0) {
+        
+            return
+        }
+
+        const host = urlToHostname(details.url);
+        const hostDisabledIndex = storageCache.disabledHost.indexOf(host);
+
+        if (hostDisabledIndex > -1) {
+            await disableRuleSets();
+        } else {
+            await enableRuleSets();
+        }
+    } catch (err) {
+        // Ignore
+    }
+});
+
+
 async function disableRuleSets() {
-    console.log("QWANT_VIP - disable rulesets");
     await updateIcon(false);
     await chrome.declarativeNetRequest.updateEnabledRulesets({
         disableRulesetIds: ruleset_ids,
@@ -163,7 +156,6 @@ async function disableRuleSets() {
 }
 
 async function enableRuleSets() {
-    console.log("QWANT_VIP - enable rulesets");
     await updateIcon(true);
     await chrome.declarativeNetRequest.updateEnabledRulesets({
         disableRulesetIds: [],
@@ -172,7 +164,7 @@ async function enableRuleSets() {
 }
 
 async function getCurrentTab() {
-    const queryOptions = {active: true};
+    const queryOptions = {active: true, lastFocusedWindow: true};
     const [tab] = await chrome.tabs.query(queryOptions);
     return tab;
 }

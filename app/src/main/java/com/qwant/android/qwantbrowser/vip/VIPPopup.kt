@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,11 +40,10 @@ fun VIPPopup(
         else -> throw (Exception("Invalid color set for VIP colors"))
     }.animatedColors()
 
-    // TODO translate texts
-    val titleText = if (vipState.enabled) "Protection activée sur ce site"
-                    else "Protection désactivée sur ce site"
-    val descText = if (vipState.enabled) "😌 Vous êtes protégé contre les traqueurs"
-                   else "😕 Vous n’êtes pas protégé contre les traqueurs"
+    val titleText = if (vipState.enabled) R.string.vip_protection_enabled
+                    else R.string.vip_protection_disabled
+    val descText = if (vipState.enabled) R.string.vip_protection_enabled_hint
+                   else R.string.vip_protection_disabled_hint
 
     Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
         Column(modifier = Modifier
@@ -56,7 +56,7 @@ fun VIPPopup(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = titleText,
+                    text = stringResource(titleText),
                     color = colors.toggleBorder,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -68,7 +68,7 @@ fun VIPPopup(
                     colors = switchColorsLight(isDarkTheme)
                 )
             }
-            Text(text = descText)
+            Text(text = stringResource(descText))
         }
 
         Spacer(Modifier.height(12.dp))
@@ -76,9 +76,9 @@ fun VIPPopup(
         Column(modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
         ) {
-            VIPLink("En savoir plus", "https://www.qwant.com/", openLink) // TODO set link in translatable string
+            VIPLink(stringResource(R.string.vip_about), stringResource(R.string.vip_about_link), openLink)
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
-            VIPLink("Partager un commentaire", "https://www.qwant.com/", openLink) // TODO set link in translatable string
+            VIPLink(stringResource(R.string.vip_comment), stringResource(R.string.vip_comment_link), openLink)
         }
     }
 }

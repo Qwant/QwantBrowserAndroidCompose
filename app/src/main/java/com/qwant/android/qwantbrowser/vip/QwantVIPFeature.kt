@@ -5,7 +5,6 @@
 package com.qwant.android.qwantbrowser.vip
 
 import android.util.Log
-import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 import org.json.JSONObject
 import org.mozilla.gecko.util.ThreadUtils.runOnUiThread
 import org.mozilla.geckoview.GeckoRuntime
@@ -18,8 +17,10 @@ import javax.inject.Singleton
  */
 @Singleton
 class QwantVIPFeature @Inject constructor(
-    vipState: VIPState
+    private val vipState: VIPState
 ) {
+    private var shouldAskStatusAfterConnectionForUrl: String? = null
+
     private val portDelegate = object: WebExtension.PortDelegate {
         override fun onPortMessage(message: Any, port: WebExtension.Port) {
             try {
@@ -45,6 +46,7 @@ class QwantVIPFeature @Inject constructor(
             Log.d("QWANT_VIP", "Communication port between native and webextension opened")
             vipState.communicationPort = port
             vipState.communicationPort?.setDelegate(portDelegate)
+            shouldAskStatusAfterConnectionForUrl?.let { askStatus(it) }
         }
     }
 
@@ -62,57 +64,23 @@ class QwantVIPFeature @Inject constructor(
         }
     }
 
+    fun restoreTabsDone(selectedTabUrl: String) {
+        if (vipState.communicationPort != null) {
+            askStatus(selectedTabUrl)
+        } else {
+            shouldAskStatusAfterConnectionForUrl = selectedTabUrl
+        }
+    }
+
+    private fun askStatus(selectedTabUrl: String) {
+        Log.d("QWANT_VIP", "askTabStatus - selected tab url is " + selectedTabUrl)
+        vipState.communicationPort?.postMessage(JSONObject().also {
+            it.put("action", "askTabStatusForUrl")
+            it.put("selectedTabUrl", selectedTabUrl)
+        })
+    }
+
     companion object {
         private const val URL = "resource://android/assets/qwant_vip/"
     }
 }
-
-/*
-object QwantVIPFeature {
-    const val ID = "qwant-vip-android@qwant.com"
-    private const val URL = "resource://android/assets/qwant_vip/"
-    private const val LAST_VERSION = "8.0.0"
-
-    /**
-     * Installs the web extension in the runtime through the WebExtensionRuntime install method
-     */
-    fun install(runtime: WebExtensionRuntime) {
-        runtime.listInstalledWebExtensions({ list ->
-            var extensionFound = false
-            list.forEach { ext ->
-                if (ext.id == ID && ext.getMetadata()?.version == LAST_VERSION) {
-                    extensionFound = true
-                    // TODO update qwant vip at launch
-                    /* Log.d("QWANT_BROWSER_EXTENSION", "Qwant Extension found: should try updating")
-                    runtime.updateWebExtension(ext,
-                        onSuccess = {
-                            Log.d("QWANT_BROWSER_EXTENSION", "Qwant webextension updated: ${it?.getMetadata()}")
-                        },
-                        onError = { _, throwable ->
-                            Log.e("QWANT_BROWSER_EXTENSION", "Error updating Qwant webextension", throwable)
-                        }
-                    ) */
-                }
-            }
-            if (!extensionFound) {
-                runtime.installWebExtension(
-                    ID, URL,
-                    onSuccess = { ext ->
-                        runtime.setAllowedInPrivateBrowsing(
-                            ext,
-                            allowed = true,
-                            onError = { throwable ->
-                                Log.e("QWANT_BROWSER_EXTENSION","Error allowing Qwant WebExtension in private browsing", throwable)
-                            }
-                        )
-                    },
-                    onError = { _, throwable ->
-                        Log.e("QWANT_BROWSER_EXTENSION","Error registering Qwant WebExtension", throwable)
-                    }
-                )
-            }
-        })
-
-    }
-}
-*/
