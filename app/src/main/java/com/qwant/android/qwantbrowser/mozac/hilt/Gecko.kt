@@ -43,10 +43,11 @@ object GeckoHiltModule {
         @ApplicationContext context: Context,
         runtime: GeckoRuntime,
         settings: Settings,
-        cookieFeature: QwantCookieFeature
+        cookieFeature: QwantCookieFeature,
+        vipFeature: QwantVIPFeature
     ): Engine {
         return GeckoEngine(context, settings, runtime).also {
-            QwantVIPFeature.install(it)
+            vipFeature.install(runtime)
             cookieFeature.install(runtime)
             YoutubeRestrictedFeature.install(runtime)
             WebCompatFeature.install(it)

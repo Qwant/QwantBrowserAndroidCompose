@@ -4,10 +4,12 @@ import android.app.Application
 import com.qwant.android.qwantbrowser.migration.MigrationUtility
 import com.qwant.android.qwantbrowser.stats.Piwik
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases
+import com.qwant.android.qwantbrowser.vip.QwantVIPFeature
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.action.SystemAction
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
@@ -35,6 +37,7 @@ class QwantApplication : Application() {
     @Inject lateinit var piwik: dagger.Lazy<Piwik>
     @Inject lateinit var migrationUtility: dagger.Lazy<MigrationUtility>
     @Inject lateinit var mediaFeature: dagger.Lazy<MediaSessionFeature>
+    @Inject lateinit var vipFeature: dagger.Lazy<QwantVIPFeature>
 
     override fun onCreate() {
         super.onCreate()
@@ -55,7 +58,13 @@ class QwantApplication : Application() {
             speculativeConnect(BuildConfig.QWANT_BASE_URL)
         }
 
-        restoreBrowserState()
+        restoreBrowserState().invokeOnCompletion {
+            android.util.Log.d("QWANT_VIP", "restore tabs done")
+            store.get().state.selectedTab?.content?.url?.let {
+                android.util.Log.d("QWANT_VIP", "selected tab url is $it")
+                vipFeature.get().restoreTabsDone(it)
+            } ?: android.util.Log.d("QWANT_VIP", "selected tab url is still null after restore")
+        }
 
         migrationUtility.get().checkMigrations()
 

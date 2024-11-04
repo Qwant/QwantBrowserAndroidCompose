@@ -1,28 +1,22 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.R
 import com.qwant.android.qwantbrowser.ext.*
@@ -40,10 +34,10 @@ import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import com.qwant.android.qwantbrowser.ui.widgets.TabCounter
 import com.qwant.android.qwantbrowser.ui.zap.ZapButton
-import com.qwant.android.qwantbrowser.vip.VipSessionObserver
 import kotlinx.coroutines.delay
 import mozilla.components.concept.engine.EngineView
 import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.vip.VIPAction
 
 enum class TabOpening {
     NONE, NORMAL, PRIVATE
@@ -94,7 +88,7 @@ fun BrowserScreen(
                 modifier = modifier,
                 toolbarState = viewModel.toolbarState,
                 browserIcons = viewModel.browserIcons,
-                beforeTextField = { QwantVIPAction(viewModel) },
+                beforeTextField = { VIPAction(viewModel.vipState, openLink = { url -> viewModel.tabsUseCases.addTab(url) }) },
                 beforeTextFieldVisible = { !viewModel.toolbarState.hasFocus && currentUrl?.isNotBlank() == true && currentUrl?.isQwantUrl() == false && currentUrl != "about:blank" },
                 afterTextField = { AfterActions(navigateTo, viewModel, appViewModel) },
                 afterTextFieldVisible = { !viewModel.toolbarState.hasFocus },
@@ -180,109 +174,6 @@ fun ToolbarAction( // TODO rename ToolbarAction to SmallIconButton and move to g
         contentAlignment = Alignment.Center
     ) {
         content()
-    }
-}
-
-
-// TODO Clean up and separate code for Qwant VIP UI
-@Composable
-fun QwantVIPAction(
-    viewModel: BrowserScreenViewModel//  = hiltViewModel(),
-    // state: WebExtensionState
-) {
-    val theme = LocalQwantTheme.current
-    val imageID = when {
-        theme.dark || theme.private -> R.drawable.icons_webext_vip_night
-        else -> R.drawable.icons_webext_vip
-    }
-
-    val state by viewModel.vipExtensionState.collectAsState()
-    val iconPainter by viewModel.vipIcon.collectAsState()
-    val counter by viewModel.vipCounter.collectAsState()
-
-    var badgeVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(viewModel.toolbarState.visible) {
-        badgeVisible = if (viewModel.toolbarState.visible) {
-            delay(200)
-            true
-        } else false
-    }
-
-    Box {
-        ToolbarAction(onClick = { state?.browserAction?.onClick?.invoke() }) {
-            BadgedBox(
-                badge = {
-                    if (counter?.isNotEmpty() == true && badgeVisible) {
-                        Badge(
-                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentColor = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier
-                                .border(
-                                    2.dp,
-                                    MaterialTheme.colorScheme.outline,
-                                    RoundedCornerShape(50)
-                                )
-                        ) {
-                            counter?.let {
-                                Text(text = it, maxLines = 1)
-                            }
-                        }
-                    }
-                }
-            ) {
-                Image(
-                    painter = iconPainter ?: painterResource(id = imageID),
-                    contentDescription = "Qwant VIP",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
-
-        if (state?.popupSession != null) {
-            Dialog(
-                properties = DialogProperties(usePlatformDefaultWidth = false),
-                onDismissRequest = { viewModel.closeQwantVIPPopup() }
-            ) {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    var engineView: EngineView? by remember { mutableStateOf(null) }
-                    val sessionObserver = remember {
-                        VipSessionObserver(
-                            closePopup = { viewModel.closeQwantVIPPopup() },
-                            loadUrl = {
-                                viewModel.tabsUseCases.addTab(it, selectTab = true)
-                                viewModel.closeQwantVIPPopup()
-                            }
-                        )
-                    }
-
-                    val configuration = LocalConfiguration.current
-
-                    DisposableEffect(engineView, state?.popupSession) {
-                        state?.popupSession?.let {
-                            it.register(sessionObserver)
-                            engineView?.render(it)
-                        }
-                        onDispose {
-                            state?.popupSession?.unregister(sessionObserver)
-                            engineView?.release()
-                        }
-                    }
-
-                    AndroidView(
-                        modifier = Modifier.size(
-                            width = configuration.screenWidthDp.dp.times(0.75f),
-                            height = configuration.screenHeightDp.dp.times(0.75f)
-                        ),
-                        factory = { context ->
-                            viewModel.engine.createView(context).asView()
-                        },
-                        update = { view ->
-                            engineView = view as EngineView
-                        }
-                    )
-                }
-            }
-        }
     }
 }
 
