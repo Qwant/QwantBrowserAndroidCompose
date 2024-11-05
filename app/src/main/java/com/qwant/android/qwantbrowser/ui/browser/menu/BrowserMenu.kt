@@ -19,6 +19,7 @@ import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
 import com.qwant.android.qwantbrowser.ui.widgets.DropdownItem
 import mozilla.components.support.ktx.android.content.share
 import com.qwant.android.qwantbrowser.BuildConfig
+import com.qwant.android.qwantbrowser.ext.selectedLocale
 
 // TODO replace canaltoys exception with either specific source file
 //  or buildconfig field regarding android capabilities
@@ -41,6 +42,12 @@ fun BrowserMenu(
         HorizontalDivider()
         NewTabs(viewModel, onDismissRequest)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        if (BuildConfig.FLAVOR_version == "original"
+            && LocalContext.current.selectedLocale().language == "fr"
+        ) {
+            QwantAccount(viewModel, applicationViewModel, onDismissRequest)
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        }
         AppNavigation(navigateTo, onDismissRequest)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         PageActions(viewModel, onDismissRequest)
@@ -72,6 +79,39 @@ fun BrowserMenu(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun QwantAccount(
+    viewModel: BrowserScreenViewModel,
+    appViewModel: QwantApplicationViewModel,
+    onDismissRequest: () -> Unit
+) {
+    val isAccountConnected = appViewModel.cookieState.isConnected
+
+    Column {
+        DropdownItem(
+            text = stringResource(if (isAccountConnected) R.string.menu_account else R.string.menu_login),
+            icon = R.drawable.icons_account,
+            onClick = {
+                onDismissRequest()
+                viewModel.tabsUseCases.selectOrAddTab(
+                    url = if (isAccountConnected) "https://www.qwant.com/account/profile"
+                          else "https://auth.qwant.com/ui/kratos/login"
+                )
+            }
+        )
+        DropdownItem(
+            text = stringResource(R.string.menu_retribution),
+            icon = R.drawable.icons_qwant_coin,
+            onClick = {
+                onDismissRequest()
+                viewModel.tabsUseCases.selectOrAddTab(
+                    url = "https://www.qwant.com/?drawer=reward-promo"
+                )
+            }
+        )
     }
 }
 

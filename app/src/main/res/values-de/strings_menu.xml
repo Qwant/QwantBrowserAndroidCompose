@@ -4,4 +4,7 @@
     <string name="menu_request_desktop_site">Desktop-Website anfordern</string>
     <string name="menu_quit_app">Die App schließen</string>
     <string name="menu_find_in_page">Auf der Seite finden</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_retribution">Loyalty program</string>
 </resources>

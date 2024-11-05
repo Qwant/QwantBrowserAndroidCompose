@@ -33,8 +33,8 @@ class QwantApplicationViewModel @Inject constructor(
     historyRepository: HistoryRepository,
     appPreferencesRepository: AppPreferencesRepository,
     clearDataUseCase: ClearDataUseCase,
-    cookieState: QwantCookieState,
-    private val piwik: Piwik
+    private val piwik: Piwik,
+    val cookieState: QwantCookieState,
 ) : ViewModel() {
     private val privacyMode = MutableStateFlow(PrivacyMode.SELECTED_TAB_PRIVACY)
 
