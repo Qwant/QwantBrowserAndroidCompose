@@ -107,7 +107,7 @@ fun HistoryList(
                                         historyViewModel.deleteUrlFromHistory(item.url)
                                     }
                                 ),
-                                modifier = Modifier.animateItemPlacement()
+                                modifier = Modifier.animateItem()
                             )
                         }
                     }

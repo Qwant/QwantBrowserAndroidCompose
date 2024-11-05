@@ -65,7 +65,7 @@ fun TabGrid(
                 onSelected = onTabSelected,
                 onDeleted = onTabDeleted,
                 contentBlockerState = contentBlockerState,
-                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier.animateItem()
             )
         }
     }
