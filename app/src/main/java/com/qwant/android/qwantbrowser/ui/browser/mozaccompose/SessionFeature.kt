@@ -45,9 +45,6 @@ fun SessionFeature(
                             tabsUseCases.selectTab(parent)
                             tabsUseCases.removeTab(tab.id)
                         }
-                    } ?: BackHandler(selectedTab?.content?.url?.isQwantUrl() == false) {
-                        openQwantUseCase(private = selectedTab?.content?.private ?: false, selectIfExists = true)
-                        tabsUseCases.removeTab(tab.id)
                     }
                 }
             }
