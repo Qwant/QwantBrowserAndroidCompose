@@ -71,13 +71,6 @@ fun Context.openDefaultAppsSystemSettings() {
     startActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
 }
 
-val Context.UA: String
-    // TODO detect tablet devices to set appropriate USER_AGENT_GECKOVIEW_TABLET
-    get() = BuildConfig.USER_AGENT_GECKOVIEW_MOBILE
-
-val Context.UAQwant: String
-    get() = "$UA ${getString(R.string.user_agent_qwant_ext, com.qwant.android.qwantbrowser.BuildConfig.VERSION_NAME)}"
-
 fun Context.isPackageInstalled(packageToFind: String) = try {
     this.packageManager.getPackageInfo(packageToFind, 0)
     true

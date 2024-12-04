@@ -1,14 +1,11 @@
 package com.qwant.android.qwantbrowser.mozac.hilt
 
-import android.content.Context
 import com.qwant.android.qwantbrowser.AppRequestInterceptor
 import com.qwant.android.qwantbrowser.BuildConfig
-import com.qwant.android.qwantbrowser.ext.UAQwant
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Settings
@@ -41,14 +38,13 @@ object GeckoSettingsHiltModule {
     @Singleton
     @Provides
     fun provideEngineSettings(
-        @ApplicationContext context: Context,
         appRequestInterceptor: AppRequestInterceptor,
         historyStorage: Lazy<HistoryStorage>
     ) : Settings {
         return DefaultSettings(
             historyTrackingDelegate = HistoryDelegate(lazy { historyStorage.get() }),
             requestInterceptor = appRequestInterceptor,
-            userAgentString = context.UAQwant,
+            userAgentString = org.mozilla.geckoview.BuildConfig.USER_AGENT_GECKOVIEW_MOBILE,
             remoteDebuggingEnabled = debugEnabled,
             testingModeEnabled = debugEnabled
         )

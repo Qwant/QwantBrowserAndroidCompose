@@ -1,9 +1,6 @@
 package com.qwant.android.qwantbrowser
 
 import android.content.Context
-import android.util.Log
-import com.qwant.android.qwantbrowser.ext.UA
-import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.getQwantSERPCategory
 import com.qwant.android.qwantbrowser.ext.getQwantSERPSearch
 import com.qwant.android.qwantbrowser.ext.isQwantUrl
@@ -33,9 +30,6 @@ class AppRequestInterceptor @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository,
     private val qwantUseCases: QwantUseCases
 ) : RequestInterceptor {
-    private val uaGlobal = context.UA
-    private val uaQwant = context.UAQwant
-
     private val coroutineScope = MainScope()
     private var openLinksInApp = false
 
@@ -67,7 +61,6 @@ class AppRequestInterceptor @Inject constructor(
         isSubframeRequest: Boolean
     ): RequestInterceptor.InterceptionResponse? {
         if (uri.isQwantUrl()) {
-            engineSession.settings.userAgentString = uaQwant
             if (!uri.isQwantUrlValid()) {
                 val path = try {
                     URI(uri).path
@@ -77,11 +70,6 @@ class AppRequestInterceptor @Inject constructor(
                 val redirectUrl = qwantUseCases.getQwantUrl(path = path, search = uri.getQwantSERPSearch(), category = uri.getQwantSERPCategory())
                 return RequestInterceptor.InterceptionResponse.Url(redirectUrl)
             }
-        } else {
-            engineSession.settings.userAgentString = uaGlobal
-
-            // TODO junior: check is youtube to inject safesearch parameter if needed
-
         }
 
         return appLinksInterceptor.onLoadRequest(
