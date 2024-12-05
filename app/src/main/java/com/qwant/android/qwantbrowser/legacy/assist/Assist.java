@@ -3,8 +3,6 @@ package com.qwant.android.qwantbrowser.legacy.assist;
 import static android.content.ClipDescription.MIMETYPE_TEXT_HTML;
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-import static com.qwant.android.qwantbrowser.ext.ContextKt.getUAQwant;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -42,6 +40,8 @@ import com.qwant.android.qwantbrowser.QwantApplication;
 import com.qwant.android.qwantbrowser.R;
 import com.qwant.android.qwantbrowser.intent.IntentReceiverActivity;
 import com.qwant.android.qwantbrowser.usecases.QwantUseCases;
+
+import org.mozilla.geckoview.BuildConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -103,7 +103,7 @@ public class Assist extends AppCompatActivity {
         webview.getSettings().setDisplayZoomControls(false);
         webview.getSettings().setJavaScriptEnabled(true);
 
-        webview.getSettings().setUserAgentString(getUAQwant(this));
+        webview.getSettings().setUserAgentString(BuildConfig.USER_AGENT_GECKOVIEW_MOBILE);
 
         // Maps settings
         webview.getSettings().setGeolocationEnabled(true);
@@ -283,6 +283,7 @@ public class Assist extends AppCompatActivity {
 
     // Geoloc permission callback
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == QWANT_PERMISSIONS_REQUEST_FINE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permission_request_callback.invoke(permission_request_origin, true, true);

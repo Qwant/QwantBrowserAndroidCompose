@@ -3,7 +3,6 @@ package com.qwant.android.qwantbrowser.stats
 import android.content.Context
 import android.util.Log
 import com.qwant.android.qwantbrowser.BuildConfig
-import com.qwant.android.qwantbrowser.ext.UAQwant
 import com.qwant.android.qwantbrowser.ext.selectedLocale
 import com.qwant.android.qwantbrowser.storage.QwantClientProvider
 import com.qwant.android.qwantbrowser.suggest.Suggestion
@@ -47,7 +46,7 @@ class Datahub @Inject constructor(
                 method = Request.Method.POST,
                 headers = MutableHeaders(
                     Pair("Content-Type", "application/json"),
-                    Pair("User-Agent", context.UAQwant)
+                    Pair("User-Agent", org.mozilla.geckoview.BuildConfig.USER_AGENT_GECKOVIEW_MOBILE)
                 ),
                 body = Request.Body.fromString(payload)
             )
