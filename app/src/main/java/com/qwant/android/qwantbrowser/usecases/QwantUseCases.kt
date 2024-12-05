@@ -34,6 +34,7 @@ class QwantUseCases @Inject constructor(
             append(path)
         }
         append("?client=").append(clientProvider.clientState.value)
+        append("&omnibar=1")
         search?.let {
             append("&q=").append(it)
         }
