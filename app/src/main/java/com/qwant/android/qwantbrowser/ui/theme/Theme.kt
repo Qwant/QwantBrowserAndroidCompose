@@ -2,6 +2,7 @@ package com.qwant.android.qwantbrowser.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState

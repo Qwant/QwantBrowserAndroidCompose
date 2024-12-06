@@ -96,7 +96,6 @@ fun BrowserScreen(
             )
         },
         engineView = engineViewHolder,
-        height = 56.dp,
         modifier = Modifier.fillMaxSize(),
         lock = { viewModel.showFindInPage }
     ) { modifier ->

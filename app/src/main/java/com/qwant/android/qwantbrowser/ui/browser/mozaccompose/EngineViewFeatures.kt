@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.qwant.android.qwantbrowser.contentBlocker.ContentBlockerState
 import com.qwant.android.qwantbrowser.ui.browser.BrowserScreenViewModel
-import com.qwant.android.qwantbrowser.ui.browser.toolbar.DynamicToolbarFeature
 import mozilla.components.concept.engine.EngineView
 
 @Composable
@@ -34,13 +33,6 @@ fun BoxScope.EngineViewFeatures(
             store = viewModel.store
         )
     }
-
-    val shouldHideToolbarOnScroll by viewModel.toolbarState.shouldHideOnScroll.collectAsState()
-    DynamicToolbarFeature(
-        engineView = engineView,
-        toolbarState = viewModel.toolbarState,
-        enabled = shouldHideToolbarOnScroll && !viewModel.showFindInPage
-    )
 
     FindInPageFeature(
         engineView = engineView,

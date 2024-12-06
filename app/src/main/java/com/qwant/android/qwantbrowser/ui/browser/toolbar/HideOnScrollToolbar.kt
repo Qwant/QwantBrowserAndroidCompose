@@ -1,22 +1,18 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import mozilla.components.concept.engine.EngineView
-import kotlin.math.roundToInt
 
 enum class HideOnScrollPosition {
     Top, Bottom
@@ -27,10 +23,9 @@ fun HideOnScrollToolbar(
     toolbarState: BrowserToolbarState,
     toolbar: @Composable (Modifier) -> Unit,
     engineView: EngineView?,
-    height: Dp,
     modifier: Modifier = Modifier,
     lock: () -> Boolean = { false },
-    content: @Composable (Modifier) -> Unit = {}
+    content: @Composable (Modifier) -> Unit = {},
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
     val position = remember(toolbarPosition) {
@@ -41,77 +36,6 @@ fun HideOnScrollToolbar(
     }
 
     val shouldHideOnScroll by toolbarState.shouldHideOnScroll.collectAsState()
-
-    if (shouldHideOnScroll) {
-        HideOnScrollToolbarImpl(
-            toolbarState = toolbarState,
-            toolbar = toolbar,
-            engineView = engineView,
-            height = height,
-            modifier = modifier,
-            lock = lock,
-            content = content,
-            position = position
-        )
-    } else {
-        Column(modifier = modifier) {
-            if (toolbarPosition == ToolbarPosition.BOTTOM) {
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                content(Modifier.fillMaxWidth().weight(2f, true))
-                toolbar(Modifier.fillMaxWidth().zIndex(2f))
-            } else if (toolbarPosition == ToolbarPosition.TOP) {
-                toolbar(Modifier.fillMaxWidth().zIndex(2f))
-                content(Modifier.fillMaxWidth().weight(2f, true))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun HideOnScrollToolbarImpl(
-    toolbarState: BrowserToolbarState,
-    toolbar: @Composable (Modifier) -> Unit,
-    engineView: EngineView?,
-    height: Dp,
-    modifier: Modifier = Modifier,
-    lock: () -> Boolean = { false },
-    content: @Composable (Modifier) -> Unit = {},
-    position: HideOnScrollPosition
-) {
-    val heightPx = with(LocalDensity.current) { height.roundToPx() }
-
-    val offset by animateFloatAsState(
-        targetValue = if (toolbarState.visible) {
-            0f
-        } else {
-            if (position == HideOnScrollPosition.Top) {
-                -heightPx.toFloat()
-            } else {
-                heightPx.toFloat()
-            }
-        },
-        animationSpec = tween(durationMillis = 500),
-        label = "hideOnScrollOffset"
-    )
-
-    val trueHeight by remember(heightPx, offset) {
-        derivedStateOf {
-            if (position == HideOnScrollPosition.Top) {
-                heightPx + offset.roundToInt()
-            } else {
-                heightPx - offset.roundToInt()
-            }
-        }
-    }
 
     val nestedScrollConnection = rememberThresholdNestedScrollConnection(
         onScroll = { sign ->
@@ -125,41 +49,77 @@ private fun HideOnScrollToolbarImpl(
         consecutiveThreshold = 1 // if (position == HideOnScrollPosition.Top) 4 else 1
     )
 
-    LaunchedEffect(trueHeight) {
-        toolbarState.updateTrueHeightPx(trueHeight)
+    val contentModifier = if (!lock() && shouldHideOnScroll) {
+        Modifier.nestedScroll(nestedScrollConnection)
+    } else Modifier
+
+    Column(modifier = modifier) {
+        if (toolbarPosition == ToolbarPosition.BOTTOM) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outline
+            )
+            content(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(2f, true)
+                    .then(contentModifier)
+            )
+            AnimatedToolbar(
+                toolbarState,
+                toolbar,
+                Modifier
+                    .fillMaxWidth()
+                    .zIndex(2f)
+            )
+        } else if (toolbarPosition == ToolbarPosition.TOP) {
+            AnimatedToolbar(
+                toolbarState,
+                toolbar,
+                Modifier
+                    .fillMaxWidth()
+                    .zIndex(2f)
+            )
+            content(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(2f, true)
+                    .then(contentModifier)
+            )
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outline
+            )
+        }
     }
+}
 
-    Box(modifier = modifier) {
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(100f)
-                .align(if (position == HideOnScrollPosition.Top) Alignment.BottomCenter else Alignment.TopCenter),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outline
-        )
+@Composable
+fun AnimatedToolbar(
+    toolbarState: BrowserToolbarState,
+    toolbar: @Composable (Modifier) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shouldHideOnScroll by toolbarState.shouldHideOnScroll.collectAsState()
 
-        toolbar(
-            Modifier
-                .fillMaxWidth()
-                .align(if (position == HideOnScrollPosition.Top) Alignment.TopCenter else Alignment.BottomCenter)
-                .zIndex(2f)
-                .offset { IntOffset(x = 0, y = offset.roundToInt()) }
-        )
-
-        content(Modifier
-            .fillMaxSize()
-            .zIndex(1f)
-            .then(
-                if (!lock()) {
-                    Modifier.nestedScroll(nestedScrollConnection)
-                } else Modifier
+    if (shouldHideOnScroll) {
+        if (!toolbarState.visible) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outline
             )
-            .then(
-                if (position == HideOnScrollPosition.Top) {
-                    Modifier.offset { IntOffset(x = 0, y = trueHeight) }
-                } else Modifier
-            )
-        )
+        }
+        AnimatedVisibility(
+            visible = toolbarState.visible,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            toolbar(modifier)
+        }
+    } else {
+        toolbar(modifier)
     }
 }
