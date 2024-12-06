@@ -28,7 +28,7 @@ fun PullToRefreshBox(
         detectVerticalDragGesturesUnconsumed(
             onDragStart = {},
             onDragEnd = {
-                if (pullRefreshState.distanceFraction == 1f) {
+                if (pullRefreshState.distanceFraction > 0.95f) {
                     onRefresh()
                 }
                 pullToRefreshRunning = false
