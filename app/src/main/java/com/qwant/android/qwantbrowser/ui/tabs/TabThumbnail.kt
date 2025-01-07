@@ -28,9 +28,9 @@ fun TabThumbnail(
     contentBlockerState: ContentBlockerState,
     modifier: Modifier = Modifier
 ) {
-    val contentBlockerStatus = contentBlockerState.getStatus(tabId)
+    val contentBlockerStatus = contentBlockerState.getStatusForTab(tabId)
     if (contentBlockerStatus != ContentBlockerState.Status.ALLOWED) {
-        ContentBlockerOverlay(status = contentBlockerStatus, blockReason = contentBlockerState.getBlockReason(tabId))
+        ContentBlockerOverlay(status = contentBlockerStatus, blockReason = contentBlockerState.getBlockReasonForTab(tabId))
     } else {
         val pixelSize = with(LocalDensity.current) { size.roundToPx() }
         var loadedImage: Bitmap? by remember { mutableStateOf(null) }

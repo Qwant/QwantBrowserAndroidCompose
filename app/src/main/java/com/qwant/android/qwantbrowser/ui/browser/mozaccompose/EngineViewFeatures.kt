@@ -27,7 +27,7 @@ fun BoxScope.EngineViewFeatures(
         backEnabled = { !viewModel.toolbarState.hasFocus }
     )
 
-    if (viewModel.contentBlockerState.getStatus() == ContentBlockerState.Status.ALLOWED) {
+    if (viewModel.contentBlockerState.status == ContentBlockerState.Status.ALLOWED) {
         ThumbnailFeature(
             engineView = engineView,
             store = viewModel.store

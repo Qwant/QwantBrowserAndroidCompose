@@ -117,11 +117,11 @@ fun BrowserScreen(
                     },
                     modifier = modifier
                 ) {
-                    val contentBlockerStatus = viewModel.contentBlockerState.getStatus()
+                    val contentBlockerStatus = viewModel.contentBlockerState.status
                     if (contentBlockerStatus != ContentBlockerState.Status.ALLOWED) {
                         ContentBlockerOverlay(
                             contentBlockerStatus,
-                            viewModel.contentBlockerState.getBlockReason(),
+                            viewModel.contentBlockerState.blockReason,
                             imageModifier = Modifier.width(300.dp),
                             imageScale = ContentScale.FillWidth,
                             alignment = Alignment.TopCenter
