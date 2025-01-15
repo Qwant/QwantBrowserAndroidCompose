@@ -33,7 +33,9 @@ fun ContentBlockerOverlay(
                     painter = painterResource(
                         id = when (blockReason) {
                             ContentBlockerState.BlockReason.IP -> R.drawable.dino_ip
-                            ContentBlockerState.BlockReason.DOMAIN, ContentBlockerState.BlockReason.URL -> R.drawable.dino_warning
+                            ContentBlockerState.BlockReason.DOMAIN,
+                            ContentBlockerState.BlockReason.URL,
+                            ContentBlockerState.BlockReason.SEARCH_ENGINE -> R.drawable.dino_warning
                             else -> R.drawable.dino_timeout
                         }
                     ),

@@ -11,7 +11,7 @@ open class ContentBlockerState {
     }
 
     enum class BlockReason {
-        NONE, INVALID, ERROR, IP, DOMAIN, URL
+        NONE, INVALID, ERROR, IP, DOMAIN, URL, SEARCH_ENGINE
     }
 
     open var status by mutableStateOf(Status.ALLOWED)

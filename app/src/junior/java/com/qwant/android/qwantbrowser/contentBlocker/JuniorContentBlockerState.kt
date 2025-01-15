@@ -122,6 +122,11 @@ class JuniorContentBlockerState(
                 return@launch
             }
 
+            if (isExternalSearchEngine(host)) {
+                block(BlockReason.SEARCH_ENGINE)
+                return@launch
+            }
+
             status = Status.CHECKING
             job = scope.launch(Dispatchers.IO) {
                 checkAsync(uri)
@@ -143,6 +148,12 @@ class JuniorContentBlockerState(
         } else {
             @Suppress("DEPRECATION")
             return Patterns.IP_ADDRESS.matcher(s).matches()
+        }
+    }
+
+    private fun isExternalSearchEngine(host: String): Boolean {
+        return blockedSearchEnginesRegex.any {
+            host.matches(it)
         }
     }
 
@@ -188,5 +199,22 @@ class JuniorContentBlockerState(
         val md = MessageDigest.getInstance("MD5")
         val digest = md.digest(this.toByteArray())
         return digest.toHexString()
+    }
+
+    companion object {
+        private val blockedSearchEnginesRegex = arrayOf("sm.cn", "mail.ru", "translate.goog")
+            .map { it.replace(".", "\\.") }
+            .map { "([a-zA-Z0-9-]+\\.)?$it" }
+            .map { it.toRegex() }
+            .plus(
+                arrayOf(
+                    "google", "qwant", "bing", "yahoo", "baidu", "yandex", "duckduckgo", "sogou", "ecosia", "naver", "coccoc",
+                    "petalsearch", "seznam", "so", "startpage", "daum", "ask", "exalead", "gigablast", "kelseek", "lycos",
+                    "mozbot", "v9", "sukoga", "swisscows", "search.brave", "search.lilo"
+                )
+                    .map { it.replace(".", "\\.") }
+                    .map { "([a-zA-Z0-9-]+\\.)?$it(\\.[a-zA-Z0-9]+)+" }
+                    .map { it.toRegex() }
+            )
     }
 }
