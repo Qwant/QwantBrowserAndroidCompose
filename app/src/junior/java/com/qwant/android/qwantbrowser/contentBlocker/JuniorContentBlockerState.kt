@@ -34,8 +34,8 @@ class JuniorContentBlockerState(
     private val scope = MainScope()
     private var job: Job? = null
 
-    private var status by mutableStateOf(Status.ALLOWED)
-    private var blockReason by mutableStateOf(BlockReason.NONE)
+    override var status by mutableStateOf(Status.ALLOWED)
+    override var blockReason by mutableStateOf(BlockReason.NONE)
     private val statusMap = mutableStateMapOf<String, Pair<Status, BlockReason>>()
 
     init {
@@ -76,20 +76,12 @@ class JuniorContentBlockerState(
         }
     }
 
-    override fun getStatus(tabId: String?): Status {
-        return if (tabId == null) {
-            status
-        } else {
-            statusMap[tabId]?.first ?: Status.ALLOWED
-        }
+    override fun getStatusForTab(tabId: String): Status {
+        return statusMap[tabId]?.first ?: Status.ALLOWED
     }
 
-    override fun getBlockReason(tabId: String?): BlockReason {
-        return if (tabId == null) {
-            blockReason
-        } else {
-            statusMap[tabId]?.second ?: BlockReason.NONE
-        }
+    override fun getBlockReasonForTab(tabId: String): BlockReason {
+        return statusMap[tabId]?.second ?: BlockReason.NONE
     }
 
     /* override fun isTabBlocked(tabId: String?) : Boolean {

@@ -14,10 +14,6 @@ import androidx.compose.ui.zIndex
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import mozilla.components.concept.engine.EngineView
 
-enum class HideOnScrollPosition {
-    Top, Bottom
-}
-
 @Composable
 fun HideOnScrollToolbar(
     toolbarState: BrowserToolbarState,
@@ -28,12 +24,6 @@ fun HideOnScrollToolbar(
     content: @Composable (Modifier) -> Unit = {},
 ) {
     val toolbarPosition by toolbarState.toolbarPosition.collectAsState()
-    val position = remember(toolbarPosition) {
-        when (toolbarPosition) {
-            ToolbarPosition.BOTTOM -> HideOnScrollPosition.Bottom
-            else -> HideOnScrollPosition.Top
-        }
-    }
 
     val shouldHideOnScroll by toolbarState.shouldHideOnScroll.collectAsState()
 
@@ -45,8 +35,8 @@ fun HideOnScrollToolbar(
                 toolbarState.updateVisibility(sign == 1f)
             }
         },
-        scrollThreshold = if (position == HideOnScrollPosition.Top) 5 else 1,
-        consecutiveThreshold = 1 // if (position == HideOnScrollPosition.Top) 4 else 1
+        scrollThreshold = 5, // if (position == HideOnScrollPosition.Top) 5 else 1,
+        consecutiveThreshold = 4 // if (position == HideOnScrollPosition.Top) 4 else 1
     )
 
     val contentModifier = if (!lock() && shouldHideOnScroll) {

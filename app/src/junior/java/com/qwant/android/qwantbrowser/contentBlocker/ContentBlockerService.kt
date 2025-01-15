@@ -24,70 +24,87 @@ class ContentBlockerService @Inject constructor(
     }
 
     suspend fun isDomainBlocked(hash: String): Boolean {
-        return isDomainBlacklist(hash) || isDomainRedirect(hash)
+        val r = isDomainBlacklist(hash) || isDomainRedirect(hash)
+        Log.d("QwantContentBlocker", "isDomainBlocked: $r")
+        return r
     }
 
     suspend fun isUrlBLocked(hash: String): Boolean {
-        return isUrlBlacklist(hash) || isUrlRedirect(hash)
+        val r = isUrlBlacklist(hash) || isUrlRedirect(hash)
+        Log.d("QwantContentBlocker", "isUrlBLocked: $r")
+        return r
     }
 
     private suspend fun isDomainBlacklist(hash: String): Boolean {
         cacheRepository.getDomain(hash, BlockListType.BLACKLIST)?.blocked?.let {
+            Log.d("QwantContentBlocker", "isDomainBlacklist cached: $it")
             return it
         }
 
+        Log.d("QwantContentBlocker", "isDomainBlacklist request")
         val result = executeRequest(getRequest(DOMAIN_BLACKLIST_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
             cacheRepository.saveDomain(hash, isBlocked, BlockListType.BLACKLIST)
+            Log.d("QwantContentBlocker", "isDomainBlacklist request result: $isBlocked")
             return isBlocked
-        }
+        } else Log.d("QwantContentBlocker", "isDomainBlacklist request error")
         return false
     }
 
     private suspend fun isDomainRedirect(hash: String): Boolean {
         cacheRepository.getDomain(hash, BlockListType.REDIRECT)?.blocked?.let {
+            Log.d("QwantContentBlocker", "isDomainRedirect cached: $it")
             return it
         }
 
+        Log.d("QwantContentBlocker", "isDomainRedirect request")
         val result = this.executeRequest(this.getRequest(DOMAIN_REDIRECT_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
             cacheRepository.saveDomain(hash, isBlocked, BlockListType.REDIRECT)
+            Log.d("QwantContentBlocker", "isDomainRedirect request result: $isBlocked")
             return isBlocked
-        }
+        } else Log.d("QwantContentBlocker", "isDomainRedirect request error")
         return false
     }
 
     private suspend fun isUrlBlacklist(hash: String): Boolean {
         cacheRepository.getUrl(hash, BlockListType.BLACKLIST)?.blocked?.let {
+            Log.d("QwantContentBlocker", "isUrlBlacklist cached: $it")
             return it
         }
 
+        Log.d("QwantContentBlocker", "isUrlBlacklist request")
         val result = executeRequest(getRequest(URL_BLACKLIST_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
             cacheRepository.saveUrl(hash, isBlocked, BlockListType.BLACKLIST)
+            Log.d("QwantContentBlocker", "isUrlBlacklist request result: $isBlocked")
             return isBlocked
-        }
+        } else Log.d("QwantContentBlocker", "isUrlBlacklist request error")
         return false
     }
 
     private suspend fun isUrlRedirect(hash: String): Boolean {
         cacheRepository.getUrl(hash, BlockListType.REDIRECT)?.blocked?.let {
+            Log.d("QwantContentBlocker", "isUrlRedirect cached: $it")
             return it
         }
 
+        Log.d("QwantContentBlocker", "isUrlRedirect request")
         val result = this.executeRequest(this.getRequest(URL_REDIRECT_ENDPOINT, hash))
         if (result != Result.ERROR) {
             val isBlocked = result == Result.BLOCKED
             cacheRepository.saveUrl(hash, isBlocked, BlockListType.REDIRECT)
+            Log.d("QwantContentBlocker", "isUrlRedirect request result: $isBlocked")
             return isBlocked
-        }
+        } else Log.d("QwantContentBlocker", "isUrlRedirect request error")
         return false
     }
 
     private fun getRequest(endpoint: String, hash: String): Request {
+        Log.d("QwantContentBlocker", "constructing request with\n    url: ${endpoint}\n    body: test1=$hash")
         return Request(
             url = endpoint,
             method = Request.Method.POST,
@@ -97,6 +114,7 @@ class ContentBlockerService @Inject constructor(
     }
 
     private suspend fun executeRequest(request: Request): Result = withContext(Dispatchers.IO) {
+        Log.d("QwantContentBlocker", "requesting $request\n    url: ${request.url}\n    body: ${request.body}")
         return@withContext try {
             client.fetch(request).use { response ->
                 if (response.status == 200) {

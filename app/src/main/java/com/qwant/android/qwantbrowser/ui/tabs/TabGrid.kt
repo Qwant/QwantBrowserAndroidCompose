@@ -90,7 +90,7 @@ fun TabCard(
         }
     }, label = "tabSwipeScale")
 
-    val isTabBlocked = contentBlockerState.getStatus(tab.id) != ContentBlockerState.Status.ALLOWED
+    val isTabBlocked = contentBlockerState.getStatusForTab(tab.id) != ContentBlockerState.Status.ALLOWED
     val isPrivateBrowsingHome = LocalQwantTheme.current.private && tab.content.url == ""
 
     Column(modifier = modifier

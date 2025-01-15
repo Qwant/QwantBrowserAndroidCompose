@@ -1,6 +1,9 @@
 package com.qwant.android.qwantbrowser.contentBlocker
 
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Job
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 open class ContentBlockerState {
     enum class Status {
@@ -11,8 +14,11 @@ open class ContentBlockerState {
         NONE, INVALID, ERROR, IP, DOMAIN, URL
     }
 
-    open fun getStatus(tabId: String? = null) = Status.ALLOWED
-    open fun getBlockReason(tabId: String? = null) = BlockReason.NONE
+    open var status by mutableStateOf(Status.ALLOWED)
+    open var blockReason by mutableStateOf(BlockReason.NONE)
+
+    open fun getStatusForTab(tabId: String) = Status.ALLOWED
+    open fun getBlockReasonForTab(tabId: String) = BlockReason.NONE
 
     open fun check(url: String): Job? = null
     open fun onQwant(): Job? = null
