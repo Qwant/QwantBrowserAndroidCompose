@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui.browser.toolbar
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
@@ -104,8 +105,8 @@ fun AnimatedToolbar(
         }
         AnimatedVisibility(
             visible = toolbarState.visible,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            enter = expandVertically(animationSpec = tween(100)),
+            exit = shrinkVertically(animationSpec = tween(100))
         ) {
             toolbar(modifier)
         }
