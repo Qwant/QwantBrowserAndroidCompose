@@ -6,10 +6,22 @@ browser.cookies
     url: "https://www.qwant.com",
     domain: ".qwant.com",
     name: "omnibar",
-    value: "1"
+    value: "1",
+    sameSite: "no_restriction"
   })
   .then((cookie) => console.log(`QWANT_COOKIES - omnibar cookie set ${JSON.stringify(cookie)}`))
   .catch((err) => console.log("QWANT_COOKIES - could not set omnibar cookie: ", err));
+
+browser.cookies
+    .set({
+      url: "https://www.qwantjunior.com",
+      domain: ".qwantjunior.com",
+      name: "omnibar",
+      value: "1",
+      sameSite: "no_restriction"
+    })
+    .then((cookie) => console.log(`QWANT_COOKIES - omnibar cookie set for junior ${JSON.stringify(cookie)}`))
+    .catch((err) => console.log("QWANT_COOKIES - could not set omnibar cookie: ", err));
 
 let nativePort = browser.runtime.connectNative("qwant_browser");
 nativePort.onMessage.addListener(message => {
