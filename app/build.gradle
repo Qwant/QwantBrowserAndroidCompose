@@ -116,6 +116,9 @@ android {
         unowhy {
             dimension "target"
         }
+        smarteen {
+            dimension "target"
+        }
         orange {
             dimension "target"
             ndk.abiFilters.clear()

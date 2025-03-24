@@ -43,6 +43,10 @@ android {
             dimension "target"
             buildConfigField("String", "PARTNER_CLIENT", "\"logicom\"")
         }
+        smarteen {
+            dimension "target"
+            buildConfigField("String", "PARTNER_CLIENT", "\"smarteen\"")
+        }
     }
 
     compileOptions {
