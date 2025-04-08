@@ -22,24 +22,24 @@
   "declarative_net_request": {
     "rule_resources": [
       {
-        "id": "adblock_warning_removal",
-        "enabled": true,
-        "path": "rules/adblock_warning_removal.json"
-      },
-      {
         "id": "filter_unblocking_search_ads_and_self_promotion",
         "enabled": true,
         "path": "rules/filter_unblocking_search_ads_and_self_promotion.json"
       },
       {
-        "id": "fanboy_annoyance",
-        "enabled": true,
-        "path": "rules/fanboy_annoyance.json"
-      },
-      {
         "id": "easy_privacy_optimized",
         "enabled": true,
         "path": "rules/easy_privacy_optimized.json"
+      },
+      {
+        "id": "adblock_warning_removal",
+        "enabled": true,
+        "path": "rules/adblock_warning_removal.json"
+      },
+      {
+        "id": "fanboy_annoyance",
+        "enabled": true,
+        "path": "rules/fanboy_annoyance.json"
       },
       {
         "id": "qwant_whitelist",

@@ -22,13 +22,13 @@ chrome.runtime.onConnect.addListener(async () => {
 
 const ruleset_ids = [
     
-    "adblock_warning_removal",
-    
     "filter_unblocking_search_ads_and_self_promotion",
     
-    "fanboy_annoyance",
-    
     "easy_privacy_optimized",
+    
+    "adblock_warning_removal",
+    
+    "fanboy_annoyance",
     
 ];
 
