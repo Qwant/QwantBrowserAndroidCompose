@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
@@ -47,7 +48,7 @@ fun Widget(
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer
     ) {
-        Scaffold { padding ->
+        Scaffold(modifier = Modifier.imePadding()) { padding ->
             Column(Modifier.padding(padding)) {
                 Box(
                     modifier = Modifier

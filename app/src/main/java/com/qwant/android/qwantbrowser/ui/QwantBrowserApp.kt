@@ -1,6 +1,7 @@
 package com.qwant.android.qwantbrowser.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
@@ -44,6 +45,7 @@ fun QwantBrowserApp(
             privacy = isPrivate
         ) {
             Scaffold(
+                modifier = Modifier.imePadding(),
                 snackbarHost = {
                     SnackbarHost(
                         hostState = applicationViewModel.snackbarHostState,
