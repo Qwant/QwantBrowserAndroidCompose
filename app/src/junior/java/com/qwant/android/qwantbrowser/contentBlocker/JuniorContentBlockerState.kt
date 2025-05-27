@@ -152,6 +152,9 @@ class JuniorContentBlockerState(
     }
 
     private fun isExternalSearchEngine(host: String): Boolean {
+        if (searchEngineWhitelist.contains(host)) {
+            return false
+        }
         return blockedSearchEnginesRegex.any {
             host.matches(it)
         }
@@ -202,6 +205,7 @@ class JuniorContentBlockerState(
     }
 
     companion object {
+        private val searchEngineWhitelist = listOf("docs.google.com", "accounts.google.com")
         private val blockedSearchEnginesRegex = arrayOf("sm.cn", "mail.ru", "translate.goog")
             .map { it.replace(".", "\\.") }
             .map { "([a-zA-Z0-9-]+\\.)?$it" }
