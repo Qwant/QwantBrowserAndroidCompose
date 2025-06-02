@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.history
 
+import android.content.ClipData
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -76,7 +79,7 @@ fun HistoryList(
                         }
 
                         item(key = item.url, contentType = 1) {
-                            val clipboardManager = LocalClipboardManager.current
+                            val clipboard = LocalClipboard.current.nativeClipboard
                             HistoryItem(
                                 visit = item,
                                 browserIcons = historyViewModel.browserIcons,
@@ -98,7 +101,7 @@ fun HistoryList(
                                         stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
                                         R.drawable.icons_download
                                     ) {
-                                        clipboardManager.setText(AnnotatedString(item.url))
+                                        clipboard.setPrimaryClip(ClipData.newRawUri(item.url, item.url.toUri()))
                                     },
                                     MenuItem(
                                         stringResource(R.string.delete),

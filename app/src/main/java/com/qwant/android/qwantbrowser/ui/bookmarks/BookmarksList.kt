@@ -1,5 +1,9 @@
 package com.qwant.android.qwantbrowser.ui.bookmarks
 
+import android.content.ClipData
+import android.content.ClipDescription
+import android.content.ClipDescription.MIMETYPE_TEXT_URILIST
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -21,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,6 +42,7 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import org.mozilla.reference.browser.storage.BookmarkItemV2
 import java.util.Locale
 import mozilla.components.feature.contextmenu.R as mozacR
+import androidx.core.net.toUri
 
 @Composable
 fun BookmarksList(
@@ -93,12 +99,12 @@ fun BookmarksList(
                                     }
                                 )
                                 bookmark.url?.let {
-                                    val clipboardManager = LocalClipboardManager.current
+                                    val clipboard = LocalClipboard.current.nativeClipboard
                                     DropdownItem(
                                         text = stringResource(mozacR.string.mozac_feature_contextmenu_copy_link),
                                         icon = R.drawable.icons_paste,
                                         onClick = {
-                                            clipboardManager.setText(AnnotatedString(it))
+                                            clipboard.setPrimaryClip(ClipData.newRawUri(it, it.toUri()))
                                             showMenu = false
                                         }
                                     )
