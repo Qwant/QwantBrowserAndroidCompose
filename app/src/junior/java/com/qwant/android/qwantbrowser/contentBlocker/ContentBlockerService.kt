@@ -2,7 +2,7 @@ package com.qwant.android.qwantbrowser.contentBlocker
 
 import android.util.Log
 import com.qwant.android.qwantbrowser.contentBlocker.cacheDb.BlockListType
-import com.qwant.android.qwantbrowser.contentBlocker.cacheDb.ContentBlockerCacheRepository
+import com.qwant.android.qwantbrowser.contentBlocker.cacheDb.ContentBlockerCacheRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ContentBlockerService @Inject constructor(
-    private val cacheRepository: ContentBlockerCacheRepository,
+    private val cacheRepository: ContentBlockerCacheRepositoryInterface,
     private val client: Client
 ) {
     private enum class Result {

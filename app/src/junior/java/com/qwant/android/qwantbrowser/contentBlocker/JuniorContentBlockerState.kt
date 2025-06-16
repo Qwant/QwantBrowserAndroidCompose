@@ -25,6 +25,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import java.security.MessageDigest
+import androidx.core.net.toUri
 
 class JuniorContentBlockerState(
     private val store: BrowserStore,
@@ -115,7 +116,7 @@ class JuniorContentBlockerState(
     }
 
     override fun check(url: String) = scope.launch {
-        val uri = Uri.parse(url)
+        val uri = url.toUri()
         uri.hostWithoutCommonPrefixes?.let { host ->
             if (isIP(host)) {
                 block(BlockReason.IP)

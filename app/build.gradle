@@ -156,6 +156,16 @@ android {
     aaptOptions {
         ignoreAssetsPattern  '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+    sourceSets {
+        junior {
+            assets {
+                srcDirs 'src/junior/assets', 'src/test/assets'
+            }
+        }
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 
     applicationVariants.configureEach { variant ->
         if (variant.productFlavors[0].name == "junior") {
@@ -253,6 +263,8 @@ dependencies {
 
     // Tests
     testImplementation libs.junit.main
+    testImplementation libs.mozac.lib.fetch.httpurlconnection
+    testImplementation libs.json
     androidTestImplementation libs.junit.androidx
     androidTestImplementation libs.espresso
 }
