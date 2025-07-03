@@ -12,11 +12,11 @@ plugins {
 
 android {
     namespace 'com.qwant.android.qwantbrowser'
-    compileSdk 35
+    compileSdk 36
     defaultConfig {
         applicationId "com.qwant.liberty"
         minSdk 21
-        targetSdk 35
+        targetSdk 36
         versionCode 50106020
         versionName "5.1.6.2"
 
