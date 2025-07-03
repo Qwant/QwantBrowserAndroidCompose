@@ -271,7 +271,7 @@ dependencies {
 
 protobuf {
     protoc {
-        def protoVersion = "4.29.1"
+        def protoVersion = "4.31.1"
         // Protobuf compiler is not supported for Apple M1 architecture,
         // fallback to specific 'protoc_platform' version if specify
         if (project.hasProperty('protoc_platform')) {

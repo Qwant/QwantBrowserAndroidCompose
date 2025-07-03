@@ -10,13 +10,13 @@ datastore = "1.1.7"
 localbroadcastmanager = "1.1.0"
 paging-runtime-ktx = "3.3.6"
 # Hilt
-hilt = "2.53"
+hilt = "2.56.2"
 androidx-hilt = "1.2.0"
 # Compose
 compose-bom = "2025.06.01"
 compose-material3 = "1.3.2"
 compose-android-activity = "1.10.1"
-compose-android-navigation = "2.9.0"
+compose-android-navigation = "2.9.1"
 compose-android-paging = "3.3.6"
 # Testing
 junit = "4.13.2"
@@ -24,8 +24,8 @@ junit-androidx = "1.2.1"
 json = "20250517"
 espresso = "3.6.1"
 # Others
-protobuf = "4.29.1"
-room = "2.7.1"
+protobuf = "4.31.1"
+room = "2.7.2"
 piwik = "1.2.3"
 mozac = "117.+"
 
