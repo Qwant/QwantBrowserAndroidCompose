@@ -34,6 +34,7 @@ class BookmarksRepository @Inject constructor(
         position = null,
         url = null,
         dateAdded = 0,
+        lastModified = 0,
         children = null
     )
 
@@ -109,6 +110,11 @@ class BookmarksRepository @Inject constructor(
          val exists = dao.alreadyExists(guid)
          if (exists) dao.deleteByGuid(guid)
          exists
+    }
+
+    override suspend fun countBookmarksInTrees(guids: List<String>): UInt {
+        // TODO, although not used
+        return 0u
     }
 
     suspend fun deleteBookmarksByUrl(url: String) = withContext(Dispatchers.IO) {
@@ -194,6 +200,7 @@ fun com.qwant.android.qwantbrowser.storage.bookmarks.BookmarkNode.toMozillaBookm
         this.title,
         this.url,
         this.dateAdded,
+        lastModified = 0,
         children
     )
 }

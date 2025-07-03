@@ -17,8 +17,12 @@ import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
+import mozilla.components.feature.downloads.DefaultDateTimeProvider
+import mozilla.components.feature.downloads.DefaultFileSizeFormatter
+import mozilla.components.feature.downloads.DownloadEstimator
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadStorage
+import mozilla.components.feature.downloads.FileSizeFormatter
 import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.feature.media.MediaSessionFeature
@@ -130,5 +134,19 @@ object MozacComponentHiltModule {
         store: BrowserStore,
     ) : MediaSessionFeature {
         return MediaSessionFeature(context, MediaSessionService::class.java, store)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFileSizeFormatter(
+        @ApplicationContext context: Context
+    ): FileSizeFormatter {
+        return DefaultFileSizeFormatter(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDownloadEstimator(): DownloadEstimator {
+        return DownloadEstimator(DefaultDateTimeProvider())
     }
 }

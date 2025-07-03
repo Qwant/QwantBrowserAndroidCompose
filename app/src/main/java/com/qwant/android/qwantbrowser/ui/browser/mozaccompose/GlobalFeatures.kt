@@ -57,6 +57,7 @@ fun GlobalFeatures(
         store = viewModel.store,
         useCases = viewModel.downloadUseCases,
         downloadManager = viewModel.downloadManager,
+        fileSizeFormatter = viewModel.fileSizeFormatter,
         onDownloadStopped = { state, _, status ->
             if (status == DownloadState.Status.COMPLETED) {
                 appViewModel.showSnackbar(

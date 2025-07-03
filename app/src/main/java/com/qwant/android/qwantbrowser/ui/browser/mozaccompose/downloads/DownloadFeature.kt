@@ -29,6 +29,7 @@ fun DownloadFeature(
     store: BrowserStore,
     useCases: DownloadsUseCases,
     downloadManager: DownloadManager,
+    fileSizeFormatter: FileSizeFormatter,
     onDownloadStopped: onDownloadStopped = { _, _, _ -> },
     showSnackbar: (String, QwantApplicationViewModel.SnackbarAction?) -> Unit
 ) {
@@ -134,8 +135,8 @@ fun DownloadFeature(
             onYes = { checkPermissionAndStartDownload() },
             onNo = { cancelDownload() },
             title = stringResource(
-                id = mozacR.string.mozac_feature_downloads_dialog_title2,
-                downloadState?.contentLength?.toMegabyteOrKilobyteString() ?: ""
+                id = mozacR.string.mozac_feature_downloads_dialog_title_3,
+                downloadState?.contentLength?.let { fileSizeFormatter.formatSizeInBytes(it) } ?: ""
             ),
             description = "${downloadState?.fileName}",
             icon = R.drawable.icons_download,

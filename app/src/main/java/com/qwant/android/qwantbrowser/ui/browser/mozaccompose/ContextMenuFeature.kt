@@ -18,7 +18,6 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.temporary.CopyDownloadFeature
-import mozilla.components.feature.downloads.temporary.ShareDownloadFeature
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.widgets.SnackbarDelegate
@@ -34,14 +33,6 @@ fun ContextMenuFeature(
     val context = LocalContext.current
     val view = LocalView.current
 
-    val shareDownloadFeature = remember {
-        ShareDownloadFeature(
-            context = context,
-            store = store,
-            httpClient = client,
-            tabId = null,
-        )
-    }
     val copyDownloadFeature = remember {
         CopyDownloadFeature(
             context = context,
@@ -51,7 +42,6 @@ fun ContextMenuFeature(
             onCopyConfirmation = { showSnackbar("Copied", null, true, SnackbarDuration.Short) }
         )
     }
-    ComposeFeatureWrapper(feature = shareDownloadFeature)
     ComposeFeatureWrapper(feature = copyDownloadFeature)
 
     val candidates = remember(context, view) {
@@ -64,27 +54,49 @@ fun ContextMenuFeature(
                 override fun show(
                     snackBarParentView: View,
                     text: Int,
+                    subText: String?,
                     duration: Int,
+                    isError: Boolean,
                     action: Int,
                     listener: ((v: View) -> Unit)?
                 ) {
                     if (text != 0) {
-                        showSnackbar(
+                        this.show(
+                            snackBarParentView,
                             context.getString(text),
-                            if (action != 0) {
-                                QwantApplicationViewModel.SnackbarAction(context.getString(action)) {
-                                    listener?.invoke(view)
-                                }
-                            } else null,
-                            false,
-                            when (duration) {
-                                SnackbarDuration.Short.ordinal -> SnackbarDuration.Short
-                                SnackbarDuration.Long.ordinal -> SnackbarDuration.Long
-                                SnackbarDuration.Indefinite.ordinal -> SnackbarDuration.Indefinite
-                                else -> SnackbarDuration.Short
-                            }
+                            subText,
+                            duration,
+                            isError,
+                            if (action != 0) context.getString(action) else null,
+                            listener
                         )
                     }
+                }
+
+                override fun show(
+                    snackBarParentView: View,
+                    text: String,
+                    subText: String?,
+                    duration: Int,
+                    isError: Boolean,
+                    action: String?,
+                    listener: ((View) -> Unit)?
+                ) {
+                    showSnackbar(
+                        text,
+                        if (action != null) {
+                            QwantApplicationViewModel.SnackbarAction(action) {
+                                listener?.invoke(view)
+                            }
+                        } else null,
+                        false,
+                        when (duration) {
+                            SnackbarDuration.Short.ordinal -> SnackbarDuration.Short
+                            SnackbarDuration.Long.ordinal -> SnackbarDuration.Long
+                            SnackbarDuration.Indefinite.ordinal -> SnackbarDuration.Indefinite
+                            else -> SnackbarDuration.Short
+                        }
+                    )
                 }
             }
         )

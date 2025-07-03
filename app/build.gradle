@@ -254,7 +254,7 @@ dependencies {
     implementation libs.mozac.feature.media
     implementation libs.mozac.support.utils
     implementation libs.mozac.support.ktx
-    implementation libs.mozac.support.rusthttp
+    implementation libs.mozac.support.appservices
     implementation libs.mozac.support.webextensions
     implementation libs.mozac.ui.widgets // SnackbarDelegate
     implementation libs.mozac.ui.icons // Permission feature icons // TODO remove this dependency after replacing with our icons

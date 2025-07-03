@@ -12,7 +12,7 @@ import mozilla.components.concept.engine.EngineSession
 fun ExternalLinksToBrowserFeature(session: EngineSession) {
     val activity = LocalContext.current.activity as WidgetActivity
     val observer = remember { object: EngineSession.Observer {
-        override fun onLocationChange(url: String) {
+        override fun onLocationChange(url: String, hasUserGesture: Boolean) {
             if (url.isNotEmpty() && url != "about:blank" && !url.isQwantUrl()) {
                 session.goBack()
                 activity.openFullBrowsingActivity(url)

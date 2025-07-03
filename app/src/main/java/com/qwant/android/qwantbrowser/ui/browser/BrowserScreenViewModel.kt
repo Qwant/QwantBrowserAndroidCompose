@@ -27,6 +27,7 @@ import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
 import mozilla.components.feature.downloads.DownloadsUseCases
+import mozilla.components.feature.downloads.FileSizeFormatter
 import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.pwa.WebAppUseCases
 import mozilla.components.feature.session.SessionUseCases
@@ -46,6 +47,7 @@ class BrowserScreenViewModel @Inject constructor(
     val tabsUseCases: TabsUseCases,
     val contextMenuUseCases: ContextMenuUseCases,
     val downloadUseCases: DownloadsUseCases,
+    val fileSizeFormatter: FileSizeFormatter,
     val permissionStorage: GeckoSitePermissionsStorage,
     val browserIcons: BrowserIcons,
     val downloadManager: DownloadManager,

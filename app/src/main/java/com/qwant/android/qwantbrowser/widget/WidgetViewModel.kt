@@ -43,7 +43,7 @@ class WidgetViewModel @Inject constructor(
 
     val session = engine.createSession().also {
         it.register(object: EngineSession.Observer {
-            override fun onLocationChange(url: String) {
+            override fun onLocationChange(url: String, hasUserGesture: Boolean) {
                 currentCategory = url.getQwantSERPCategory()
             }
             override fun onAppPermissionRequest(permissionRequest: PermissionRequest) = Unit
