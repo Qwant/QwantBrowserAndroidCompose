@@ -30,11 +30,11 @@ piwik = "1.2.3"
 mozac = "117.+"
 
 # Plugins
-android-gradle-plugin = "8.7.3"
-kotlin-plugin = "2.0.21"
-hilt-plugin = "2.53"
-protobuf-plugin = "0.9.4"
-ksp = "2.0.21-1.0.25"
+android-gradle-plugin = "8.11.0"
+kotlin-plugin = "2.2.0"
+hilt-plugin = "2.56.2"
+protobuf-plugin = "0.9.5"
+ksp = "2.2.0-2.0.2"
 
 [libraries]
 # Legacy

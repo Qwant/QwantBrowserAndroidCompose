@@ -140,8 +140,10 @@ fun QwantBrowserTheme(
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                @Suppress("DEPRECATION") window.statusBarColor = colorScheme.surface.toArgb()
-                @Suppress("DEPRECATION") window.navigationBarColor = colorScheme.surface.toArgb()
+                @Suppress("DEPRECATION")
+                window.statusBarColor = colorScheme.surface.toArgb()
+                @Suppress("DEPRECATION")
+                window.navigationBarColor = colorScheme.surface.toArgb()
             }
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !(darkTheme || privacy)
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !(darkTheme || privacy)
