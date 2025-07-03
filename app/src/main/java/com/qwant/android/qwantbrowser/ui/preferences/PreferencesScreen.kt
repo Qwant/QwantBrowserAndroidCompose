@@ -24,6 +24,7 @@ import com.qwant.android.qwantbrowser.ext.openAppStorePage
 import com.qwant.android.qwantbrowser.preferences.app.Appearance
 import com.qwant.android.qwantbrowser.preferences.app.ToolbarPosition
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
+import com.qwant.android.qwantbrowser.ui.preferences.permissions.PermissionsPreference
 import com.qwant.android.qwantbrowser.ui.preferences.widgets.*
 import com.qwant.android.qwantbrowser.ui.widgets.HtmlText
 import com.qwant.android.qwantbrowser.ui.widgets.ScreenHeader
@@ -89,6 +90,8 @@ fun PreferencesScreen(
 
             PreferenceGroupLabel(label = R.string.settings_group_privacy)
 
+            // Permissions granted to websites editor
+            PermissionsPreference(viewModel)
             // Paramètres de suppression de navigation
             ClearDataPreference(viewModel, applicationViewModel)
             // Supprimer les données à la fermeture

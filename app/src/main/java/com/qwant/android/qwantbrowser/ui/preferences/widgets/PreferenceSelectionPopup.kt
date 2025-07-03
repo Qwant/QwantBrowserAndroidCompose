@@ -24,7 +24,8 @@ fun PreferenceSelectionPopup(
     popupContent: @Composable () -> Unit,
     @StringRes description: Int? = null,
     icon: @Composable () -> Unit = {},
-    fullscreenPopup: Boolean = false
+    fullscreenPopup: Boolean = false,
+    disableScreenHeader: Boolean = false
 ) {
     var showPopup by remember { mutableStateOf(false) }
 
@@ -46,11 +47,15 @@ fun PreferenceSelectionPopup(
                     onDismissRequest = { showPopup = false }
                 ) {
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        val scrollState = rememberScrollState()
-                        Column {
-                            ScreenHeader(title = stringResource(id = label), scrollableState = scrollState)
-                            Box(modifier = Modifier.verticalScroll(scrollState).padding(top = 16.dp)) {
-                                popupContent()
+                        if (disableScreenHeader) {
+                            popupContent()
+                        } else {
+                            val scrollState = rememberScrollState()
+                            Column {
+                                ScreenHeader(title = stringResource(id = label), scrollableState = scrollState)
+                                Box(modifier = Modifier.verticalScroll(scrollState).padding(top = 16.dp)) {
+                                    popupContent()
+                                }
                             }
                         }
                     }
