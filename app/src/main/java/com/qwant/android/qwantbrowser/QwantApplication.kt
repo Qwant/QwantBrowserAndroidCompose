@@ -24,6 +24,7 @@ import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.webextensions.WebExtensionSupport
+import org.mozilla.geckoview.TranslationsController
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

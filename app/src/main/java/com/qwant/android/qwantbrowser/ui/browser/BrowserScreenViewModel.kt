@@ -156,6 +156,15 @@ class BrowserScreenViewModel @Inject constructor(
             initialValue = false
         )
 
+    val translationState = store.flow()
+        .map { state -> state.selectedTab?.translationsState }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = null
+        )
+
     var showFindInPage by mutableStateOf(false)
         private set
 

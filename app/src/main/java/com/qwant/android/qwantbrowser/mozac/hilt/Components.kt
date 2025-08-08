@@ -9,9 +9,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.MainScope
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
+import mozilla.components.browser.state.engine.middleware.TranslationsMiddleware
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
 import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
@@ -35,7 +37,6 @@ import mozilla.components.feature.session.middleware.LastAccessMiddleware
 import mozilla.components.support.base.android.NotificationsDelegate
 import javax.inject.Singleton
 
-
 @InstallIn(SingletonComponent::class)
 @Module
 object MozacComponentHiltModule {
@@ -55,7 +56,8 @@ object MozacComponentHiltModule {
                 PromptMiddleware(),
                 LastAccessMiddleware(),
                 LastMediaAccessMiddleware(),
-                RecordingDevicesMiddleware(context, notificationsDelegate)
+                RecordingDevicesMiddleware(context, notificationsDelegate),
+                TranslationsMiddleware(engine, MainScope(), false)
             ) + EngineMiddleware.create(engine)
         )
     }

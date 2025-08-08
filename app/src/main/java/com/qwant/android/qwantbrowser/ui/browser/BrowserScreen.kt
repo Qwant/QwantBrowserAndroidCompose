@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +39,10 @@ import kotlinx.coroutines.delay
 import mozilla.components.concept.engine.EngineView
 import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.vip.VIPAction
+import mozilla.components.browser.state.action.TranslationsAction
+import mozilla.components.browser.state.engine.middleware.TranslationsMiddleware
+import mozilla.components.concept.engine.translate.TranslationSupport
+import org.mozilla.geckoview.TranslationsController
 
 enum class TabOpening {
     NONE, NORMAL, PRIVATE
@@ -184,7 +189,17 @@ fun AfterActions(
 ) {
     val private = appViewModel.isPrivate.collectAsState()
     val privateBeforeClick = private.value
+
+    val translationsState by viewModel.translationState.collectAsState()
+
     Row {
+        Log.d("QWANT_TRANSLATE", "is expected: ${translationsState?.isExpectedTranslate}\nis offer: ${translationsState?.isOfferTranslate}")
+        if (translationsState?.isExpectedTranslate == true) {
+            // Show toolbar icon
+        } else if (translationsState?.isOfferTranslate == true) {
+            // Show translation popup
+        }
+
         if (BuildConfig.FLAVOR_target == "canaltoys") {
             val canGoBack by viewModel.canGoBack.collectAsState()
             val canGoForward by viewModel.canGoForward.collectAsState()
