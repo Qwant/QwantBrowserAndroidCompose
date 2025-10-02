@@ -102,16 +102,6 @@ fun QwantAccount(
                 )
             }
         )
-        DropdownItem(
-            text = stringResource(R.string.menu_retribution),
-            icon = R.drawable.icons_qwant_coin,
-            onClick = {
-                onDismissRequest()
-                viewModel.tabsUseCases.selectOrAddTab(
-                    url = "https://www.qwant.com/?drawer=reward-promo"
-                )
-            }
-        )
     }
 }
 
