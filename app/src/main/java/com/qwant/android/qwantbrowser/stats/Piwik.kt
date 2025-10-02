@@ -20,7 +20,7 @@ class Piwik @Inject constructor(
     @ApplicationContext context: Context,
     appPreferencesRepository: AppPreferencesRepository,
 ) {
-    /* private val coroutineScope = MainScope()
+    private val coroutineScope = MainScope()
 
     private val tracker = Piwik.getInstance(context).newTracker(TrackerConfig(
         BuildConfig.PIWIK_URL,
@@ -29,7 +29,7 @@ class Piwik @Inject constructor(
     )).also {
         it.setAnonymizationState(BuildConfig.PIWIK_ANONYMISATION)
         it.visitorIDLifetime = (((365.25 / 12) * 13) * (24 * 60 * 60.0 * 1000)).toLong() // 13 months in milliseconds // 5 * 60 * 1000 // 5 minutes in milliseconds //
-        it.dispatchInterval = 0
+        // it.dispatchInterval = 0
         it.isPrefixing = false
     }
 
@@ -41,10 +41,10 @@ class Piwik @Inject constructor(
                     tracker.isOptOut = it
                 }
         }
-    } */
+    }
 
     fun trackApplicationDownload() {
-        // TrackHelper.track().sendApplicationDownload().with(tracker)
+        TrackHelper.track().sendApplicationDownload().with(tracker)
     }
 
     fun event(
@@ -52,9 +52,9 @@ class Piwik @Inject constructor(
         action: String,
         name: String? = null
     ) {
-        /* val builder = TrackHelper.track().event(category, action)
+        val builder = TrackHelper.track().event(category, action)
         name?.let { builder.name(it) }
-        builder.with(tracker) */
+        builder.with(tracker)
     }
 
     fun screenView(url: String) {

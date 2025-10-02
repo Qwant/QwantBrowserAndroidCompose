@@ -104,7 +104,7 @@ class BrowserScreenViewModel @Inject constructor(
     init {
         urlFlow
             .mapNotNull { it }
-            .mapLatest {
+            .map {
                 delay(2000)
                 piwik.screenView(it)
             }
