@@ -8,13 +8,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
+import mozilla.components.feature.downloads.DefaultPackageNameProvider
 import mozilla.components.feature.downloads.DownloadEstimator
 import mozilla.components.feature.downloads.FileSizeFormatter
+import mozilla.components.feature.downloads.PackageNameProvider
 import mozilla.components.support.base.android.NotificationsDelegate
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DownloadService : AbstractFetchDownloadService() {
+class DownloadService: AbstractFetchDownloadService() {
     @Inject lateinit var c: dagger.Lazy<Client>
     override val httpClient: Client by lazy { c.get() }
 
@@ -29,4 +31,6 @@ class DownloadService : AbstractFetchDownloadService() {
 
     @Inject lateinit var nd: dagger.Lazy<NotificationsDelegate>
     override val notificationsDelegate: NotificationsDelegate by lazy { nd.get() }
+
+    override val packageNameProvider: PackageNameProvider = DefaultPackageNameProvider(this)
 }

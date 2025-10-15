@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.qwant.android.qwantbrowser.ui.nav.QwantNavHost
 import com.qwant.android.qwantbrowser.ui.theme.QwantBrowserTheme

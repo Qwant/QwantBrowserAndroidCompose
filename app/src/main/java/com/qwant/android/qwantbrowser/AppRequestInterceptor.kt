@@ -45,7 +45,6 @@ class AppRequestInterceptor @Inject constructor(
 
     private val appLinksInterceptor = AppLinksInterceptor(
         context = context,
-        interceptLinkClicks = true,
         launchInApp = { openLinksInApp },
         launchFromInterceptor = true
     )

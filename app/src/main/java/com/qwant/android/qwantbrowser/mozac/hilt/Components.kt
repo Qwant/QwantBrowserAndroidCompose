@@ -50,7 +50,12 @@ object MozacComponentHiltModule {
     ) : BrowserStore {
         return BrowserStore(
             middleware = listOf(
-                DownloadMiddleware(context, DownloadService::class.java, downloadStorage = downloadStorage),
+                DownloadMiddleware(
+                    context,
+                    DownloadService::class.java,
+                    deleteFileFromStorage = { false },
+                    downloadStorage = downloadStorage
+                ),
                 ThumbnailsMiddleware(thumbnailStorage),
                 PromptMiddleware(),
                 LastAccessMiddleware(),

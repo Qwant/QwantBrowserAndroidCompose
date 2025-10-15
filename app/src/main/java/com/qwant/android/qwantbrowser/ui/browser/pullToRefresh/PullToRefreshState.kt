@@ -7,6 +7,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.MainScope
@@ -30,6 +31,8 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
             val positionalThreshold: Float = 250f
             var verticalOffset: Float by mutableFloatStateOf(0f)
 
+            override var isAnimating: Boolean = false
+
             override val distanceFraction: Float
                 get() = verticalOffset / positionalThreshold
 
@@ -43,6 +46,7 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
 
             override fun animateOffset(offset: Float, duration: Int) {
                 coroutineScope.launch {
+                    isAnimating = true
                     val tween = FloatTweenSpec(duration, easing = FastOutLinearInEasing)
                     val initialValue = verticalOffset
                     val startMark = TimeSource.Monotonic.markNow()
@@ -51,6 +55,7 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
                         verticalOffset = tween.getValueFromNanos(ns, initialValue, offset, 0f)
                         delay(10)
                     }
+                    isAnimating = false
                 }
             }
 

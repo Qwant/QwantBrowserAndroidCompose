@@ -145,6 +145,8 @@ fun PermissionsGrantedRows(
                         SitePermissionsStorage.Permission.AUTOPLAY_INAUDIBLE -> "Autoplay (inaudible)" // TODO translate
                         SitePermissionsStorage.Permission.MEDIA_KEY_SYSTEM_ACCESS -> "Media key system access" // TODO translate
                         SitePermissionsStorage.Permission.STORAGE_ACCESS -> "Cross origin storage access" // TODO translate
+                        SitePermissionsStorage.Permission.LOCAL_DEVICE_ACCESS -> "Local device access" // TODO translate
+                        SitePermissionsStorage.Permission.LOCAL_NETWORK_ACCESS -> "Local network access" // TODO translate
                     },
                     modifier = Modifier.weight(2f)
                 )

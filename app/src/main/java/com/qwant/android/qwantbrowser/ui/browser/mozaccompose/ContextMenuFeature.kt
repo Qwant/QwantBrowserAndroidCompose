@@ -7,6 +7,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.style.TextOverflow
 import com.qwant.android.qwantbrowser.BuildConfig
 import com.qwant.android.qwantbrowser.ui.QwantApplicationViewModel
 import com.qwant.android.qwantbrowser.ui.widgets.Dropdown
@@ -55,9 +56,11 @@ fun ContextMenuFeature(
                     snackBarParentView: View,
                     text: Int,
                     subText: String?,
+                    subTextOverflow: TextOverflow?,
                     duration: Int,
                     isError: Boolean,
                     action: Int,
+                    withDismissAction: Boolean,
                     listener: ((v: View) -> Unit)?
                 ) {
                     if (text != 0) {
@@ -65,9 +68,11 @@ fun ContextMenuFeature(
                             snackBarParentView,
                             context.getString(text),
                             subText,
+                            subTextOverflow,
                             duration,
                             isError,
                             if (action != 0) context.getString(action) else null,
+                            withDismissAction,
                             listener
                         )
                     }
@@ -77,9 +82,11 @@ fun ContextMenuFeature(
                     snackBarParentView: View,
                     text: String,
                     subText: String?,
+                    subTextOverflow: TextOverflow?,
                     duration: Int,
                     isError: Boolean,
                     action: String?,
+                    withDismissAction: Boolean,
                     listener: ((View) -> Unit)?
                 ) {
                     showSnackbar(
@@ -89,7 +96,7 @@ fun ContextMenuFeature(
                                 listener?.invoke(view)
                             }
                         } else null,
-                        false,
+                        withDismissAction,
                         when (duration) {
                             SnackbarDuration.Short.ordinal -> SnackbarDuration.Short
                             SnackbarDuration.Long.ordinal -> SnackbarDuration.Long

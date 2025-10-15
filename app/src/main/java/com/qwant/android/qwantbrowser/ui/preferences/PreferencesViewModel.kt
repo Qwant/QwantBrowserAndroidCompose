@@ -131,6 +131,8 @@ class PreferencesViewModel @Inject constructor(
             SitePermissionsStorage.Permission.AUTOPLAY_INAUDIBLE -> permissions.copy(autoplayInaudible = autoplayStatus)
             SitePermissionsStorage.Permission.MEDIA_KEY_SYSTEM_ACCESS -> permissions.copy(mediaKeySystemAccess = value)
             SitePermissionsStorage.Permission.STORAGE_ACCESS -> permissions.copy(crossOriginStorageAccess = value)
+            SitePermissionsStorage.Permission.LOCAL_DEVICE_ACCESS -> permissions.copy(localDeviceAccess = value)
+            SitePermissionsStorage.Permission.LOCAL_NETWORK_ACCESS -> permissions.copy(localNetworkAccess = value)
         }
     }
 

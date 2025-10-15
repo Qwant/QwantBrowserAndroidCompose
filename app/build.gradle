@@ -15,7 +15,7 @@ android {
     compileSdk 36
     defaultConfig {
         applicationId "com.qwant.liberty"
-        minSdk 21
+        minSdk 26
         targetSdk 36
         versionCode 50200010
         versionName "5.2.0.1"
