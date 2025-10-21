@@ -1,5 +1,6 @@
 package com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts
 
+import android.security.KeyChain
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -8,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.graphics.toColorInt
+import com.qwant.android.qwantbrowser.ext.activity
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts.dialog.AlertDialog
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts.dialog.AuthenticationDialog
 import com.qwant.android.qwantbrowser.ui.browser.mozaccompose.prompts.dialog.ChoiceDialog
@@ -184,6 +186,20 @@ fun PromptFeature(
                 },
                 onDismiss = { consumeAfter { request.onDismiss() } },
             )
+
+            is PromptRequest.CertificateRequest -> {
+                context.activity?.let { activity ->
+                    KeyChain.choosePrivateKeyAlias(
+                        activity,
+                        { alias -> request.onComplete(alias) },
+                        arrayOf("RSA", "EC"), // keyTypes
+                        null, // issuers - currently not supported
+                        request.host, // the host that requested the certificate
+                        -1, // specify the default port to simplify the UI
+                        null // alias - leave null for now to not preselect a certificate
+                    )
+                } ?: consumeAfter { request.onComplete(null) }
+            }
 
             // TODO password, addresses and credit card manager
             // dismiss and consume immediately as we don't have suggestions yet
