@@ -2,38 +2,38 @@
 # Legacy
 constraintlayout = "2.2.1"
 preference-ktx = "1.2.1"
-material = "1.12.0"
+material = "1.13.0"
 # AndroidX
-core-ktx = "1.16.0"
-lifecycle = "2.9.0"
+core-ktx = "1.17.0"
+lifecycle = "2.9.4"
 datastore = "1.1.7"
 localbroadcastmanager = "1.1.0"
 paging-runtime-ktx = "3.3.6"
 # Hilt
-hilt = "2.53"
-androidx-hilt = "1.2.0"
+hilt = "2.57.2"
+androidx-hilt = "1.3.0"
 # Compose
-compose-bom = "2025.05.01"
-compose-material3 = "1.3.2"
-compose-android-activity = "1.10.1"
-compose-android-navigation = "2.9.0"
+compose-bom = "2025.11.00"
+compose-material3 = "1.4.0"
+compose-android-activity = "1.11.0"
+compose-android-navigation = "2.9.6"
 compose-android-paging = "3.3.6"
 # Testing
 junit = "4.13.2"
-junit-androidx = "1.2.1"
-espresso = "3.6.1"
+junit-androidx = "1.3.0"
+espresso = "3.7.0"
 # Others
-protobuf = "4.29.1"
-room = "2.7.1"
+protobuf = "4.33.0"
+room = "2.8.3"
 piwik = "1.2.3"
 mozac = "117.+"
 
 # Plugins
-android-gradle-plugin = "8.7.3"
-kotlin-plugin = "2.0.21"
-hilt-plugin = "2.53"
-protobuf-plugin = "0.9.4"
-ksp = "2.0.21-1.0.25"
+android-gradle-plugin = "8.13.1"
+kotlin-plugin = "2.2.20"
+hilt-plugin = "2.57.2"
+protobuf-plugin = "0.9.5"
+ksp = "2.2.20-2.0.4"
 
 [libraries]
 # Legacy

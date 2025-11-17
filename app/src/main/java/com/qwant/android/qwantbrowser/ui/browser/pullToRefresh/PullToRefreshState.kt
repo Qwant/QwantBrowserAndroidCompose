@@ -29,6 +29,7 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
 
             val positionalThreshold: Float = 250f
             var verticalOffset: Float by mutableFloatStateOf(0f)
+            override var isAnimating: Boolean = false
 
             override val distanceFraction: Float
                 get() = verticalOffset / positionalThreshold
@@ -42,6 +43,7 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
             }
 
             override fun animateOffset(offset: Float, duration: Int) {
+                isAnimating = true
                 coroutineScope.launch {
                     val tween = FloatTweenSpec(duration, easing = FastOutLinearInEasing)
                     val initialValue = verticalOffset
@@ -51,6 +53,7 @@ fun rememberPullToRefreshState(): CustomPullToRefreshState {
                         verticalOffset = tween.getValueFromNanos(ns, initialValue, offset, 0f)
                         delay(10)
                     }
+                    isAnimating = false
                 }
             }
 
