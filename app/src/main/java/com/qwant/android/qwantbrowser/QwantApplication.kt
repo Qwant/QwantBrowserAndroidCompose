@@ -104,7 +104,11 @@ class QwantApplication : Application() {
     @OptIn(DelicateCoroutinesApi::class)
     private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
         sessionStorage.get().let {
-            tabsUseCases.get().restore(it)
+            try {
+                tabsUseCases.get().restore(it)
+            } catch (e: IllegalArgumentException) {
+                android.util.Log.e("QWANT_RESTORE", "Could not restore tabs because of incompatibility when rolling back from mozac 145")
+            }
             // Now that we have restored our previous state (if there's one) let's setup auto saving the state while the app is used.
             it.autoSave(store.get())
                 .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
