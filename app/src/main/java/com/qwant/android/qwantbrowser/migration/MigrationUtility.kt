@@ -142,10 +142,12 @@ class MigrationUtility @Inject constructor(
                 bookmarksRepository.addItem(parentGuid, bookmark.url ?: "", bookmark.title, position = null)
             }
             BookmarkItemV2.BookmarkType.FOLDER -> {
-                val folderGuid = bookmarksRepository.addFolder(parentGuid, bookmark.title, position = null)
+                val folderGuid = bookmarksRepository.addFolder(parentGuid, bookmark.title, position = null).getOrNull()
                 @Suppress("UNNECESSARY_SAFE_CALL") // null exception needed for very old bookmarks deserialization
-                bookmark.children?.forEach {
-                    this.restoreBookmarkV4Recursive(it, folderGuid)
+                if (folderGuid != null) {
+                    bookmark.children?.forEach {
+                        this.restoreBookmarkV4Recursive(it, folderGuid)
+                    }
                 }
             }
         }

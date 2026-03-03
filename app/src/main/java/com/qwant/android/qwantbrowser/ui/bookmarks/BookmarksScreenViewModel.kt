@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -37,7 +38,8 @@ class BookmarksScreenViewModel @Inject constructor(
         private set
 
     val folder = snapshotFlow { folderGuid }
-        .mapLatest { bookmarksRepository.getBookmark(folderGuid) ?: bookmarksRepository.root }
+        .mapLatest { bookmarksRepository.getBookmark(folderGuid).getOrNull() ?: bookmarksRepository.root }
+        .filterNotNull()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

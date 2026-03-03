@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import mozilla.components.browser.icons.loader.IconLoader
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
@@ -59,7 +60,7 @@ class BookmarksRepository @Inject constructor(
         parentGuid: String,
         title: String,
         position: UInt?
-    ): String = withContext(Dispatchers.IO) {
+    ): Result<String> = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -70,7 +71,7 @@ class BookmarksRepository @Inject constructor(
             url = null,
             dateAdded = System.currentTimeMillis()
         ))
-        guid
+        Result.success(guid)
     }
 
     override suspend fun addItem(
@@ -78,7 +79,7 @@ class BookmarksRepository @Inject constructor(
         url: String,
         title: String,
         position: UInt?
-    ): String = withContext(Dispatchers.IO) {
+    ): Result<String> = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -89,10 +90,10 @@ class BookmarksRepository @Inject constructor(
             url = url,
             dateAdded = System.currentTimeMillis()
         ))
-        guid
+        Result.success(guid)
     }
 
-    override suspend fun addSeparator(parentGuid: String, position: UInt?): String = withContext(Dispatchers.IO) {
+    override suspend fun addSeparator(parentGuid: String, position: UInt?): Result<String> = withContext(Dispatchers.IO) {
         val guid = getNewGuid()
         dao.insert(BookmarkNode(
             guid = guid,
@@ -103,13 +104,13 @@ class BookmarksRepository @Inject constructor(
             url = null,
             dateAdded = System.currentTimeMillis()
         ))
-        guid
+        Result.success(guid)
     }
 
-    override suspend fun deleteNode(guid: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteNode(guid: String): Result<Boolean> = withContext(Dispatchers.IO) {
          val exists = dao.alreadyExists(guid)
          if (exists) dao.deleteByGuid(guid)
-         exists
+        Result.success(exists)
     }
 
     override suspend fun countBookmarksInTrees(guids: List<String>): UInt {
@@ -121,23 +122,23 @@ class BookmarksRepository @Inject constructor(
         dao.deleteByUrl(url)
     }
 
-    override suspend fun getBookmark(guid: String): BookmarkNode? = withContext(Dispatchers.IO) {
-        dao.get(guid)?.toMozillaBookmarkNode()
+    override suspend fun getBookmark(guid: String): Result<BookmarkNode?> = withContext(Dispatchers.IO) {
+        Result.success(dao.get(guid)?.toMozillaBookmarkNode())
     }
 
-    override suspend fun getBookmarksWithUrl(url: String): List<BookmarkNode> = withContext(Dispatchers.IO) {
-        dao.getByUrl(url).map { it.toMozillaBookmarkNode() }
+    override suspend fun getBookmarksWithUrl(url: String): Result<List<BookmarkNode>> = withContext(Dispatchers.IO) {
+        Result.success(dao.getByUrl(url).map { it.toMozillaBookmarkNode() })
     }
 
     override suspend fun getRecentBookmarks(
         limit: Int,
         maxAge: Long?,
         currentTime: Long
-    ): List<BookmarkNode> = withContext(Dispatchers.IO) {
-        dao.getRecent(maxAge ?: 0, currentTime, limit).map { it.toMozillaBookmarkNode() }
+    ): Result<List<BookmarkNode>> = withContext(Dispatchers.IO) {
+        Result.success(dao.getRecent(maxAge ?: 0, currentTime, limit).map { it.toMozillaBookmarkNode() })
     }
 
-    override suspend fun getTree(guid: String, recursive: Boolean): BookmarkNode? = withContext(Dispatchers.IO) {
+    override suspend fun getTree(guid: String, recursive: Boolean): Result<BookmarkNode?> = withContext(Dispatchers.IO) {
         val children = dao.getChildren(guid).mapNotNull { child ->
             if (recursive) {
                 this@BookmarksRepository.getTree(child.guid, true)
@@ -145,17 +146,17 @@ class BookmarksRepository @Inject constructor(
                 child.toMozillaBookmarkNode()
             }
         }
-        when (guid) {
-            root.guid -> root.copy(children = children)
-            else -> dao.get(guid)?.toMozillaBookmarkNode(children)
-        }
+        Result.success(when (guid) {
+            root.guid -> root.copy(children = children as List<BookmarkNode>?)
+            else -> dao.get(guid)?.toMozillaBookmarkNode(children as List<BookmarkNode>?)
+        })
     }
 
-    override suspend fun searchBookmarks(query: String, limit: Int): List<BookmarkNode> = withContext(Dispatchers.IO) {
-        dao.search(query, limit).map { it.toMozillaBookmarkNode() }
+    override suspend fun searchBookmarks(query: String, limit: Int): Result<List<BookmarkNode>> = withContext(Dispatchers.IO) {
+        Result.success(dao.search(query, limit).map { it.toMozillaBookmarkNode() })
     }
 
-    override suspend fun updateNode(guid: String, info: BookmarkInfo): Unit = withContext(Dispatchers.IO) {
+    override suspend fun updateNode(guid: String, info: BookmarkInfo): Result<Unit> = withContext(Dispatchers.IO) {
         val bookmark = dao.get(guid)
         bookmark?.let { b ->
             info.parentGuid?.let { b.parentGuid = it }
@@ -163,7 +164,9 @@ class BookmarksRepository @Inject constructor(
             info.url?.let { b.url = it }
             info.position?.let { b.position = it.toInt() }
             dao.update(b)
+            return@withContext Result.success(Unit)
         }
+        return@withContext Result.failure(Throwable("Bookmark not found"))
     }
 
     override suspend fun getSuggestions(text: String): List<Suggestion> = withContext(Dispatchers.IO) {
