@@ -60,11 +60,11 @@ fun PreferencesScreen(
                 onValueChange = { viewModel.updateToolbarPosition(it) }
             )
             // Hide toolbar on scroll
-            PreferenceToggle(
+            /* PreferenceToggle(
                 label = R.string.hide_toolbar_on_scroll_label,
                 value = appPrefs.hideToolbarOnScroll,
                 onValueChange = { viewModel.updateHideToolbarOnScroll(it) }
-            )
+            ) */
             // Tabs view
             TabsViewPreference(
                 value = appPrefs.tabsView,
